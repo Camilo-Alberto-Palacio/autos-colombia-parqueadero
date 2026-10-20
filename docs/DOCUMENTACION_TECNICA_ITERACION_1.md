@@ -136,3 +136,23 @@ El propósito fundamental de esta primera iteración es dotar a la cabina de con
   - **Dado** el mapa de celdas en pantalla.
   - **Cuando** el usuario hace clic sobre la celda `C-24`.
   - **Entonces** el panel lateral muestra la placa, modelo, color, conductor y tiempo transcurrido del vehículo estacionado.
+
+---
+
+## 7. ANEXO VISUAL: DIAGRAMAS DEL SISTEMA
+
+### 7.1 Diagrama de Paquetes
+![Diagrama de Paquetes](diagramas/1_diagrama_paquetes.png)
+
+### 7.2 Diagrama de Casos de Uso
+![Diagrama de Casos de Uso](diagramas/2_diagrama_casos_de_uso.png)
+
+### 7.3 Diagrama de Clases del Dominio
+![Diagrama de Clases](diagramas/3_diagrama_de_clases.png)
+
+### 7.4 Diagrama de Secuencia: Proceso de Ingreso
+![Secuencia de Entrada](diagramas/4_diagrama_secuencia_entrada.png)
+
+### 7.5 Diagrama de Secuencia: Proceso de Salida
+![Secuencia de Salida](diagramas/5_diagrama_secuencia_salida.png)
+
