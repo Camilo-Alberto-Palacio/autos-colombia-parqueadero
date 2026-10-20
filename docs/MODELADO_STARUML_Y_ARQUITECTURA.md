@@ -61,37 +61,41 @@ Representa la organización modular del código fuente:
 
 ```plantuml
 @startuml Diagrama_Paquetes_AutosColombia
-package "Capa Presentacion (Frontend)" {
+skinparam packageStyle rectangle
+
+package "Capa Presentación" {
     [index.html]
     [app.js]
     [style.css]
 }
 
-package "Capa de Controladores y API (Backend)" {
-    [app.py\n(AutosColombiaHandler)]
+package "Capa de Controladores y API" {
+    [app.py\n(AutosColombiaHandler)] as AppServer
 }
 
 package "Capa de Dominio y Negocio" {
-    [models.py\n(Logica de Control de Acceso)]
-    package "Entidades" {
-        class Vehiculo
-        class Celda
-        class Mensualidad
-        class Propietario
-        class RegistroAcceso
+    [models.py\n(Logica de Control de Acceso)] as Models
+    package "Entidades del Dominio" {
+        [Vehiculo]
+        [Celda]
+        [Mensualidad]
+        [Propietario]
+        [RegistroAcceso]
     }
 }
 
 package "Capa de Persistencia" {
-    [database.py\n(ConnectionManager)]
+    [database.py\n(ConnectionManager)] as DBManager
     database "autos_colombia.db\n(SQLite Relacional)" as DB
 }
 
-[app.js] ..> [app.py] : HTTP JSON
-[app.py] ..> [models.py] : Invoca servicios
-[models.py] ..> Entidades : Instancia / Mapea
-[models.py] ..> [database.py] : Solicita conexion
-[database.py] ..> DB : Ejecuta SQL (PRAGMA FK=ON)
+[app.js] ..> AppServer : HTTP REST JSON
+AppServer ..> Models : Invoca servicios
+Models ..> [Vehiculo] : Instancia
+Models ..> [Celda] : Asigna dinamicamente
+Models ..> [Mensualidad] : Valida vigencia
+Models ..> DBManager : Solicita conexion
+DBManager ..> DB : Ejecuta SQL (PRAGMA FK=ON)
 @enduml
 ```
 
