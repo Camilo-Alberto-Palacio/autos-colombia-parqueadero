@@ -67,7 +67,9 @@ def main():
         "2_diagrama_casos_de_uso",
         "3_diagrama_de_clases",
         "4_diagrama_secuencia_entrada",
-        "5_diagrama_secuencia_salida"
+        "5_diagrama_secuencia_salida",
+        "6_diagrama_arquitectura_componentes",
+        "7_diagrama_entidad_relacion_mer"
     ]
 
     for i, bloque in enumerate(bloques):

@@ -1,0 +1,207 @@
+{
+	"_type": "Project",
+	"_id": "AAAAAAFF+h6SjaM2Hec=",
+	"name": "Autos Colombia 24/7 - Iteración 1",
+	"author": "Camilo Palacios - Docente: Reinaldo Rojas",
+	"version": "1.0",
+	"ownedElements": [
+		{
+			"_type": "UMLModel",
+			"_id": "AAAAAAFF+qBWK6M3Z8Y=",
+			"_parent": {
+				"$ref": "AAAAAAFF+h6SjaM2Hec="
+			},
+			"name": "Modelo de Dominio y Arquitectura Autos Colombia",
+			"ownedElements": [
+				{
+					"_type": "UMLPackage",
+					"_id": "PKG_PRESENTACION",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Capa Presentación (Frontend Web SPA)",
+					"documentation": "Interfaz de usuario Cobalt Bay OS (index.html, app.js)"
+				},
+				{
+					"_type": "UMLPackage",
+					"_id": "PKG_CONTROLADORES",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Capa Controladores REST (Backend Concurrente)",
+					"documentation": "Servidor HTTP Multi-Hilo (app.py / ThreadedHTTPServer)"
+				},
+				{
+					"_type": "UMLPackage",
+					"_id": "PKG_DOMINIO",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Capa Dominio y Reglas de Negocio",
+					"ownedElements": [
+						{
+							"_type": "UMLClass",
+							"_id": "CLS_PROPIETARIO",
+							"_parent": {
+								"$ref": "PKG_DOMINIO"
+							},
+							"name": "Propietario",
+							"attributes": [
+								{ "_type": "UMLAttribute", "name": "id", "type": "Integer", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "documento", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "nombreCompleto", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "telefono", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "email", "type": "String", "visibility": "private" }
+							]
+						},
+						{
+							"_type": "UMLClass",
+							"_id": "CLS_VEHICULO",
+							"_parent": {
+								"$ref": "PKG_DOMINIO"
+							},
+							"name": "Vehiculo",
+							"attributes": [
+								{ "_type": "UMLAttribute", "name": "placa", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "tipoVehiculo", "type": "TipoVehiculo", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "marca", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "modelo", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "color", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "activo", "type": "Boolean", "visibility": "private" }
+							],
+							"operations": [
+								{ "_type": "UMLOperation", "name": "tieneMensualidadVigente", "visibility": "public" },
+								{ "_type": "UMLOperation", "name": "estaDentro", "visibility": "public" }
+							]
+						},
+						{
+							"_type": "UMLClass",
+							"_id": "CLS_MENSUALIDAD",
+							"_parent": {
+								"$ref": "PKG_DOMINIO"
+							},
+							"name": "Mensualidad",
+							"attributes": [
+								{ "_type": "UMLAttribute", "name": "id", "type": "Integer", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "fechaPago", "type": "Date", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "fechaVencimiento", "type": "Date", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "valorPagado", "type": "Decimal", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "estado", "type": "EstadoMensualidad", "visibility": "private" }
+							],
+							"operations": [
+								{ "_type": "UMLOperation", "name": "estaVigente", "visibility": "public" },
+								{ "_type": "UMLOperation", "name": "diasRestantes", "visibility": "public" }
+							]
+						},
+						{
+							"_type": "UMLClass",
+							"_id": "CLS_CELDA",
+							"_parent": {
+								"$ref": "PKG_DOMINIO"
+							},
+							"name": "Celda",
+							"attributes": [
+								{ "_type": "UMLAttribute", "name": "codigo", "type": "String", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "tipoPermitido", "type": "TipoVehiculo", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "estado", "type": "EstadoCelda", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "piso", "type": "Integer", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "zona", "type": "String", "visibility": "private" }
+							],
+							"operations": [
+								{ "_type": "UMLOperation", "name": "ocupar", "visibility": "public" },
+								{ "_type": "UMLOperation", "name": "liberar", "visibility": "public" }
+							]
+						},
+						{
+							"_type": "UMLClass",
+							"_id": "CLS_REGISTRO",
+							"_parent": {
+								"$ref": "PKG_DOMINIO"
+							},
+							"name": "RegistroAcceso",
+							"attributes": [
+								{ "_type": "UMLAttribute", "name": "id", "type": "Integer", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "fechaIngreso", "type": "DateTime", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "fechaSalida", "type": "DateTime", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "estado", "type": "EstadoAcceso", "visibility": "private" },
+								{ "_type": "UMLAttribute", "name": "observaciones", "type": "String", "visibility": "private" }
+							],
+							"operations": [
+								{ "_type": "UMLOperation", "name": "registrarSalida", "visibility": "public" }
+							]
+						},
+						{
+							"_type": "UMLClass",
+							"_id": "CLS_SERVICIO",
+							"_parent": {
+								"$ref": "PKG_DOMINIO"
+							},
+							"name": "ParqueaderoService",
+							"attributes": [
+								{ "_type": "UMLAttribute", "name": "CAPACIDAD_CARROS", "type": "int", "defaultValue": "70", "isStatic": true },
+								{ "_type": "UMLAttribute", "name": "CAPACIDAD_MOTOS", "type": "int", "defaultValue": "10", "isStatic": true },
+								{ "_type": "UMLAttribute", "name": "TARIFA_CARRO", "type": "Decimal", "defaultValue": "250000", "isStatic": true },
+								{ "_type": "UMLAttribute", "name": "TARIFA_MOTO", "type": "Decimal", "defaultValue": "100000", "isStatic": true }
+							],
+							"operations": [
+								{ "_type": "UMLOperation", "name": "consultarVehiculo", "visibility": "public" },
+								{ "_type": "UMLOperation", "name": "registrarIngreso", "visibility": "public" },
+								{ "_type": "UMLOperation", "name": "registrarSalida", "visibility": "public" },
+								{ "_type": "UMLOperation", "name": "asignarCeldaAleatoria", "visibility": "public" }
+							]
+						}
+					]
+				},
+				{
+					"_type": "UMLPackage",
+					"_id": "PKG_PERSISTENCIA",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Capa de Persistencia SQLite (Modo WAL)",
+					"documentation": "Gestión de transacciones atómicas e integridad referencial (database.py, autos_colombia.db)"
+				},
+				{
+					"_type": "UMLActor",
+					"_id": "ACT_OPERARIO",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "Operario de Cabina 24/7"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "UC_INGRESO",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "CU-01: Registrar Ingreso y Asignar Celda Aleatoria"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "UC_VALIDAR",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "CU-02: Validar Mensualidad Vigente y Aforo"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "UC_SALIDA",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "CU-03: Registrar Salida y Liberar Celda"
+				},
+				{
+					"_type": "UMLUseCase",
+					"_id": "UC_NOVEDADES",
+					"_parent": {
+						"$ref": "AAAAAAFF+qBWK6M3Z8Y="
+					},
+					"name": "CU-04: Registrar Novedades Físicas del Vehículo"
+				}
+			]
+		}
+	]
+}

@@ -336,11 +336,119 @@ UI -> UI : Actualiza contadores y mapa de 80 celdas
 
 ---
 
-## 6. INSTRUCCIONES DE IMPORTACIÓN EN STARUML
+## 6. DIAGRAMA DE ARQUITECTURA DE COMPONENTES E INTERFACES DE COMUNICACIÓN
+
+Representa los componentes de software ejecutables y las interfaces provistas/requeridas mediante las cuales se comunican (incluyendo soporte multi-operario concurrente):
+
+```plantuml
+@startuml Arquitectura_Componentes_Interfaces
+skinparam componentStyle uml2
+
+node "Cliente Web (Terminales Operarios 24/7)" {
+    component "UI Cabina de Control\n(index.html + app.js)" as WebUI
+    component "Monitor Mapa 80 Celdas\n(Sincronización Real-Time)" as MapUI
+}
+
+interface "IHttpRestApi\n(GET/POST JSON)" as IRest
+
+node "Servidor de Aplicación Concurrente (Python 3)" {
+    component "Controlador HTTP Multi-Hilo\n(app.py / ThreadedHTTPServer)" as HttpController
+    interface "IServicioParqueadero" as IService
+    component "Motor Reglas de Negocio\n(models.py)" as BusinessEngine
+    interface "IConexionDatos\n(Transacción Atómica)" as IDB
+    component "Gestor de Persistencia\n(database.py + Lock)" as DataAccess
+}
+
+database "Motor Relacional SQLite\n(autos_colombia.db - Modo WAL)" as SQLite {
+    frame "Tablas Normalizadas (3FN)" as Tablas
+}
+
+WebUI --( IRest : Consume API
+MapUI --( IRest : Polling 24/7
+IRest - HttpController : Expone
+
+HttpController --( IService : Invoca
+IService - BusinessEngine : Implementa
+
+BusinessEngine --( IDB : BEGIN IMMEDIATE
+IDB - DataAccess : Provee
+
+DataAccess --> Tablas : SQL + PRAGMA FK=ON
+@enduml
+```
+
+---
+
+## 7. DIAGRAMA ENTIDAD-RELACIÓN Y MODELO RELACIONAL (BASE DE DATOS)
+
+```plantuml
+@startuml Diagrama_MER_AutosColombia
+hide circle
+skinparam linetype ortho
+
+entity "PROPIETARIO" as prop {
+    * **id** : INTEGER <<PK>>
+    --
+    * documento : VARCHAR(20) <<UNIQUE>>
+    * nombre_completo : VARCHAR(120)
+    * telefono : VARCHAR(20)
+    email : VARCHAR(100)
+    fecha_registro : DATETIME
+}
+
+entity "VEHICULO" as veh {
+    * **placa** : VARCHAR(10) <<PK>>
+    --
+    * tipo_vehiculo : VARCHAR(10) <<CARRO|MOTO>>
+    * marca : VARCHAR(50)
+    * modelo : VARCHAR(50)
+    * color : VARCHAR(30)
+    * propietario_id : INTEGER <<FK>>
+    * activo : BOOLEAN
+    fecha_creacion : DATETIME
+}
+
+entity "MENSUALIDAD" as mens {
+    * **id** : INTEGER <<PK>>
+    --
+    * vehiculo_placa : VARCHAR(10) <<FK>>
+    * fecha_pago : DATE
+    * fecha_vencimiento : DATE
+    * valor_pagado : DECIMAL(10,2)
+    * estado : VARCHAR(15) <<ACTIVA|VENCIDA>>
+}
+
+entity "CELDA" as celda {
+    * **codigo** : VARCHAR(10) <<PK>>
+    --
+    * tipo_permitido : VARCHAR(10) <<CARRO|MOTO>>
+    * estado : VARCHAR(15) <<DISPONIBLE|OCUPADA>>
+    * piso : INTEGER
+    zona : VARCHAR(20)
+}
+
+entity "REGISTRO_ACCESO" as reg {
+    * **id** : INTEGER <<PK>>
+    --
+    * vehiculo_placa : VARCHAR(10) <<FK>>
+    * celda_codigo : VARCHAR(10) <<FK>>
+    * fecha_ingreso : DATETIME
+    fecha_salida : DATETIME
+    * estado : VARCHAR(15) <<ADENTRO|FINALIZADO>>
+    observaciones : TEXT
+}
+
+prop ||--|{ veh : "posee (1:N)"
+veh ||--|{ mens : "paga mensualidad (1:N)"
+veh ||--o{ reg : "registra ingreso/salida (1:N)"
+celda ||--o{ reg : "asigna dinámicamente (1:N)"
+@enduml
+```
+
+---
+
+## 8. INSTRUCCIONES DE APERTURA EN STARUML
 
 1. Abrir **StarUML**.
-2. Crear un nuevo proyecto o abrir el archivo del semillero.
-3. Para generar o importar los diagramas:
-   - Puede usar el plugin **StarUML PlantUML** (Tools -> Extension Manager -> Buscar "PlantUML").
-   - O crear manualmente los paquetes, clases y diagramas de casos de uso copiando la estructura de atributos y relaciones descrita en este documento.
-4. El archivo complementario `staruml_diagrams.puml` en esta misma carpeta contiene el código puro de todos los diagramas para visualización y renderizado inmediato.
+2. Seleccionar `File -> Open...` y elegir el archivo nativo **`docs/Autos_Colombia_StarUML.mdj`** incluido en esta carpeta.
+3. También dispone de todos los diagramas exportados en alta resolución en `docs/diagramas/` (formatos `.png` y `.svg`) y el código fuente `.puml` en `docs/staruml_diagrams.puml`.

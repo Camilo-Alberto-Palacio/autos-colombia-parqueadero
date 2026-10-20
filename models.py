@@ -2,11 +2,16 @@
 Lógica del Negocio y Control de Acceso 24/7 - Autos Colombia
 Iteración 1: Gestión Exclusiva de Entrada y Salida
 Docente: Reinaldo Rojas
+Incluye:
+  - Concurrencia segura para múltiples operarios/puertas simultáneas
+  - Asignación dinámica/aleatoria de celdas (70 Carros, 10 Motos)
+  - Validación estricta de mensualidad sin periodo de gracia
+  - Registro de novedades/observaciones del estado físico al ingresar y salir
 """
 
 import random
 from datetime import datetime, date, timedelta
-from database import get_connection
+from database import get_connection, db_lock
 
 TARIFA_CARRO = 250000.00
 TARIFA_MOTO = 100000.00
@@ -29,7 +34,7 @@ def formatear_placa(placa: str) -> str:
 
 def consultar_vehiculo(placa_raw: str):
     """
-    Busca un vehículo por placa, verifica su información técnica,
+    Busca un vehículo por placa, verifica su información técnica (tipo, marca, modelo, color),
     estado de la mensualidad y si está actualmente dentro del parqueadero.
     """
     placa = limpiar_placa(placa_raw)
@@ -77,14 +82,15 @@ def consultar_vehiculo(placa_raw: str):
         m = dict(mensualidad_row)
         fecha_venc = datetime.strptime(m['fecha_vencimiento'], "%Y-%m-%d").date()
         m['dias_restantes'] = (fecha_venc - hoy).days
-        m['al_dia'] = fecha_venc >= hoy
+        # Regla estricta: Sin periodo de gracia. Si fecha_venc < hoy, está vencida.
+        m['al_dia'] = (fecha_venc >= hoy) and (m['estado'] == 'ACTIVA')
         vehiculo['mensualidad'] = m
     else:
         vehiculo['mensualidad'] = None
 
     # Verificar si actualmente se encuentra dentro del parqueadero
     query_adentro = """
-    SELECT r.id, r.celda_codigo, r.fecha_ingreso, r.estado
+    SELECT r.id, r.celda_codigo, r.fecha_ingreso, r.estado, r.observaciones
     FROM registro_acceso r
     WHERE r.vehiculo_placa = ? AND r.estado = 'ADENTRO'
     ORDER BY r.fecha_ingreso DESC
@@ -98,176 +104,213 @@ def consultar_vehiculo(placa_raw: str):
     conn.close()
     return vehiculo
 
-def registrar_ingreso(placa_raw: str, observaciones: str = None):
+def registrar_ingreso(placa_raw: str, observaciones: str = None, puerta: str = "Puerta 1 (Norte)"):
     """
-    Valida y procesa el ingreso de un vehículo al parqueadero 24/7:
-    Reglas:
-      1. Debe estar registrado en el sistema.
-      2. No debe estar ya adentro del parqueadero.
-      3. Debe tener la mensualidad vigente (al día).
-      4. Debe haber celdas disponibles para su tipo (Carro o Moto).
-      5. La asignación de la celda se realiza de forma dinámica/aleatoria.
+    Valida y procesa el ingreso de un vehículo al parqueadero 24/7 con bloqueo transaccional
+    para soportar múltiples operarios en simultáneo sin colisión de celdas.
     """
-    placa = limpiar_placa(placa_raw)
-    vehiculo = consultar_vehiculo(placa)
+    with db_lock:
+        placa = limpiar_placa(placa_raw)
+        vehiculo = consultar_vehiculo(placa)
 
-    if not vehiculo:
-        return {
-            "success": False,
-            "codigo_error": "NO_REGISTRADO",
-            "mensaje": f"El vehículo con placa '{formatear_placa(placa)}' NO se encuentra registrado en el sistema de abonados.",
-            "detalle": "En la modalidad 24/7 solo pueden ingresar vehículos previamente suscritos."
-        }
+        if not vehiculo:
+            return {
+                "success": False,
+                "codigo_error": "NO_REGISTRADO",
+                "mensaje": f"El vehículo con placa '{formatear_placa(placa)}' NO se encuentra registrado en el sistema de abonados.",
+                "detalle": "El parqueadero opera exclusivamente por mensualidad."
+            }
 
-    if vehiculo['esta_adentro']:
-        celda = vehiculo['registro_actual']['celda_codigo']
-        return {
-            "success": False,
-            "codigo_error": "YA_ADENTRO",
-            "mensaje": f"El vehículo '{formatear_placa(placa)}' ya se encuentra estacionado adentro en la celda {celda}.",
-            "detalle": "Debe registrar la salida antes de permitir un nuevo ingreso."
-        }
+        if vehiculo['esta_adentro']:
+            celda = vehiculo['registro_actual']['celda_codigo']
+            return {
+                "success": False,
+                "codigo_error": "YA_ADENTRO",
+                "mensaje": f"Control de duplicidad: El vehículo '{formatear_placa(placa)}' ya figura ADENTRO en la celda {celda}.",
+                "detalle": "No se puede registrar doble ingreso sin haber registrado antes su salida."
+            }
 
-    mensualidad = vehiculo['mensualidad']
-    if not mensualidad or not mensualidad['al_dia']:
-        fecha_v = mensualidad['fecha_vencimiento'] if mensualidad else "Sin registro"
-        return {
-            "success": False,
-            "codigo_error": "MENSUALIDAD_VENCIDA",
-            "mensaje": f"Acceso Denegado: La mensualidad del vehículo '{formatear_placa(placa)}' se encuentra VENCIDA ({fecha_v}).",
-            "detalle": "El parqueadero opera exclusivamente por mensualidad. Debe estar al día para abrir la barrera.",
-            "vehiculo": vehiculo
-        }
+        mensualidad = vehiculo['mensualidad']
+        if not mensualidad or not mensualidad['al_dia']:
+            fecha_v = mensualidad['fecha_vencimiento'] if mensualidad else "Sin registro"
+            return {
+                "success": False,
+                "codigo_error": "MENSUALIDAD_VENCIDA",
+                "mensaje": f"Acceso Denegado: La mensualidad del vehículo '{formatear_placa(placa)}' está VENCIDA ({fecha_v}).",
+                "detalle": "No existe periodo de gracia. El pago debe estar vigente para autorizar el ingreso.",
+                "vehiculo": vehiculo
+            }
 
-    # Validar disponibilidad y obtener celdas libres para el tipo de vehículo
-    tipo = vehiculo['tipo_vehiculo']
-    conn = get_connection()
-    cursor = conn.cursor()
+        tipo = vehiculo['tipo_vehiculo']
+        conn = get_connection()
+        cursor = conn.cursor()
 
-    cursor.execute("""
-        SELECT codigo, piso, zona 
-        FROM celda 
-        WHERE tipo_permitido = ? AND estado = 'DISPONIBLE'
-    """, (tipo,))
-    celdas_libres = [dict(r) for r in cursor.fetchall()]
+        try:
+            # Iniciar transacción inmediata para evitar condición de carrera entre operarios
+            cursor.execute("BEGIN IMMEDIATE;")
 
-    if not celdas_libres:
-        conn.close()
-        return {
-            "success": False,
-            "codigo_error": "SIN_CUPO",
-            "mensaje": f"No hay celdas disponibles para {tipo}s. Capacidad máxima alcanzada.",
-            "detalle": f"Capacidad total: {CAPACIDAD_CARROS if tipo == 'CARRO' else CAPACIDAD_MOTOS} celdas."
-        }
+            cursor.execute("""
+                SELECT codigo, piso, zona 
+                FROM celda 
+                WHERE tipo_permitido = ? AND estado = 'DISPONIBLE'
+            """, (tipo,))
+            celdas_libres = [dict(r) for r in cursor.fetchall()]
 
-    # Asignación DINÁMICA / ALEATORIA requerida por el profesor
-    celda_elegida = random.choice(celdas_libres)
-    codigo_celda = celda_elegida['codigo']
-    fecha_ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            if not celdas_libres:
+                conn.rollback()
+                conn.close()
+                return {
+                    "success": False,
+                    "codigo_error": "SIN_CUPO",
+                    "mensaje": f"Capacidad máxima alcanzada para {tipo}s. No hay celdas disponibles.",
+                    "detalle": f"Aforo máximo reglamentario: {CAPACIDAD_CARROS if tipo == 'CARRO' else CAPACIDAD_MOTOS} celdas para {tipo.lower()}s."
+                }
 
-    # Marcar celda como OCUPADA
-    cursor.execute("""
-        UPDATE celda 
-        SET estado = 'OCUPADA' 
-        WHERE codigo = ?
-    """, (codigo_celda,))
+            # Asignación DINÁMICA / ALEATORIA requerida por el profesor
+            celda_elegida = random.choice(celdas_libres)
+            codigo_celda = celda_elegida['codigo']
+            fecha_ahora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Registrar el acceso
-    cursor.execute("""
-        INSERT INTO registro_acceso (vehiculo_placa, celda_codigo, fecha_ingreso, estado, observaciones)
-        VALUES (?, ?, ?, 'ADENTRO', ?)
-    """, (vehiculo['placa'], codigo_celda, fecha_ahora, observaciones or "Ingreso regular mensualidad"))
+            obs_limpia = (observaciones or "").strip()
+            texto_obs = f"[{puerta}] {obs_limpia}" if obs_limpia else f"[{puerta}] Sin novedades físicas al ingreso"
 
-    conn.commit()
-    conn.close()
+            # Marcar celda como OCUPADA
+            cursor.execute("""
+                UPDATE celda 
+                SET estado = 'OCUPADA' 
+                WHERE codigo = ?
+            """, (codigo_celda,))
 
-    return {
-        "success": True,
-        "mensaje": f"¡Barrera Abierta! Ingreso autorizado para el vehículo {formatear_placa(placa)}.",
-        "celda_asignada": codigo_celda,
-        "zona": celda_elegida['zona'],
-        "piso": celda_elegida['piso'],
-        "fecha_ingreso": fecha_ahora,
-        "vehiculo": vehiculo
-    }
+            # Registrar el acceso
+            cursor.execute("""
+                INSERT INTO registro_acceso (vehiculo_placa, celda_codigo, fecha_ingreso, estado, observaciones)
+                VALUES (?, ?, ?, 'ADENTRO', ?)
+            """, (vehiculo['placa'], codigo_celda, fecha_ahora, texto_obs))
 
-def registrar_salida(placa_raw: str):
+            registro_id = cursor.lastrowid
+            conn.commit()
+            conn.close()
+
+            return {
+                "success": True,
+                "registro_id": registro_id,
+                "mensaje": f"¡Barrera Abierta en {puerta}! Ingreso autorizado para {formatear_placa(placa)}.",
+                "celda_asignada": codigo_celda,
+                "zona": celda_elegida['zona'],
+                "piso": celda_elegida['piso'],
+                "fecha_ingreso": fecha_ahora,
+                "observaciones": texto_obs,
+                "vehiculo": vehiculo
+            }
+        except Exception as e:
+            conn.rollback()
+            conn.close()
+            return {
+                "success": False,
+                "codigo_error": "ERROR_TRANSACCION",
+                "mensaje": f"Error de concurrencia al asignar celda: {str(e)}"
+            }
+
+def registrar_salida(placa_raw: str, observaciones_salida: str = None, puerta: str = "Puerta 1 (Norte)"):
     """
-    Registra la salida del vehículo y libera automáticamente su celda.
+    Registra la salida del vehículo (por placa o selección) y libera automáticamente su celda.
+    Permite anexar observaciones de salida.
     """
-    placa = limpiar_placa(placa_raw)
-    conn = get_connection()
-    cursor = conn.cursor()
+    with db_lock:
+        placa = limpiar_placa(placa_raw)
+        conn = get_connection()
+        cursor = conn.cursor()
 
-    query = """
-    SELECT r.id, r.vehiculo_placa, r.celda_codigo, r.fecha_ingreso,
-           v.tipo_vehiculo, v.marca, v.modelo, v.color, p.nombre_completo AS conductor
-    FROM registro_acceso r
-    JOIN vehiculo v ON r.vehiculo_placa = v.placa
-    JOIN propietario p ON v.propietario_id = p.id
-    WHERE REPLACE(REPLACE(r.vehiculo_placa, '-', ''), ' ', '') = ? AND r.estado = 'ADENTRO'
-    ORDER BY r.fecha_ingreso DESC
-    LIMIT 1
-    """
-    cursor.execute(query, (placa,))
-    registro = cursor.fetchone()
+        query = """
+        SELECT r.id, r.vehiculo_placa, r.celda_codigo, r.fecha_ingreso, r.observaciones,
+               v.tipo_vehiculo, v.marca, v.modelo, v.color, p.nombre_completo AS conductor
+        FROM registro_acceso r
+        JOIN vehiculo v ON r.vehiculo_placa = v.placa
+        JOIN propietario p ON v.propietario_id = p.id
+        WHERE REPLACE(REPLACE(r.vehiculo_placa, '-', ''), ' ', '') = ? AND r.estado = 'ADENTRO'
+        ORDER BY r.fecha_ingreso DESC
+        LIMIT 1
+        """
+        cursor.execute(query, (placa,))
+        registro = cursor.fetchone()
 
-    if not registro:
-        conn.close()
+        if not registro:
+            conn.close()
+            return {
+                "success": False,
+                "codigo_error": "NO_ESTA_ADENTRO",
+                "mensaje": f"El vehículo '{formatear_placa(placa)}' no se encuentra actualmente dentro del parqueadero."
+            }
+
+        reg_dict = dict(registro)
+        fecha_salida = datetime.now()
+        fecha_ingreso = datetime.strptime(reg_dict['fecha_ingreso'], "%Y-%m-%d %H:%M:%S")
+        duracion = fecha_salida - fecha_ingreso
+        horas = int(duracion.total_seconds() // 3600)
+        minutos = int((duracion.total_seconds() % 3600) // 60)
+        segundos = int(duracion.total_seconds() % 60)
+        if horas > 0:
+            tiempo_texto = f"{horas}h {minutos}m"
+        elif minutos > 0:
+            tiempo_texto = f"{minutos}m {segundos}s"
+        else:
+            tiempo_texto = f"{segundos} seg"
+
+        fecha_salida_str = fecha_salida.strftime("%Y-%m-%d %H:%M:%S")
+
+        obs_previa = reg_dict.get('observaciones') or ""
+        if observaciones_salida and observaciones_salida.strip():
+            obs_final = f"{obs_previa} | Salida ({puerta}): {observaciones_salida.strip()}"
+        else:
+            obs_final = f"{obs_previa} | Salida ({puerta}): OK"
+
+        try:
+            cursor.execute("BEGIN IMMEDIATE;")
+            # Finalizar registro de acceso
+            cursor.execute("""
+                UPDATE registro_acceso 
+                SET fecha_salida = ?, estado = 'FINALIZADO', observaciones = ?
+                WHERE id = ?
+            """, (fecha_salida_str, obs_final, reg_dict['id']))
+
+            # Liberar la celda inmediatamente
+            cursor.execute("""
+                UPDATE celda 
+                SET estado = 'DISPONIBLE' 
+                WHERE codigo = ?
+            """, (reg_dict['celda_codigo'],))
+
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            conn.rollback()
+            conn.close()
+            return {"success": False, "mensaje": f"Error al liberar celda: {str(e)}"}
+
         return {
-            "success": False,
-            "codigo_error": "NO_ESTA_ADENTRO",
-            "mensaje": f"El vehículo '{formatear_placa(placa)}' no figura actualmente adentro del parqueadero."
+            "success": True,
+            "registro_id": reg_dict['id'],
+            "mensaje": f"Salida registrada en {puerta}. Celda {reg_dict['celda_codigo']} liberada inmediatamente.",
+            "placa": formatear_placa(reg_dict['vehiculo_placa']),
+            "celda_liberada": reg_dict['celda_codigo'],
+            "fecha_ingreso": reg_dict['fecha_ingreso'],
+            "fecha_salida": fecha_salida_str,
+            "tiempo_permanencia": tiempo_texto,
+            "observaciones": obs_final,
+            "vehiculo": {
+                "marca": reg_dict['marca'],
+                "modelo": reg_dict['modelo'],
+                "color": reg_dict['color'],
+                "tipo": reg_dict['tipo_vehiculo'],
+                "conductor": reg_dict['conductor']
+            }
         }
-
-    reg_dict = dict(registro)
-    fecha_salida = datetime.now()
-    fecha_ingreso = datetime.strptime(reg_dict['fecha_ingreso'], "%Y-%m-%d %H:%M:%S")
-    duracion = fecha_salida - fecha_ingreso
-    horas = int(duracion.total_seconds() // 3600)
-    minutos = int((duracion.total_seconds() % 3600) // 60)
-    tiempo_texto = f"{horas}h {minutos}m" if horas > 0 else f"{minutos} min"
-
-    fecha_salida_str = fecha_salida.strftime("%Y-%m-%d %H:%M:%S")
-
-    # Finalizar registro de acceso
-    cursor.execute("""
-        UPDATE registro_acceso 
-        SET fecha_salida = ?, estado = 'FINALIZADO'
-        WHERE id = ?
-    """, (fecha_salida_str, reg_dict['id']))
-
-    # Liberar la celda inmediatamente
-    cursor.execute("""
-        UPDATE celda 
-        SET estado = 'DISPONIBLE' 
-        WHERE codigo = ?
-    """, (reg_dict['celda_codigo'],))
-
-    conn.commit()
-    conn.close()
-
-    return {
-        "success": True,
-        "mensaje": f"Salida registrada exitosamente. Celda {reg_dict['celda_codigo']} liberada.",
-        "placa": formatear_placa(reg_dict['vehiculo_placa']),
-        "celda_liberada": reg_dict['celda_codigo'],
-        "fecha_ingreso": reg_dict['fecha_ingreso'],
-        "fecha_salida": fecha_salida_str,
-        "tiempo_permanencia": tiempo_texto,
-        "vehiculo": {
-            "marca": reg_dict['marca'],
-            "modelo": reg_dict['modelo'],
-            "color": reg_dict['color'],
-            "tipo": reg_dict['tipo_vehiculo'],
-            "conductor": reg_dict['conductor']
-        }
-    }
 
 def obtener_resumen_operativo():
     """
     Retorna métricas operativas en tiempo real de capacidad,
-    celdas ocupadas/libres, vehículos adentro y listado de las 80 celdas.
+    celdas ocupadas/libres, vehículos adentro, listado de las 80 celdas,
+    padrón de abonados y últimos movimientos.
     """
     conn = get_connection()
     cursor = conn.cursor()
@@ -307,6 +350,7 @@ def obtener_resumen_operativo():
             r.vehiculo_placa,
             r.celda_codigo,
             r.fecha_ingreso,
+            r.observaciones,
             v.tipo_vehiculo,
             v.marca,
             v.modelo,
@@ -321,7 +365,6 @@ def obtener_resumen_operativo():
     """)
     vehiculos_adentro = [dict(r) for r in cursor.fetchall()]
 
-    # Calcular tiempo de permanencia de cada uno
     ahora = datetime.now()
     for v in vehiculos_adentro:
         try:
@@ -333,7 +376,7 @@ def obtener_resumen_operativo():
         except:
             v['tiempo_transcurrido'] = "Reciente"
 
-    # Mapeo de todas las 80 celdas con detalle del vehículo que la ocupa
+    # Mapeo de todas las 80 celdas
     cursor.execute("""
         SELECT 
             c.codigo, 
@@ -341,7 +384,10 @@ def obtener_resumen_operativo():
             c.estado, 
             c.piso, 
             c.zona,
+            r.id AS registro_id,
             r.vehiculo_placa,
+            r.fecha_ingreso,
+            r.observaciones,
             v.marca,
             v.modelo,
             v.color,
@@ -354,21 +400,61 @@ def obtener_resumen_operativo():
     """)
     celdas = [dict(r) for r in cursor.fetchall()]
 
-    # Últimos 10 movimientos (historial)
+    # Padrón completo de vehículos abonados registrados en BD
     cursor.execute("""
         SELECT 
+            v.placa,
+            v.tipo_vehiculo,
+            v.marca,
+            v.modelo,
+            v.color,
+            p.nombre_completo AS propietario,
+            p.documento,
+            p.telefono,
+            m.fecha_pago,
+            m.fecha_vencimiento,
+            m.valor_pagado,
+            m.estado AS estado_mensualidad
+        FROM vehiculo v
+        JOIN propietario p ON v.propietario_id = p.id
+        LEFT JOIN mensualidad m ON m.id = (
+            SELECT id FROM mensualidad 
+            WHERE vehiculo_placa = v.placa 
+            ORDER BY fecha_vencimiento DESC LIMIT 1
+        )
+        ORDER BY v.fecha_creacion DESC, v.placa ASC
+    """)
+    abonados = []
+    hoy = date.today()
+    for row in cursor.fetchall():
+        ab = dict(row)
+        if ab['fecha_vencimiento']:
+            fv = datetime.strptime(ab['fecha_vencimiento'], "%Y-%m-%d").date()
+            ab['al_dia'] = (fv >= hoy) and (ab['estado_mensualidad'] == 'ACTIVA')
+            ab['dias_restantes'] = (fv - hoy).days
+        else:
+            ab['al_dia'] = False
+            ab['dias_restantes'] = -99
+        abonados.append(ab)
+
+    # Últimos 20 movimientos (historial)
+    cursor.execute("""
+        SELECT 
+            r.id,
             r.vehiculo_placa,
             r.celda_codigo,
             r.fecha_ingreso,
             r.fecha_salida,
             r.estado,
+            r.observaciones,
             v.tipo_vehiculo,
             v.marca,
-            v.modelo
+            v.modelo,
+            v.color
         FROM registro_acceso r
         JOIN vehiculo v ON r.vehiculo_placa = v.placa
         ORDER BY r.id DESC
-        LIMIT 10
+        LIMIT 20
     """)
     historial = [dict(r) for r in cursor.fetchall()]
 
@@ -394,63 +480,64 @@ def obtener_resumen_operativo():
         "vehiculos_adentro": vehiculos_adentro,
         "total_adentro": len(vehiculos_adentro),
         "celdas": celdas,
+        "abonados": abonados,
         "historial": historial
     }
 
 def registrar_nuevo_abonado(datos: dict):
     """
-    Función utilitaria para registrar un nuevo vehículo de prueba
-    con su mensualidad activa o vencida para pruebas del profesor.
+    Registra un vehículo de prueba con su mensualidad (Exactamente 1 mes desde fecha de pago).
     """
-    placa = limpiar_placa(datos.get('placa'))
-    tipo = datos.get('tipo_vehiculo', 'CARRO').upper()
-    marca = datos.get('marca', 'Generica')
-    modelo = datos.get('modelo', '2024')
-    color = datos.get('color', 'Blanco')
-    conductor = datos.get('conductor', 'Cliente Abonado')
-    telefono = datos.get('telefono', '3001234567')
-    documento = datos.get('documento', f"CC{random.randint(10000000, 99999999)}")
-    estado_pago = datos.get('estado_pago', 'ACTIVA') # ACTIVA o VENCIDA
+    with db_lock:
+        placa = limpiar_placa(datos.get('placa'))
+        if not placa:
+            return {"success": False, "error": "La placa es obligatoria."}
+        tipo = datos.get('tipo_vehiculo', 'CARRO').upper()
+        marca = datos.get('marca', 'Genérica')
+        modelo = datos.get('modelo', '2024')
+        color = datos.get('color', 'Blanco')
+        conductor = datos.get('conductor', 'Cliente Abonado')
+        telefono = datos.get('telefono', '3001234567')
+        documento = datos.get('documento', f"CC{random.randint(10000000, 99999999)}")
+        estado_pago = datos.get('estado_pago', 'ACTIVA')
 
-    conn = get_connection()
-    cursor = conn.cursor()
+        conn = get_connection()
+        cursor = conn.cursor()
 
-    try:
-        # Insertar o buscar propietario
-        cursor.execute("SELECT id FROM propietario WHERE documento = ?", (documento,))
-        prop = cursor.fetchone()
-        if prop:
-            prop_id = prop['id']
-        else:
+        try:
+            cursor.execute("SELECT id FROM propietario WHERE documento = ?", (documento,))
+            prop = cursor.fetchone()
+            if prop:
+                prop_id = prop['id']
+            else:
+                cursor.execute("""
+                    INSERT INTO propietario (documento, nombre_completo, telefono, email)
+                    VALUES (?, ?, ?, ?)
+                """, (documento, conductor, telefono, f"{documento.lower()}@autoscolombia.com"))
+                prop_id = cursor.lastrowid
+
             cursor.execute("""
-                INSERT INTO propietario (documento, nombre_completo, telefono, email)
-                VALUES (?, ?, ?, ?)
-            """, (documento, conductor, telefono, f"{documento}@autoscolombia.com"))
-            prop_id = cursor.lastrowid
+                INSERT OR REPLACE INTO vehiculo (placa, tipo_vehiculo, marca, modelo, color, propietario_id, activo)
+                VALUES (?, ?, ?, ?, ?, ?, 1)
+            """, (placa, tipo, marca, modelo, color, prop_id))
 
-        # Insertar vehículo
-        cursor.execute("""
-            INSERT OR REPLACE INTO vehiculo (placa, tipo_vehiculo, marca, modelo, color, propietario_id, activo)
-            VALUES (?, ?, ?, ?, ?, ?, 1)
-        """, (placa, tipo, marca, modelo, color, prop_id))
+            tarifa = TARIFA_CARRO if tipo == 'CARRO' else TARIFA_MOTO
+            hoy = date.today()
+            if estado_pago == 'ACTIVA':
+                fecha_pago = hoy - timedelta(days=5)
+                fecha_venc = hoy + timedelta(days=25)
+            else:
+                fecha_pago = hoy - timedelta(days=40)
+                fecha_venc = hoy - timedelta(days=10)
 
-        tarifa = TARIFA_CARRO if tipo == 'CARRO' else TARIFA_MOTO
-        hoy = date.today()
-        if estado_pago == 'ACTIVA':
-            fecha_pago = hoy - timedelta(days=5)
-            fecha_venc = hoy + timedelta(days=25)
-        else:
-            fecha_pago = hoy - timedelta(days=40)
-            fecha_venc = hoy - timedelta(days=10)
+            cursor.execute("""
+                INSERT INTO mensualidad (vehiculo_placa, fecha_pago, fecha_vencimiento, valor_pagado, estado)
+                VALUES (?, ?, ?, ?, ?)
+            """, (placa, fecha_pago.strftime("%Y-%m-%d"), fecha_venc.strftime("%Y-%m-%d"), tarifa, estado_pago))
 
-        cursor.execute("""
-            INSERT INTO mensualidad (vehiculo_placa, fecha_pago, fecha_vencimiento, valor_pagado, estado)
-            VALUES (?, ?, ?, ?, ?)
-        """, (placa, fecha_pago.strftime("%Y-%m-%d"), fecha_venc.strftime("%Y-%m-%d"), tarifa, estado_pago))
-
-        conn.commit()
-        conn.close()
-        return {"success": True, "mensaje": f"Vehículo {placa} registrado con éxito."}
-    except Exception as e:
-        conn.close()
-        return {"success": False, "error": str(e)}
+            conn.commit()
+            conn.close()
+            return {"success": True, "mensaje": f"Vehículo {placa} registrado con éxito."}
+        except Exception as e:
+            conn.close()
+            return {"success": False, "error": str(e)}
