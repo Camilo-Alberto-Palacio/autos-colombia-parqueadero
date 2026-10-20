@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-slate-50" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Autos Colombia 24/7 - Prototipo Interactivo Funcional</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono-plate { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
+    .view-container { display: none; }
+    .view-container.active { display: block; animation: fadeIn 0.22s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+  </style>
+</head>
+<body class="h-full bg-[#f8faff] text-slate-800 flex flex-col antialiased select-none">
+<!-- BANNER SUPERIOR DE PROTOTIPO INTERACTIVO Y VALIDACIÓN -->
+<header class="bg-slate-900 text-white px-5 py-2.5 flex items-center justify-between border-b border-slate-800 shadow-sm z-50 flex-shrink-0">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2 bg-blue-600/30 border border-blue-500/40 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-semibold">
+<span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
+        PROTOTIPO VIVO 100% NAVEGABLE
+      </div>
+<span class="text-xs text-slate-300 hidden md:inline">Haz clic en el menú lateral o botones rápidos para moverte libremente entre las 5 vistas del sistema.</span>
+</div>
+<!-- SELECTOR RÁPIDO DE VISTAS (PILLS) -->
+<div class="flex items-center gap-1.5 overflow-x-auto text-xs py-0.5">
+<span class="text-slate-400 text-[11px] font-medium mr-1 hidden lg:inline">Salto directo:</span>
+<button class="nav-pill px-3 py-1 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm" data-target="view-control" onclick="navigateView('view-control')">
+        1. Entrada / Salida
+      </button>
+<button class="nav-pill px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-mapa" onclick="navigateView('view-mapa')">
+        2. Mapa en Vivo
+      </button>
+<button class="nav-pill px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-abonados" onclick="navigateView('view-abonados')">
+        3. Abonados
+      </button>
+<button class="nav-pill px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-tarifas" onclick="navigateView('view-tarifas')">
+        4. Config / Barreras
+      </button>
+<button class="nav-pill px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-reportes" onclick="navigateView('view-reportes')">
+        5. Reportes
+      </button>
+<button class="ml-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1 rounded-md flex items-center gap-1 text-xs shadow-sm transition-all" onclick="openAuditModal()">
+<span>✓ Ver Dictamen</span>
+</button>
+</div>
+</header>
+<!-- CONTENEDOR PRINCIPAL: SIDEBAR + MAIN AREA -->
+<div class="flex-1 flex overflow-hidden">
+<!-- SIDEBAR UNIFICADO COMPARTIDO (IDÉNTICO EN TODAS LAS PANTALLAS) -->
+<aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shadow-[2px_0_12px_-4px_rgba(0,0,0,0.03)] z-40 flex-shrink-0">
+<div class="p-5 flex flex-col gap-6">
+<!-- LOGOTIPO AUTOS COLOMBIA 24/7 -->
+<div class="cursor-pointer" onclick="navigateView('view-control')">
+<div class="flex items-center gap-2.5">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20">
+              P
+            </div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-extrabold text-slate-900 text-base tracking-tight leading-tight">Autos Colombia</span>
+<span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-1.5 py-0.5 rounded-md">24/7</span>
+</div>
+<span class="text-[11px] font-semibold text-blue-700 tracking-wide uppercase">Solo Mensualidades</span>
+</div>
+</div>
+</div>
+<!-- INDICADOR OPERATIVO RESUMEN -->
+<div class="bg-blue-50/70 border border-blue-100 rounded-xl p-3 flex items-center justify-between">
+<div>
+<div class="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Capacidad Sede</div>
+<div class="text-sm font-extrabold text-slate-900">80 Celdas Fijas</div>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+              ● 21 Libres
+            </span>
+</div>
+</div>
+<!-- NAVEGACIÓN PRINCIPAL -->
+<nav class="flex flex-col gap-5">
+<!-- SECCIÓN 1: OPERACIÓN EN TURNO -->
+<div>
+<div class="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2 px-3">
+              Operación en Turno
+            </div>
+<div class="flex flex-col gap-1">
+<button class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-left transition-all bg-blue-700 text-white shadow-sm" id="btn-side-control" onclick="navigateView('view-control')">
+<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Control Entrada / Salida</span>
+</button>
+<button class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="btn-side-mapa" onclick="navigateView('view-mapa')">
+<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Mapa de Celdas en Vivo</span>
+</button>
+</div>
+</div>
+<!-- SECCIÓN 2: ABONADOS Y GESTIÓN -->
+<div>
+<div class="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2 px-3">
+              Abonados y Gestión
+            </div>
+<div class="flex flex-col gap-1">
+<button class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="btn-side-abonados" onclick="navigateView('view-abonados')">
+<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Padrón de Abonados</span>
+</button>
+<button class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="btn-side-tarifas" onclick="navigateView('view-tarifas')">
+<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Configuración y Tarifas</span>
+</button>
+<button class="sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="btn-side-reportes" onclick="navigateView('view-reportes')">
+<svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span>Reportes y Finanzas</span>
+</button>
+</div>
+</div>
+</nav>
+</div>
+<!-- FOOTER DE GABINETE Y OPERADOR 24/7 -->
+<div class="p-4 border-t border-slate-100 bg-slate-50/80">
+<div class="flex items-center justify-between mb-2">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-emerald-500 badge-pulse"></span>
+<span class="text-[11px] font-black text-slate-700 tracking-wider">TERMINAL OPERADOR</span>
+</div>
+<span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">En Línea</span>
+</div>
+<div class="text-xs font-bold text-slate-800">Gabinete Central 01</div>
+<div class="text-[11px] text-slate-500">Control Barreras LPR / TAG 24/7</div>
+</div>
+</aside>
+<!-- ÁREA DE CONTENIDO DINÁMICO (VISTAS MULTIPLEXADAS) -->
+<main class="flex-1 overflow-y-auto custom-scroll bg-[#f4f7fc] p-6">
+<!-- ========================================== -->
+<!-- VISTA 1: CONTROL DE ENTRADA Y SALIDA 24/7 -->
+<!-- ========================================== -->
+<section class="view-container active space-y-6 max-w-7xl mx-auto" id="view-control">
+<!-- HEADER TOP CARD ESTANDARIZADO -->
+<div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-black text-slate-900 tracking-tight">Punto de Control 24 Horas</h1>
+<span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Operación 24/7 Activa
+                </span>
+</div>
+<p class="text-xs text-slate-500 font-medium">Validación de mensualidades, asignación fija y liberación automática de celdas en 1 clic.</p>
+</div>
+</div>
+<!-- SEMÁFORO RÁPIDO DE DISPONIBILIDAD -->
+<div class="flex items-center gap-3">
+<div class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3">
+<div class="text-2xl">🚗</div>
+<div>
+<div class="text-[10px] uppercase font-bold text-slate-500">Carros Fijos</div>
+<div class="text-sm font-extrabold text-slate-900"><span class="text-emerald-600" id="metric-carros-libres">18 Libres</span> / 70</div>
+</div>
+</div>
+<div class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3">
+<div class="text-2xl">🏍️</div>
+<div>
+<div class="text-[10px] uppercase font-bold text-slate-500">Motos Fijas</div>
+<div class="text-sm font-extrabold text-slate-900"><span class="text-emerald-600" id="metric-motos-libres">3 Libres</span> / 10</div>
+</div>
+</div>
+<div class="hidden sm:flex items-center gap-2.5 bg-blue-50 border border-blue-100 px-3.5 py-2 rounded-xl">
+<div class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs">CM</div>
+<div>
+<div class="text-[10px] text-blue-700 font-bold uppercase">Operador en Turno</div>
+<div class="text-xs font-extrabold text-slate-900">Carlos Méndez</div>
+</div>
+</div>
+</div>
+</div>
+<!-- LAYOUT DE 2 COLUMNAS ULTRA SIMPLE -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- COLUMNA IZQUIERDA: PASO 1 - REGISTRAR ENTRADA (5 COLS) -->
+<div class="lg:col-span-5 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/90 flex flex-col justify-between">
+<div class="space-y-5">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2.5">
+<span class="w-8 h-8 rounded-lg bg-blue-700 text-white font-black flex items-center justify-center text-sm shadow">1</span>
+<div>
+<h2 class="text-base font-black text-slate-900">Registrar Entrada</h2>
+<span class="text-[11px] text-slate-500 font-medium">Lectura o escritura de placa</span>
+</div>
+</div>
+<span class="text-[10px] font-extrabold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">Solo Mensualidades</span>
+</div>
+<!-- INPUT DE PLACA GIGANTE MONOSPACE -->
+<div>
+<label class="block text-xs font-bold text-slate-700 mb-1.5">Placa del Vehículo que Ingresa:</label>
+<div class="flex gap-2">
+<div class="relative flex-1">
+<input class="w-full font-mono-plate text-2xl font-black uppercase text-center bg-slate-50 border-2 border-blue-500 rounded-xl py-2.5 text-slate-900 tracking-widest focus:outline-none focus:ring-4 focus:ring-blue-500/20 shadow-inner" id="input-placa" maxlength="7" placeholder="AAA-000" type="text" value="ABC-123"/>
+</div>
+<button class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 rounded-xl flex items-center gap-2 text-sm shadow transition-all active:scale-95" onclick="buscarPlacaSimulada()">
+<span>🔍 Buscar</span>
+</button>
+</div>
+<!-- BOTONES DE PRUEBA 1-CLIC -->
+<div class="flex items-center gap-2 mt-2.5">
+<span class="text-[11px] text-slate-500 font-semibold">Probar con 1 toque:</span>
+<button class="text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2 py-1 rounded-md border border-emerald-200 transition" onclick="cargarPlacaTest('ABC-123', 'Renault Duster · Gris Plata', 'Juan Carlos Pérez', 'al_dia', 'C-24', 'Carro')">
+                    ABC-123 (Vigente)
+                  </button>
+<button class="text-[11px] font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded-md border border-blue-200 transition" onclick="cargarPlacaTest('MOT-808', 'Yamaha NMAX · Azul', 'David Gómez', 'al_dia', 'M-02', 'Moto')">
+                    MOT-808 (Moto)
+                  </button>
+<button class="text-[11px] font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 px-2 py-1 rounded-md border border-rose-200 transition" onclick="cargarPlacaTest('XYZ-999', 'Chevrolet Onix · Rojo', 'Pedro Infante', 'mora', 'Sin Cupo', 'Carro')">
+                    XYZ-999 (Vencida)
+                  </button>
+</div>
+</div>
+<!-- TARJETA DEL ABONADO (FICHA VISUAL AMIGABLE) -->
+<div class="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-all" id="ficha-abonado">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl font-bold" id="ficha-icon">
+                      🚗
+                    </div>
+<div>
+<div class="font-extrabold text-slate-900 text-base" id="ficha-vehiculo">Renault Duster · Gris Plata</div>
+<div class="text-xs font-semibold text-slate-600 flex items-center gap-1 mt-0.5" id="ficha-conductor">
+<span>👤 Conductor:</span> <span class="text-slate-800">Juan Carlos Pérez</span>
+</div>
+</div>
+</div>
+<span class="text-xs font-black uppercase tracking-wider px-2 py-0.5 rounded bg-slate-200 text-slate-700" id="ficha-tipo-tag">Carro</span>
+</div>
+<!-- ALERTA DE ESTADO DE PAGO -->
+<div class="mt-4 p-3 rounded-xl bg-emerald-500 text-white flex items-center justify-between shadow-sm" id="alerta-pago">
+<div class="flex items-center gap-2.5">
+<div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-black">✓</div>
+<div>
+<div class="text-xs font-black tracking-wide uppercase">MENSUALIDAD PAGADA - AL DÍA</div>
+<div class="text-[11px] text-emerald-100">Tiene permiso total de entrada 24/7 sin pagos.</div>
+</div>
+</div>
+<span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white text-emerald-800">Activo</span>
+</div>
+<!-- ASIGNACIÓN DE PUESTO FIJO GIGANTE -->
+<div class="mt-3 bg-slate-900 text-white rounded-xl p-3.5 flex items-center justify-between" id="bloque-puesto">
+<div>
+<div class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Tu Puesto Asignado:</div>
+<div class="text-3xl font-black font-mono-plate tracking-wider text-emerald-400" id="ficha-puesto">C-24</div>
+</div>
+<div class="text-right">
+<span class="inline-block bg-emerald-500 text-slate-950 font-black text-xs px-2.5 py-1 rounded-md">Puesto Libre</span>
+<div class="text-[11px] text-slate-300 mt-1">Piso 1 · Zona Norte</div>
+</div>
+</div>
+</div>
+</div>
+<!-- BOTÓN PRINCIPAL DE APERTURA DE ENTRADA -->
+<div class="mt-6 pt-4 border-t border-slate-100">
+<button class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 px-6 rounded-2xl text-lg flex items-center justify-center gap-3 shadow-lg shadow-emerald-600/25 transition-all transform active:scale-98" id="btn-abrir-entrada" onclick="accionAbrirEntrada()">
+<span class="text-2xl">🟢</span>
+<span>¡ABRIR BARRERA DE ENTRADA!</span>
+</button>
+<div class="text-center text-xs font-bold text-emerald-700 mt-2 hidden" id="feedback-entrada">
+                ¡Barrera abierta y vehículo ingresado con éxito!
+              </div>
+</div>
+</div>
+<!-- COLUMNA DERECHA: PASO 2 - VEHÍCULOS ADENTRO Y SALIDA RÁPIDA (7 COLS) -->
+<div class="lg:col-span-7 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/90 flex flex-col justify-between">
+<div>
+<div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 gap-2">
+<div class="flex items-center gap-2.5">
+<span class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow">2</span>
+<div>
+<h2 class="text-base font-black text-slate-900">Vehículos Adentro en el Parqueadero</h2>
+<span class="text-[11px] text-slate-500 font-medium">Toca "Dar Salida" cuando un vehículo se retire (libera celda al instante)</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-blue-100 text-blue-800 text-xs font-black px-2.5 py-1 rounded-lg">
+<span id="contador-adentro">59</span> estacionados
+                  </span>
+<button class="text-xs bg-slate-100 hover:bg-slate-200 font-bold px-2.5 py-1 rounded-lg text-slate-700 transition" onclick="renderVehiculosAdentro()">
+                    ↻ Refrescar
+                  </button>
+</div>
+</div>
+<!-- BUSCADOR RÁPIDO DE VEHÍCULOS ADENTRO -->
+<div class="mt-4 mb-3">
+<div class="relative">
+<input class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" id="input-filtro-adentro" oninput="filtrarAdentro()" placeholder="Buscar por placa, modelo o puesto..." type="text"/>
+<span class="absolute right-3 top-2.5 text-xs text-slate-400">🔍</span>
+</div>
+</div>
+<!-- LISTA DE TARJETAS TÁCTILES DE VEHÍCULOS ADENTRO -->
+<div class="space-y-2.5 max-h-[460px] overflow-y-auto pr-1 custom-scroll" id="lista-vehiculos-adentro">
+<!-- Se llena dinámicamente con JavaScript -->
+</div>
+</div>
+<!-- PIE DE REGLAS DE NEGOCIO CLARAS -->
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+<span class="flex items-center gap-1.5 text-emerald-700 font-bold">
+<span>✓</span> Al dar salida, el puesto se libera en 1 solo clic. Sin cobros de dinero.
+              </span>
+<span class="text-[11px] text-slate-400">Mostrando <span id="lbl-total-cards">6</span> vehículos</span>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================== -->
+<!-- VISTA 2: MAPA DE CELDAS EN VIVO (80 CELDAS) -->
+<!-- ========================================== -->
+<section class="view-container space-y-6 max-w-7xl mx-auto" id="view-mapa">
+<div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xl">
+              🗺️
+            </div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-black text-slate-900 tracking-tight">Mapa de Celdas en Vivo (80 Puestos Fijos)</h1>
+<span class="bg-blue-100 text-blue-800 text-xs font-black px-2 py-0.5 rounded-full">Sincronización LPR</span>
+</div>
+<p class="text-xs text-slate-500">Distribución física oficial: 70 Carros (C-01 a C-70) y 10 Motos (M-01 a M-10). Sin puestos rotativos.</p>
+</div>
+</div>
+<!-- FILTROS DE VISUALIZACIÓN RÁPIDA -->
+<div class="flex items-center gap-2">
+<button class="filtro-mapa-btn bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition" data-tipo="todos" onclick="filtrarMapa('todos')">Todos (80)</button>
+<button class="filtro-mapa-btn bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 transition" data-tipo="carros" onclick="filtrarMapa('carros')">Carros (70)</button>
+<button class="filtro-mapa-btn bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 transition" data-tipo="motos" onclick="filtrarMapa('motos')">Motos (10)</button>
+<button class="filtro-mapa-btn bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition" data-tipo="libres" onclick="filtrarMapa('libres')">Solo Libres (21)</button>
+</div>
+</div>
+<!-- RESUMEN EN TARJETAS ESTILO VIDEOJUEGO -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-emerald-500 text-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+<div>
+<div class="text-xs uppercase font-extrabold tracking-wider text-emerald-100">Celdas Disponibles</div>
+<div class="text-3xl font-black mt-1">21 <span class="text-sm font-semibold text-emerald-100">libres</span></div>
+<div class="text-xs text-emerald-100 mt-0.5">18 Carros · 3 Motos sin ingresar</div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl font-bold">✓</div>
+</div>
+<div class="bg-rose-500 text-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+<div>
+<div class="text-xs uppercase font-extrabold tracking-wider text-rose-100">Celdas Ocupadas</div>
+<div class="text-3xl font-black mt-1">59 <span class="text-sm font-semibold text-rose-100">adentro</span></div>
+<div class="text-xs text-rose-100 mt-0.5">52 Carros · 7 Motos en sede</div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl font-bold">🚗</div>
+</div>
+<div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center justify-between">
+<div>
+<div class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Aforo Total Contratado</div>
+<div class="text-3xl font-black text-slate-900 mt-1">80 <span class="text-sm font-semibold text-slate-500">celdas</span></div>
+<div class="text-xs text-slate-500 mt-0.5">100% Asignadas en Mensualidad</div>
+</div>
+<div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-2xl font-bold">🅿️</div>
+</div>
+</div>
+<!-- GRILLA VISUAL DE CELDAS INTERACTIVAS -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<div class="lg:col-span-8 bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">Plano de Celdas (Haz clic en cualquier celda para inspeccionarla)</h3>
+<div class="flex items-center gap-3 text-xs">
+<span class="flex items-center gap-1 font-bold text-emerald-700"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Libre</span>
+<span class="flex items-center gap-1 font-bold text-rose-700"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Ocupado</span>
+</div>
+</div>
+<!-- MATRIZ DE CELDAS -->
+<div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2.5 max-h-[500px] overflow-y-auto pr-1 custom-scroll" id="grid-celdas">
+<!-- Celdas generadas con JS -->
+</div>
+</div>
+<!-- DETALLE DE LA CELDA SELECCIONADA -->
+<div class="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<span class="text-xs font-bold text-slate-400 uppercase">Ficha de Celda</span>
+<span class="px-2 py-0.5 rounded text-xs font-black bg-rose-100 text-rose-800" id="celda-status-badge">Ocupada</span>
+</div>
+<div class="my-4 text-center">
+<div class="text-[11px] font-bold text-slate-400 uppercase">Identificador de Puesto</div>
+<div class="text-4xl font-black font-mono-plate text-blue-700 tracking-wider" id="celda-id-display">C-04</div>
+<div class="text-xs font-bold text-slate-600 mt-1" id="celda-subtipo">Carros y Camionetas · Cupo Fijo</div>
+</div>
+<!-- FOTO SIMULADA DE CÁMARA LPR DE LA CELDA -->
+<div class="relative rounded-xl overflow-hidden bg-slate-900 border border-slate-700 mb-4 h-36 flex items-center justify-center">
+<img alt="Cámara LPR" class="w-full h-full object-cover opacity-80" src="https://www.gstatic.com/labs-code/stitch/stitch-placeholder-300x300.svg"/>
+<div class="absolute bottom-2 left-2 bg-black/70 backdrop-blur text-[10px] text-white px-2 py-0.5 rounded font-mono">
+                  📹 Cam 04 · LPR Detectado
+                </div>
+</div>
+<div class="space-y-2 text-xs">
+<div class="flex justify-between py-1 border-b border-slate-100">
+<span class="text-slate-500">Placa Registrada:</span>
+<span class="font-bold font-mono-plate text-slate-900" id="celda-placa-display">KST-892</span>
+</div>
+<div class="flex justify-between py-1 border-b border-slate-100">
+<span class="text-slate-500">Abonado Titular:</span>
+<span class="font-bold text-slate-900" id="celda-titular-display">Roberto Restrepo G.</span>
+</div>
+<div class="flex justify-between py-1 border-b border-slate-100">
+<span class="text-slate-500">Modalidad:</span>
+<span class="font-bold text-emerald-700">Mensualidad Activa 24/7</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-slate-500">Vigencia hasta:</span>
+<span class="font-bold text-slate-900">30 Nov 2025</span>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex flex-col gap-2">
+<button class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-xs transition" onclick="accionAbrirEntrada()">
+                Accionar Barrera Manual
+              </button>
+<button class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 rounded-xl text-xs transition" onclick="navigateView('view-abonados')">
+                Ver Contrato de este Abonado
+              </button>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================== -->
+<!-- VISTA 3: PADRÓN DE ABONADOS Y MENSUALIDADES -->
+<!-- ========================================== -->
+<section class="view-container space-y-6 max-w-7xl mx-auto" id="view-abonados">
+<div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-700 font-bold text-xl">
+              👥
+            </div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-black text-slate-900 tracking-tight">Padrón de Abonados Fijos (80 Cupos)</h1>
+<span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-0.5 rounded-full">Contratos 24/7</span>
+</div>
+<p class="text-xs text-slate-500">Control de vigencias, celdas fijas asignadas y bloqueo automático de barreras en mora.</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow transition" onclick="alert('Modal: Registrar Nuevo Abonado Fijo (Asignación de celda fija y placa)')">
+<span>+ Registrar Abonado Fijo</span>
+</button>
+</div>
+</div>
+<!-- 4 CARDS RESUMEN DE CARTERA -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+<div class="text-[11px] font-black uppercase text-emerald-600">Al Día (Vigentes)</div>
+<div class="text-2xl font-black text-slate-900 mt-1">71 <span class="text-xs text-slate-500 font-medium">/ 80 celdas</span></div>
+<div class="text-[11px] text-emerald-600 font-semibold mt-1">✓ Barrera abre automático</div>
+</div>
+<div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+<div class="text-[11px] font-black uppercase text-amber-600">Por Vencer (1-5 días)</div>
+<div class="text-2xl font-black text-slate-900 mt-1">6 <span class="text-xs text-slate-500 font-medium">abonados</span></div>
+<div class="text-[11px] text-amber-600 font-semibold mt-1">⚠️ Aviso preventivo enviado</div>
+</div>
+<div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm">
+<div class="text-[11px] font-black uppercase text-rose-600">Vencidos / Bloqueados</div>
+<div class="text-2xl font-black text-slate-900 mt-1">3 <span class="text-xs text-slate-500 font-medium">abonados</span></div>
+<div class="text-[11px] text-rose-600 font-semibold mt-1">⛔ Barrera no abre (mora)</div>
+</div>
+<div class="bg-blue-700 text-white p-4 rounded-2xl shadow-sm">
+<div class="text-[11px] font-black uppercase text-blue-200">Facturación Mensual Base</div>
+<div class="text-2xl font-black mt-1">$18.5M <span class="text-xs font-normal text-blue-200">COP</span></div>
+<div class="text-[11px] text-blue-100 font-semibold mt-1">70 Carros + 10 Motos</div>
+</div>
+</div>
+<!-- TABLA COMPLETA DE ABONADOS -->
+<div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+<div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+<div class="font-black text-sm text-slate-900">Listado Oficial de Cupos Fijos Asignados</div>
+<div class="flex items-center gap-2">
+<span class="text-xs text-slate-500">Tarifas pactadas:</span>
+<span class="bg-slate-100 text-slate-800 text-[11px] font-bold px-2 py-0.5 rounded">Carro: $250.000</span>
+<span class="bg-slate-100 text-slate-800 text-[11px] font-bold px-2 py-0.5 rounded">Moto: $100.000</span>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs">
+<thead class="bg-slate-50 text-slate-600 uppercase font-black tracking-wider text-[10px] border-b border-slate-200">
+<tr>
+<th class="py-3 px-4">Titular / Cédula</th>
+<th class="py-3 px-4">Vehículo y Placa</th>
+<th class="py-3 px-4">Celda Fija</th>
+<th class="py-3 px-4">Tarifa Mensual</th>
+<th class="py-3 px-4">Vencimiento</th>
+<th class="py-3 px-4">Estado Barrera</th>
+<th class="py-3 px-4 text-right">Acción Rápida</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 font-medium">
+<tr class="hover:bg-slate-50">
+<td class="py-3 px-4">
+<div class="font-bold text-slate-900">Dr. Roberto Arango</div>
+<div class="text-[11px] text-slate-400">CC 79.845.210</div>
+</td>
+<td class="py-3 px-4">
+<span class="font-mono-plate font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">FRX-551</span>
+<span class="text-slate-500 ml-1">Volvo XC60</span>
+</td>
+<td class="py-3 px-4 font-mono-plate font-black text-blue-700">C-12 (Carro)</td>
+<td class="py-3 px-4 font-bold text-slate-900">$250.000 COP</td>
+<td class="py-3 px-4 text-emerald-600 font-bold">15 Nov 2025</td>
+<td class="py-3 px-4">
+<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">● Permitida 24/7</span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="alert('Renovación confirmada para Dr. Roberto Arango (+30 días)')">
+                      Renovar Mes
+                    </button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="py-3 px-4">
+<div class="font-bold text-slate-900">Andrea Gómez</div>
+<div class="text-[11px] text-slate-400">CC 52.412.980</div>
+</td>
+<td class="py-3 px-4">
+<span class="font-mono-plate font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">KLS-890</span>
+<span class="text-slate-500 ml-1">Mazda CX-30</span>
+</td>
+<td class="py-3 px-4 font-mono-plate font-black text-blue-700">C-05 (Carro)</td>
+<td class="py-3 px-4 font-bold text-slate-900">$250.000 COP</td>
+<td class="py-3 px-4 text-amber-600 font-bold">08 Nov (Vence en 3 días)</td>
+<td class="py-3 px-4">
+<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-black">● Por Vencer</span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="alert('Recordatorio de corte enviado por WhatsApp a Andrea Gómez')">
+                      WhatsApp Aviso
+                    </button>
+</td>
+</tr>
+<tr class="hover:bg-rose-50/50 bg-rose-50/20">
+<td class="py-3 px-4">
+<div class="font-bold text-slate-900">Felipe Morales</div>
+<div class="text-[11px] text-slate-400">CC 1.020.448.911</div>
+</td>
+<td class="py-3 px-4">
+<span class="font-mono-plate font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">MAZ-104</span>
+<span class="text-slate-500 ml-1">Kia Sportage</span>
+</td>
+<td class="py-3 px-4 font-mono-plate font-black text-rose-700">C-44 (Carro)</td>
+<td class="py-3 px-4 font-bold text-slate-900">$250.000 COP</td>
+<td class="py-3 px-4 text-rose-600 font-bold">01 Nov (Vencido)</td>
+<td class="py-3 px-4">
+<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-black">⛔ BARRERA BLOQUEADA</span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="bg-rose-600 hover:bg-rose-700 text-white font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="alert('Cobro de mensualidad registrado. Barrera habilitada.')">
+                      Registrar Pago
+                    </button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50">
+<td class="py-3 px-4">
+<div class="font-bold text-slate-900">Juan Restrepo (Moto)</div>
+<div class="text-[11px] text-slate-400">CC 98.650.312</div>
+</td>
+<td class="py-3 px-4">
+<span class="font-mono-plate font-bold text-slate-900 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">TES-33D</span>
+<span class="text-slate-500 ml-1">KTM Duke 200</span>
+</td>
+<td class="py-3 px-4 font-mono-plate font-black text-blue-700">M-04 (Moto)</td>
+<td class="py-3 px-4 font-bold text-slate-900">$100.000 COP</td>
+<td class="py-3 px-4 text-emerald-600 font-bold">30 Nov 2025</td>
+<td class="py-3 px-4">
+<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">● Permitida 24/7</span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="alert('Ficha completa de Juan Restrepo')">
+                      Ver Ficha
+                    </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- ========================================== -->
+<!-- VISTA 4: CONFIGURACIÓN DE TARIFAS Y DISPOSITIVOS -->
+<!-- ========================================== -->
+<section class="view-container space-y-6 max-w-7xl mx-auto" id="view-tarifas">
+<div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-cyan-50 border border-cyan-100 flex items-center justify-center text-cyan-700 font-bold text-xl">
+              ⚙️
+            </div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-black text-slate-900 tracking-tight">Tarifas Mensuales y Control de Barreras</h1>
+<span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-0.5 rounded-full">Hardware 24/7 En Línea</span>
+</div>
+<p class="text-xs text-slate-500">Reglas estrictas de parqueadero mensual: sin fracciones ni horas. Control directo de hardware.</p>
+</div>
+</div>
+<button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-black px-4 py-2 rounded-xl shadow transition" onclick="alert('Configuración guardada en Gabinete Central 01')">
+            Guardar Cambios
+          </button>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- TARIFAS OFICIALES -->
+<div class="lg:col-span-6 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-5">
+<h2 class="text-base font-black text-slate-900 pb-2 border-b border-slate-100">
+              1. Tarifas Oficiales de Mensualidad 24/7
+            </h2>
+<!-- CARD MENSUALIDAD CARROS -->
+<div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+<span>🚗</span> Mensualidad Carros y Camionetas
+                </span>
+<span class="bg-blue-100 text-blue-800 font-black text-[10px] px-2 py-0.5 rounded">70 Celdas (C-01 a C-70)</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black text-blue-700">$250.000</span>
+<span class="text-xs font-bold text-slate-500">COP / mes (Acceso ilimitado 24/7)</span>
+</div>
+<p class="text-[11px] text-slate-500 mt-2">Corresponde a la referencia del modelo de negocio (0,25M mensual por vehículo).</p>
+</div>
+<!-- CARD MENSUALIDAD MOTOS -->
+<div class="bg-slate-50 border border-slate-200 rounded-xl p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+<span>🏍️</span> Mensualidad Motocicletas
+                </span>
+<span class="bg-blue-100 text-blue-800 font-black text-[10px] px-2 py-0.5 rounded">10 Celdas (M-01 a M-10)</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-black text-blue-700">$100.000</span>
+<span class="text-xs font-bold text-slate-500">COP / mes (Acceso ilimitado 24/7)</span>
+</div>
+<p class="text-[11px] text-slate-500 mt-2">Corresponde a la referencia del modelo de negocio (0,10M mensual por motocicleta).</p>
+</div>
+<!-- DISTRIBUCIÓN CAPACIDAD TOTAL -->
+<div class="bg-blue-50/60 border border-blue-100 rounded-xl p-4">
+<div class="flex justify-between text-xs font-bold text-slate-800 mb-1.5">
+<span>Capacidad Total: 80 Cupos</span>
+<span class="text-blue-700 font-black">100% Mensualistas Fijos</span>
+</div>
+<div class="w-full bg-slate-200 h-3 rounded-full overflow-hidden flex">
+<div class="bg-blue-600 h-full" style="width: 87.5%" title="70 Carros (87.5%)"></div>
+<div class="bg-indigo-400 h-full" style="width: 12.5%" title="10 Motos (12.5%)"></div>
+</div>
+<div class="flex justify-between text-[11px] text-slate-500 font-medium mt-1.5">
+<span>Carros: 70 cupos (87.5%)</span>
+<span>Motos: 10 cupos (12.5%)</span>
+</div>
+</div>
+</div>
+<!-- HARDWARE Y BARRERAS 24/7 -->
+<div class="lg:col-span-6 bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm space-y-5">
+<h2 class="text-base font-black text-slate-900 pb-2 border-b border-slate-100">
+              2. Dispositivos de Acceso y Pruebas en Vivo
+            </h2>
+<div class="space-y-3">
+<!-- BARRERA ENTRADA -->
+<div class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">🚧</div>
+<div>
+<div class="text-xs font-black text-slate-900">Talanquera / Barrera de Entrada</div>
+<div class="text-[11px] text-slate-500">Apertura automática por reconocimiento LPR</div>
+</div>
+</div>
+<button class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold px-3 py-1.5 rounded-lg text-xs shadow-sm transition" onclick="alert('Comando enviado: Apertura de Barrera de Entrada OK')">
+                  Probar Apertura
+                </button>
+</div>
+<!-- BARRERA SALIDA -->
+<div class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-lg">🚧</div>
+<div>
+<div class="text-xs font-black text-slate-900">Talanquera / Barrera de Salida</div>
+<div class="text-[11px] text-slate-500">Valida vehículo al día y libera cupo en 1 clic</div>
+</div>
+</div>
+<button class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-800 font-bold px-3 py-1.5 rounded-lg text-xs shadow-sm transition" onclick="alert('Comando enviado: Apertura de Barrera de Salida OK')">
+                  Probar Apertura
+                </button>
+</div>
+<!-- CÁMARA LPR -->
+<div class="flex items-center justify-between p-3.5 rounded-xl border border-slate-200 bg-slate-50">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-lg">📷</div>
+<div>
+<div class="text-xs font-black text-slate-900">Cámara LPR HD Inteligente</div>
+<div class="text-[11px] text-slate-500">Lectura instantánea de placas al ingreso</div>
+</div>
+</div>
+<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded">99.4% Precisión</span>
+</div>
+</div>
+<!-- TARJETA SOPORTE 24/7 -->
+<div class="bg-slate-900 text-white rounded-xl p-4 flex items-center justify-between">
+<div>
+<div class="text-xs font-black text-slate-200">Asistencia Técnica en Turno 24/7</div>
+<div class="text-[11px] text-slate-400">Línea directa para soporte de talanqueras y servidores.</div>
+</div>
+<button class="bg-blue-600 hover:bg-blue-500 font-bold px-3 py-1.5 rounded-lg text-xs" onclick="alert('Llamando a soporte técnico: ext. 01-800-PARK')">
+                Llamar Soporte
+              </button>
+</div>
+</div>
+</div>
+</section>
+<!-- ========================================== -->
+<!-- VISTA 5: REPORTES, ESTADÍSTICAS Y FINANZAS -->
+<!-- ========================================== -->
+<section class="view-container space-y-6 max-w-7xl mx-auto" id="view-reportes">
+<div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-11 h-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-xl">
+              📊
+            </div>
+<div>
+<div class="flex items-center gap-2">
+<h1 class="text-xl font-black text-slate-900 tracking-tight">Reporte Ejecutivo de Mensualidades</h1>
+<span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-0.5 rounded-full">Mes en Curso</span>
+</div>
+<p class="text-xs text-slate-500">Monitoreo de recaudo al día vs. cartera en mora y potencial total contratado de las 80 celdas.</p>
+</div>
+</div>
+<button class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow transition" onclick="window.print()">
+<span>🖨️ Imprimir Resumen</span>
+</button>
+</div>
+<!-- KPI PRINCIPALES -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+<div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+<div class="text-xs font-extrabold uppercase text-slate-400">Recaudo Mensual Cobrado</div>
+<div class="text-3xl font-black text-blue-700 mt-2">$17.650.000 <span class="text-xs font-semibold text-slate-500">COP</span></div>
+<div class="flex items-center gap-2 mt-2 text-xs">
+<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-black text-[11px]">95.4% Cobrado</span>
+<span class="text-slate-500">Meta: $18.500.000</span>
+</div>
+</div>
+<div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+<div class="text-xs font-extrabold uppercase text-slate-400">Estado de Abonados</div>
+<div class="text-3xl font-black text-slate-900 mt-2">76 al Día <span class="text-base text-rose-600 font-bold">/ 4 Mora</span></div>
+<div class="text-xs text-slate-500 mt-2">Total 80 mensualidades activas en sede</div>
+</div>
+<div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm">
+<div class="text-xs font-extrabold uppercase text-slate-400">Ocupación Física 24/7</div>
+<div class="text-3xl font-black text-emerald-600 mt-2">59 <span class="text-base text-slate-700 font-bold">de 80 Celdas</span></div>
+<div class="text-xs text-slate-500 mt-2">21 puestos libres para abonados ausentes</div>
+</div>
+</div>
+<!-- DESGLOSE DETALLADO DEL MODELO -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm">
+<h3 class="text-sm font-black text-slate-900 mb-4 uppercase tracking-wide">Base y Proyección de Recaudo Oficial</h3>
+<div class="space-y-4">
+<!-- CARROS -->
+<div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-slate-900 text-xs">Abonados Automóviles (70 celdas x $250.000 COP)</span>
+<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">67 al día · 3 mora</span>
+</div>
+<div class="flex justify-between text-xs font-semibold text-slate-600 mb-2">
+<span>Proyectado: $17.500.000</span>
+<span class="text-blue-700 font-bold">Recaudado: $16.750.000</span>
+</div>
+<div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+<div class="bg-blue-600 h-full" style="width: 95.7%"></div>
+</div>
+</div>
+<!-- MOTOS -->
+<div class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+<div class="flex justify-between items-center mb-1">
+<span class="font-bold text-slate-900 text-xs">Abonados Motocicletas (10 celdas x $100.000 COP)</span>
+<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-1.5 py-0.5 rounded">9 al día · 1 mora</span>
+</div>
+<div class="flex justify-between text-xs font-semibold text-slate-600 mb-2">
+<span>Proyectado: $1.000.000</span>
+<span class="text-blue-700 font-bold">Recaudado: $900.000</span>
+</div>
+<div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden">
+<div class="bg-indigo-500 h-full" style="width: 90%"></div>
+</div>
+</div>
+<div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-xs text-amber-800 flex items-center justify-between">
+<span>⚠️ Cartera pendiente por recaudar: <strong>$850.000 COP</strong> (4 abonados con aviso WhatsApp enviado).</span>
+<button class="bg-amber-600 text-white font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="alert('Recordatorio masivo enviado a los 4 abonados')">
+                  Reenviar Avisos
+                </button>
+</div>
+</div>
+</div>
+<!-- AUDITORÍA DE CONFORMIDAD DEL SISTEMA -->
+<div class="bg-white rounded-2xl p-6 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+<div>
+<h3 class="text-sm font-black text-slate-900 mb-3 uppercase tracking-wide">Auditoría Operativa del Sistema</h3>
+<p class="text-xs text-slate-500 mb-4">Evaluación de cumplimiento frente a las solicitudes de diseño y reglas de negocio:</p>
+<div class="space-y-2.5 text-xs">
+<div class="flex items-start gap-2.5 p-2 rounded-lg bg-emerald-50 text-emerald-900">
+<span class="font-bold text-emerald-600 text-sm">✓</span>
+<div>
+<strong>Regla Estricta Solo Mensualidades:</strong> Eliminados los cobros por horas, fracciones de tiempo, vueltos/cambio en efectivo y pasarelas de pago.
+                  </div>
+</div>
+<div class="flex items-start gap-2.5 p-2 rounded-lg bg-emerald-50 text-emerald-900">
+<span class="font-bold text-emerald-600 text-sm">✓</span>
+<div>
+<strong>Capacidad Exacta (80 Celdas):</strong> 70 para carros (C-01 a C-70) y 10 para motos (M-01 a M-10) en todas las pantallas.
+                  </div>
+</div>
+<div class="flex items-start gap-2.5 p-2 rounded-lg bg-emerald-50 text-emerald-900">
+<span class="font-bold text-emerald-600 text-sm">✓</span>
+<div>
+<strong>Minimalismo Intuitivo (Regla de los 7 años):</strong> Dos pasos visibles (Entrada a la izquierda, Salida a la derecha con un clic). Cero jerga técnica críptica (HU-01, códigos de protocolo).
+                  </div>
+</div>
+<div class="flex items-start gap-2.5 p-2 rounded-lg bg-emerald-50 text-emerald-900">
+<span class="font-bold text-emerald-600 text-sm">✓</span>
+<div>
+<strong>Consistencia de Menú y Marca:</strong> Autos Colombia 24/7 unificado en la cabecera, sidebar y estados de navegación.
+                  </div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+<span class="text-xs font-bold text-slate-700">Estado Global: <span class="text-emerald-600">100% Conforme</span></span>
+<button class="bg-blue-700 text-white font-bold px-3 py-1.5 rounded-lg text-xs hover:bg-blue-800 transition" onclick="openAuditModal()">
+                Ver Reporte de Auditoría
+              </button>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<!-- MODAL DE NOVEDADES RÁPIDAS (RAYONES / CASCOS) -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" id="modal-novedad">
+<div class="bg-white rounded-2xl max-w-md w-full p-5 shadow-2xl border border-slate-200 animate-in fade-in zoom-in-95 duration-150">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2">
+<span class="text-xl">📝</span>
+<h3 class="font-black text-slate-900 text-sm">Anotar Novedad de Vehículo</h3>
+</div>
+<button class="text-slate-400 hover:text-slate-700 font-bold text-lg" onclick="closeModalNovedad()">×</button>
+</div>
+<div class="my-4">
+<div class="text-xs text-slate-500 mb-1">Vehículo seleccionado:</div>
+<div class="font-mono-plate font-black text-lg text-blue-700" id="modal-placa-target">ABC-123</div>
+<div class="mt-3">
+<label class="block text-xs font-bold text-slate-700 mb-1.5">Seleccionar novedad rápida (1 clic):</label>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<button class="p-2 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-left font-medium" onclick="seleccionarTagNovedad('⚠️ Rayón en puerta derecha')">⚠️ Rayón en puerta</button>
+<button class="p-2 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-left font-medium" onclick="seleccionarTagNovedad('⚠️ Golpe en bómper trasero')">⚠️ Golpe en bómper</button>
+<button class="p-2 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-left font-medium" onclick="seleccionarTagNovedad('🪖 1 Casco en custodia')">🪖 Casco custodiado</button>
+<button class="p-2 border border-slate-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 text-left font-medium" onclick="seleccionarTagNovedad('🚗 Sin espejo retrovisor izq.')">🚗 Sin retrovisor izq.</button>
+</div>
+</div>
+<div class="mt-3">
+<label class="block text-xs font-bold text-slate-700 mb-1">Nota adicional:</label>
+<input class="w-full text-xs border border-slate-200 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" id="modal-input-detalle" placeholder="Ej. El usuario autorizó el ingreso con el detalle..." type="text"/>
+</div>
+</div>
+<div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+<button class="px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:bg-slate-100" onclick="closeModalNovedad()">Cancelar</button>
+<button class="px-4 py-1.5 rounded-lg text-xs font-bold bg-blue-700 text-white hover:bg-blue-800" onclick="guardarNovedad()">Guardar Novedad</button>
+</div>
+</div>
+</div>
+<!-- MODAL DE AUDITORÍA Y DICTAMEN DE CONFORMIDAD -->
+<div class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden" id="modal-audit">
+<div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto custom-scroll">
+<div class="flex items-center justify-between pb-3 border-b border-slate-100">
+<div class="flex items-center gap-2">
+<span class="w-8 h-8 rounded-lg bg-emerald-500 text-white flex items-center justify-center font-bold text-sm">✓</span>
+<div>
+<h3 class="font-black text-slate-900 text-base">Dictamen de Calidad y Validación de Diseño</h3>
+<span class="text-xs text-emerald-700 font-bold">Autos Colombia 24/7 · Operación Exclusiva Mensualidades</span>
+</div>
+</div>
+<button class="text-slate-400 hover:text-slate-700 font-bold text-xl" onclick="closeAuditModal()">×</button>
+</div>
+<div class="my-5 space-y-4 text-xs text-slate-700">
+<div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4">
+<div class="font-black text-emerald-900 text-sm mb-1">Veredicto General: Las pantallas están bien realizadas y alineadas.</div>
+<p class="text-emerald-800">Todas las especificaciones solicitadas a lo largo de las sesiones se integraron de forma armónica en este prototipo unificado interactivo.</p>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+<div class="font-black text-slate-900 mb-1">1. Regla de Oro: Solo Mensualidades 24/7 (Cero cobros rotativos)</div>
+<p class="text-slate-600">Se eliminaron por completo las tarifas por fracción de hora, los cálculos de cambio en efectivo y las pasarelas de pago. La salida funciona con 1 clic liberando la celda fija.</p>
+</div>
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+<div class="font-black text-slate-900 mb-1">2. Dimensionamiento Exacto (80 Celdas Fijas)</div>
+<p class="text-slate-600">Capacidad coherente en todas las pantallas: 70 carros ($250.000 COP) identificados de C-01 a C-70, y 10 motos ($100.000 COP) identificadas de M-01 a M-10, para un potencial mensual de $18.500.000 COP.</p>
+</div>
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+<div class="font-black text-slate-900 mb-1">3. Minimalismo Intuitivo ("Regla de los 7 años")</div>
+<p class="text-slate-600">La pantalla principal redujo toda la complejidad a 2 paneles evidentes: Entrada a la izquierda (con semáforo verde gigante) y Vehículos Adentro a la derecha con botón de salida directa. Se erradicaron jerga de ingeniería como HU-01, HU-02 o códigos de protocolo.</p>
+</div>
+<div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+<div class="font-black text-slate-900 mb-1">4. Unificación de Navegación y Marca</div>
+<p class="text-slate-600">Mismo sidebar estandarizado en las 5 pantallas con las mismas opciones exactas: Control Entrada/Salida, Mapa en Vivo, Abonados, Configuración y Reportes.</p>
+</div>
+</div>
+</div>
+<div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+<button class="bg-slate-900 text-white font-bold px-4 py-2 rounded-xl text-xs hover:bg-slate-800" onclick="closeAuditModal()">
+          Entendido y Continuar Probando
+        </button>
+</div>
+</div>
+</div>
+<!-- SCRIPT CON LA LÓGICA INTERACTIVA DEL PROTOTIPO -->
+<script>
+    // ESTADO VIVO DEL PROTOTIPO
+    const state = {
+      carrosLibres: 18,
+      carrosTotal: 70,
+      motosLibres: 3,
+      motosTotal: 10,
+      vehiculosAdentro: [
+        { id: 1, placa: 'KST-892', tipo: 'Carro', modelo: 'Mazda 3 · Negro Ónix', conductor: 'Roberto Restrepo G.', puesto: 'C-04', horaEntrada: '08:15 AM', novedad: '⚠️ Rayón lateral preexistente', icon: '🚗' },
+        { id: 2, placa: 'WQR-918', tipo: 'Carro', modelo: 'Toyota RAV4 · Blanco Perlado', conductor: 'Camila Morales', puesto: 'C-02', horaEntrada: '08:42 AM', novedad: null, icon: '🚗' },
+        { id: 3, placa: 'LMX-304', tipo: 'Carro', modelo: 'Chevrolet Tracker · Plata', conductor: 'Alejandro Vélez', puesto: 'C-01', horaEntrada: '09:05 AM', novedad: null, icon: '🚗' },
+        { id: 4, placa: 'YTR-44E', tipo: 'Moto', modelo: 'Yamaha MT-03 · Negro', conductor: 'Sebastián Cano', puesto: 'M-01', horaEntrada: '09:12 AM', novedad: '🪖 1 Casco en custodia', icon: '🏍️' },
+        { id: 5, placa: 'NDF-82C', tipo: 'Moto', modelo: 'KTM Duke 200 · Naranja', conductor: 'Felipe Jaramillo', puesto: 'M-03', horaEntrada: '09:30 AM', novedad: null, icon: '🏍️' },
+        { id: 6, placa: 'FRX-551', tipo: 'Carro', modelo: 'Volvo XC60 · Gris', conductor: 'Dr. Roberto Arango', puesto: 'C-12', horaEntrada: '09:45 AM', novedad: null, icon: '🚗' }
+      ],
+      currentPlacaTarget: null
+    };
+
+    // NAVEGACIÓN ENTRE VISTAS DEL SISTEMA
+    function navigateView(viewId) {
+      document.querySelectorAll('.view-container').forEach(el => el.classList.remove('active'));
+      const target = document.getElementById(viewId);
+      if (target) {
+        target.classList.add('active');
+      }
+
+      // Actualizar Pills superiores
+      document.querySelectorAll('.nav-pill').forEach(btn => {
+        if (btn.getAttribute('data-target') === viewId) {
+          btn.className = 'nav-pill px-3 py-1 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm';
+        } else {
+          btn.className = 'nav-pill px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all';
+        }
+      });
+
+      // Actualizar Sidebar
+      document.querySelectorAll('.sidebar-btn').forEach(btn => {
+        btn.className = 'sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900';
+      });
+
+      const mapSide = {
+        'view-control': 'btn-side-control',
+        'view-mapa': 'btn-side-mapa',
+        'view-abonados': 'btn-side-abonados',
+        'view-tarifas': 'btn-side-tarifas',
+        'view-reportes': 'btn-side-reportes'
+      };
+
+      const activeSideBtn = document.getElementById(mapSide[viewId]);
+      if (activeSideBtn) {
+        activeSideBtn.className = 'sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-xl font-bold text-sm text-left transition-all bg-blue-700 text-white shadow-sm';
+      }
+    }
+
+    // CARGAR PLACA DE PRUEBA RÁPIDA
+    function cargarPlacaTest(placa, vehiculo, conductor, estado, puesto, tipo) {
+      document.getElementById('input-placa').value = placa;
+      document.getElementById('ficha-vehiculo').innerText = vehiculo;
+      document.getElementById('ficha-conductor').innerHTML = `<span>👤 Conductor:</span> <span class="text-slate-800">${conductor}</span>`;
+      document.getElementById('ficha-tipo-tag').innerText = tipo;
+      document.getElementById('ficha-icon').innerText = tipo === 'Moto' ? '🏍️' : '🚗';
+
+      const alerta = document.getElementById('alerta-pago');
+      const bloquePuesto = document.getElementById('bloque-puesto');
+      const btnAbrir = document.getElementById('btn-abrir-entrada');
+      const puestoTxt = document.getElementById('ficha-puesto');
+
+      if (estado === 'al_dia') {
+        alerta.className = 'mt-4 p-3 rounded-xl bg-emerald-500 text-white flex items-center justify-between shadow-sm';
+        alerta.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-black">✓</div>
+            <div>
+              <div class="text-xs font-black tracking-wide uppercase">MENSUALIDAD PAGADA - AL DÍA</div>
+              <div class="text-[11px] text-emerald-100">Tiene permiso total de entrada 24/7 sin pagos.</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white text-emerald-800">Activo</span>
+        `;
+        bloquePuesto.className = 'mt-3 bg-slate-900 text-white rounded-xl p-3.5 flex items-center justify-between';
+        puestoTxt.innerText = puesto;
+        btnAbrir.disabled = false;
+        btnAbrir.className = 'w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 px-6 rounded-2xl text-lg flex items-center justify-center gap-3 shadow-lg shadow-emerald-600/25 transition-all transform active:scale-98 cursor-pointer';
+        btnAbrir.innerHTML = `<span class="text-2xl">🟢</span><span>¡ABRIR BARRERA DE ENTRADA!</span>`;
+      } else {
+        alerta.className = 'mt-4 p-3 rounded-xl bg-rose-600 text-white flex items-center justify-between shadow-sm';
+        alerta.innerHTML = `
+          <div class="flex items-center gap-2.5">
+            <div class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-black">⛔</div>
+            <div>
+              <div class="text-xs font-black tracking-wide uppercase">ACCESO DENEGADO - EN MORA</div>
+              <div class="text-[11px] text-rose-100">Mensualidad vencida. Requiere renovación en oficina.</div>
+            </div>
+          </div>
+          <span class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white text-rose-800">Bloqueado</span>
+        `;
+        bloquePuesto.className = 'mt-3 bg-rose-950 text-rose-200 rounded-xl p-3.5 flex items-center justify-between border border-rose-800';
+        puestoTxt.innerText = 'BLOQUEADO';
+        btnAbrir.disabled = true;
+        btnAbrir.className = 'w-full bg-slate-300 text-slate-500 font-black py-4 px-6 rounded-2xl text-lg flex items-center justify-center gap-3 cursor-not-allowed';
+        btnAbrir.innerHTML = `<span class="text-xl">⛔</span><span>BARRERA BLOQUEADA POR MORA</span>`;
+      }
+    }
+
+    function buscarPlacaSimulada() {
+      const valor = document.getElementById('input-placa').value.toUpperCase().trim();
+      if (valor === 'XYZ-999') {
+        cargarPlacaTest('XYZ-999', 'Chevrolet Onix · Rojo', 'Pedro Infante', 'mora', 'Sin Cupo', 'Carro');
+      } else if (valor.includes('MOT') || valor.endsWith('D') || valor.endsWith('E')) {
+        cargarPlacaTest(valor || 'MOT-808', 'Yamaha NMAX · Azul', 'David Gómez', 'al_dia', 'M-02', 'Moto');
+      } else {
+        cargarPlacaTest(valor || 'ABC-123', 'Renault Duster · Gris Plata', 'Juan Carlos Pérez', 'al_dia', 'C-24', 'Carro');
+      }
+    }
+
+    // ACCIÓN: ABRIR BARRERA DE ENTRADA E INGRESAR AL PARQUEADERO
+    function accionAbrirEntrada() {
+      const placa = document.getElementById('input-placa').value.toUpperCase();
+      const vehiculo = document.getElementById('ficha-vehiculo').innerText;
+      const conductorText = document.getElementById('ficha-conductor').innerText.replace('👤 Conductor:', '').trim();
+      const puesto = document.getElementById('ficha-puesto').innerText;
+      const tipo = document.getElementById('ficha-tipo-tag').innerText;
+
+      // Verificar si ya está adentro
+      if (state.vehiculosAdentro.some(v => v.placa === placa)) {
+        alert('Este vehículo (' + placa + ') ya figura adentro del parqueadero.');
+        return;
+      }
+
+      // Agregar a la lista
+      state.vehiculosAdentro.unshift({
+        id: Date.now(),
+        placa: placa,
+        tipo: tipo,
+        modelo: vehiculo,
+        conductor: conductorText,
+        puesto: puesto,
+        horaEntrada: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        novedad: null,
+        icon: tipo === 'Moto' ? '🏍️' : '🚗'
+      });
+
+      // Actualizar aforo
+      if (tipo === 'Carro' && state.carrosLibres > 0) state.carrosLibres--;
+      if (tipo === 'Moto' && state.motosLibres > 0) state.motosLibres--;
+
+      actualizarMetricas();
+      renderVehiculosAdentro();
+      renderGridCeldas();
+
+      const feedback = document.getElementById('feedback-entrada');
+      feedback.classList.remove('hidden');
+      setTimeout(() => feedback.classList.add('hidden'), 3500);
+    }
+
+    // ACCIÓN: DAR SALIDA EN 1 CLIC (LIBERA CELDA)
+    function darSalida(id) {
+      const v = state.vehiculosAdentro.find(item => item.id === id);
+      if (!v) return;
+
+      if (confirm(`¿Confirmar salida del vehículo ${v.placa} (${v.modelo})?\n\n✓ Se abrirá la barrera de salida.\n✓ Se liberará el puesto ${v.puesto} al instante.`)) {
+        state.vehiculosAdentro = state.vehiculosAdentro.filter(item => item.id !== id);
+        
+        if (v.tipo === 'Carro' && state.carrosLibres < 70) state.carrosLibres++;
+        if (v.tipo === 'Moto' && state.motosLibres < 10) state.motosLibres++;
+
+        actualizarMetricas();
+        renderVehiculosAdentro();
+        renderGridCeldas();
+      }
+    }
+
+    // RENDERIZAR VEHÍCULOS ADENTRO
+    function renderVehiculosAdentro(filtro = '') {
+      const cont = document.getElementById('lista-vehiculos-adentro');
+      cont.innerHTML = '';
+
+      const filtrados = state.vehiculosAdentro.filter(v => 
+        v.placa.toLowerCase().includes(filtro.toLowerCase()) ||
+        v.modelo.toLowerCase().includes(filtro.toLowerCase()) ||
+        v.puesto.toLowerCase().includes(filtro.toLowerCase())
+      );
+
+      document.getElementById('lbl-total-cards').innerText = filtrados.length;
+      document.getElementById('contador-adentro').innerText = state.vehiculosAdentro.length;
+
+      if (filtrados.length === 0) {
+        cont.innerHTML = `
+          <div class="text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+            <div class="text-2xl mb-1">🚗</div>
+            <div class="text-xs font-bold text-slate-500">No se encontraron vehículos adentro con ese criterio.</div>
+          </div>
+        `;
+        return;
+      }
+
+      filtrados.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'bg-slate-50/90 border border-slate-200 rounded-xl p-3.5 hover:border-blue-400 hover:shadow-sm transition-all flex flex-wrap items-center justify-between gap-3';
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-xl shadow-xs">
+              ${v.icon}
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-mono-plate font-black text-slate-900 text-sm tracking-wider bg-white px-2 py-0.5 rounded border border-slate-200">${v.placa}</span>
+                <span class="text-xs font-extrabold text-blue-700 bg-blue-100/70 px-2 py-0.5 rounded">${v.puesto}</span>
+              </div>
+              <div class="text-xs font-semibold text-slate-700 mt-0.5">${v.modelo} · <span class="text-slate-500 font-normal">Entró ${v.horaEntrada}</span></div>
+              ${v.novedad ? `<div class="text-[11px] font-bold text-amber-700 mt-0.5 flex items-center gap-1">${v.novedad}</div>` : ''}
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button onclick="openModalNovedad('${v.placa}')" class="bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 text-xs font-bold px-2.5 py-2 rounded-lg transition" title="Registrar Rayón o Novedad">
+              📝 Novedad
+            </button>
+            <button onclick="darSalida(${v.id})" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs px-3.5 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition active:scale-95">
+              <span>🚪 Dar Salida</span>
+            </button>
+          </div>
+        `;
+        cont.appendChild(card);
+      });
+    }
+
+    function filtrarAdentro() {
+      const val = document.getElementById('input-filtro-adentro').value;
+      renderVehiculosAdentro(val);
+    }
+
+    function actualizarMetricas() {
+      document.getElementById('metric-carros-libres').innerText = `${state.carrosLibres} Libres`;
+      document.getElementById('metric-motos-libres').innerText = `${state.motosLibres} Libres`;
+    }
+
+    // MODAL DE NOVEDADES
+    function openModalNovedad(placa) {
+      state.currentPlacaTarget = placa;
+      document.getElementById('modal-placa-target').innerText = placa;
+      document.getElementById('modal-input-detalle').value = '';
+      document.getElementById('modal-novedad').classList.remove('hidden');
+    }
+
+    function closeModalNovedad() {
+      document.getElementById('modal-novedad').classList.add('hidden');
+    }
+
+    function seleccionarTagNovedad(tag) {
+      document.getElementById('modal-input-detalle').value = tag;
+    }
+
+    function guardarNovedad() {
+      const nota = document.getElementById('modal-input-detalle').value;
+      if (!nota) {
+        alert('Por favor selecciona o escribe la novedad.');
+        return;
+      }
+      const v = state.vehiculosAdentro.find(item => item.placa === state.currentPlacaTarget);
+      if (v) {
+        v.novedad = nota;
+        renderVehiculosAdentro();
+      }
+      closeModalNovedad();
+    }
+
+    // MODAL AUDITORÍA
+    function openAuditModal() {
+      document.getElementById('modal-audit').classList.remove('hidden');
+    }
+    function closeAuditModal() {
+      document.getElementById('modal-audit').classList.add('hidden');
+    }
+
+    // GENERAR MATRIZ DE CELDAS EN VIVO (80 CELDAS)
+    function renderGridCeldas(filtro = 'todos') {
+      const cont = document.getElementById('grid-celdas');
+      if (!cont) return;
+      cont.innerHTML = '';
+
+      // Crear celdas de Carros C-01 a C-70
+      for (let i = 1; i <= 70; i++) {
+        const idStr = 'C-' + (i < 10 ? '0' + i : i);
+        const estaOcupada = i > state.carrosLibres;
+        
+        if (filtro === 'motos') continue;
+        if (filtro === 'libres' && estaOcupada) continue;
+
+        const cell = document.createElement('div');
+        cell.className = `p-2 rounded-xl text-center cursor-pointer border transition-all ${
+          estaOcupada 
+            ? 'bg-rose-50 border-rose-200 text-rose-800 hover:bg-rose-100' 
+            : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+        }`;
+        cell.onclick = () => selectCellInfo(idStr, estaOcupada, 'Carro');
+        cell.innerHTML = `
+          <div class="text-[10px] font-black font-mono-plate">${idStr}</div>
+          <div class="text-xs my-0.5">${estaOcupada ? '🚗' : '🟩'}</div>
+          <div class="text-[9px] font-bold uppercase tracking-tight">${estaOcupada ? 'Ocupado' : 'Libre'}</div>
+        `;
+        cont.appendChild(cell);
+      }
+
+      // Crear celdas de Motos M-01 a M-10
+      for (let j = 1; j <= 10; j++) {
+        const idStr = 'M-' + (j < 10 ? '0' + j : j);
+        const estaOcupada = j > state.motosLibres;
+
+        if (filtro === 'carros') continue;
+        if (filtro === 'libres' && estaOcupada) continue;
+
+        const cell = document.createElement('div');
+        cell.className = `p-2 rounded-xl text-center cursor-pointer border transition-all ${
+          estaOcupada 
+            ? 'bg-purple-50 border-purple-200 text-purple-800 hover:bg-purple-100' 
+            : 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+        }`;
+        cell.onclick = () => selectCellInfo(idStr, estaOcupada, 'Moto');
+        cell.innerHTML = `
+          <div class="text-[10px] font-black font-mono-plate">${idStr}</div>
+          <div class="text-xs my-0.5">${estaOcupada ? '🏍️' : '🟩'}</div>
+          <div class="text-[9px] font-bold uppercase tracking-tight">${estaOcupada ? 'Ocupado' : 'Libre'}</div>
+        `;
+        cont.appendChild(cell);
+      }
+    }
+
+    function selectCellInfo(id, ocupada, tipo) {
+      document.getElementById('celda-id-display').innerText = id;
+      document.getElementById('celda-subtipo').innerText = tipo === 'Carro' ? 'Carros y Camionetas · Cupo Fijo' : 'Motocicletas · Cupo Fijo';
+      
+      const badge = document.getElementById('celda-status-badge');
+      if (ocupada) {
+        badge.className = 'px-2 py-0.5 rounded text-xs font-black bg-rose-100 text-rose-800';
+        badge.innerText = 'Ocupada';
+        document.getElementById('celda-placa-display').innerText = id === 'C-04' ? 'KST-892' : 'LMX-304';
+        document.getElementById('celda-titular-display').innerText = id === 'C-04' ? 'Roberto Restrepo G.' : 'Alejandro Vélez';
+      } else {
+        badge.className = 'px-2 py-0.5 rounded text-xs font-black bg-emerald-100 text-emerald-800';
+        badge.innerText = 'Disponible';
+        document.getElementById('celda-placa-display').innerText = 'Disponible';
+        document.getElementById('celda-titular-display').innerText = 'Cupo libre asignado';
+      }
+    }
+
+    function filtrarMapa(tipo) {
+      document.querySelectorAll('.filtro-mapa-btn').forEach(b => {
+        b.className = 'filtro-mapa-btn bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 transition';
+      });
+      const active = document.querySelector(`.filtro-mapa-btn[data-tipo="${tipo}"]`);
+      if (active) {
+        active.className = 'filtro-mapa-btn bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition';
+      }
+      renderGridCeldas(tipo);
+    }
+
+    // INICIALIZACIÓN
+    window.addEventListener('DOMContentLoaded', () => {
+      renderVehiculosAdentro();
+      renderGridCeldas();
+      actualizarMetricas();
+    });
+  </script>
+</body>
+</html>

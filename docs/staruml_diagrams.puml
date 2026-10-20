@@ -1,0 +1,103 @@
+' ====================================================================
+' PARQUEADERO AUTOS COLOMBIA 24/7 - STARUML & PLANTUML DIAGRAMS
+' Docente: Reinaldo Rojas
+' Iteración 1: Módulo de Entrada y Salida
+' ====================================================================
+
+@startuml Diagrama_Clases_Completo
+skinparam classAttributeIconSize true
+skinparam style strictuml
+
+enum TipoVehiculo {
+    CARRO
+    MOTO
+}
+
+enum EstadoCelda {
+    DISPONIBLE
+    OCUPADA
+    MANTENIMIENTO
+}
+
+enum EstadoMensualidad {
+    ACTIVA
+    VENCIDA
+    CANCELADA
+}
+
+enum EstadoAcceso {
+    ADENTRO
+    FINALIZADO
+}
+
+class Propietario {
+    - id: Integer
+    - documento: String
+    - nombreCompleto: String
+    - telefono: String
+    - email: String
+    - fechaRegistro: DateTime
+    + getVehiculos(): List<Vehiculo>
+}
+
+class Vehiculo {
+    - placa: String
+    - tipoVehiculo: TipoVehiculo
+    - marca: String
+    - modelo: String
+    - color: String
+    - activo: Boolean
+    + tieneMensualidadVigente(): Boolean
+    + estaDentro(): Boolean
+}
+
+class Mensualidad {
+    - id: Integer
+    - fechaPago: Date
+    - fechaVencimiento: Date
+    - valorPagado: Decimal
+    - estado: EstadoMensualidad
+    + estaVigente(fechaActual: Date): Boolean
+    + diasRestantes(): Integer
+}
+
+class Celda {
+    - codigo: String
+    - tipoPermitido: TipoVehiculo
+    - estado: EstadoCelda
+    - piso: Integer
+    - zona: String
+    + ocupar(): void
+    + liberar(): void
+    + estaDisponible(): Boolean
+}
+
+class RegistroAcceso {
+    - id: Integer
+    - fechaIngreso: DateTime
+    - fechaSalida: DateTime
+    - estado: EstadoAcceso
+    - observaciones: String
+    + registrarSalida(fecha: DateTime): Duration
+}
+
+class ParqueaderoService {
+    + {static} CAPACIDAD_CARROS: int = 70
+    + {static} CAPACIDAD_MOTOS: int = 10
+    + {static} TARIFA_CARRO: Decimal = 250000.00
+    + {static} TARIFA_MOTO: Decimal = 100000.00
+    + consultarVehiculo(placa: String): Vehiculo
+    + registrarIngreso(placa: String): ResultadoIngreso
+    + registrarSalida(placa: String): ResultadoSalida
+    + asignarCeldaAleatoria(tipo: TipoVehiculo): Celda
+    + obtenerEstado80Celdas(): ResumenOperativo
+}
+
+Propietario "1" o-- "1..*" Vehiculo : posee
+Vehiculo "1" *-- "1..*" Mensualidad : tiene
+Vehiculo "1" -- "0..*" RegistroAcceso : registra
+Celda "1" -- "0..*" RegistroAcceso : aloja
+ParqueaderoService ..> Vehiculo : valida
+ParqueaderoService ..> Celda : asigna
+ParqueaderoService ..> RegistroAcceso : persiste
+@enduml

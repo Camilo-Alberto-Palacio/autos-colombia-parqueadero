@@ -1,0 +1,584 @@
+<!DOCTYPE html><html lang="es" style=""><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{width:6px;height:6px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{"colors":{"on-surface":"#0b1c30","tertiary-fixed-dim":"#4cd7f6","on-secondary-fixed":"#131b2e","surface-tint":"#2151da","primary-container":"#1d4ed8","surface-container-lowest":"#ffffff","primary-fixed":"#dce1ff","primary":"#0037b0","on-secondary-container":"#5c647a","inverse-on-surface":"#eaf1ff","on-primary-container":"#cad3ff","surface-container":"#e5eeff","inverse-primary":"#b7c4ff","on-primary-fixed-variant":"#0039b5","surface-variant":"#d3e4fe","tertiary-fixed":"#acedff","surface-container-highest":"#d3e4fe","tertiary":"#004b59","outline-variant":"#c4c5d7","surface-dim":"#cbdbf5","on-surface-variant":"#434655","secondary":"#565e74","on-error":"#ffffff","surface-container-low":"#eff4ff","primary-fixed-dim":"#b7c4ff","on-primary":"#ffffff","on-background":"#0b1c30","on-tertiary-fixed-variant":"#004e5c","secondary-container":"#dae2fd","error-container":"#ffdad6","tertiary-container":"#006577","surface-bright":"#f8f9ff","inverse-surface":"#213145","on-tertiary-fixed":"#001f26","background":"#f8f9ff","secondary-fixed":"#dae2fd","on-error-container":"#93000a","on-tertiary-container":"#75e3ff","surface":"#f8f9ff","on-secondary-fixed-variant":"#3f465c","surface-container-high":"#dce9ff","error":"#ba1a1a","on-tertiary":"#ffffff","on-secondary":"#ffffff","secondary-fixed-dim":"#bec6e0","outline":"#747686","on-primary-fixed":"#001551"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"gutter-lg":"1.5rem","space-sm":"0.5rem","space-xl":"2rem","space-xs":"0.25rem","space-md":"1rem","margin-sm":"1rem","space-lg":"1.5rem","gutter":"1rem","margin":"1.5rem"},"fontFamily":{"body-md":["Inter"],"headline-lg":["Plus Jakarta Sans"],"label-md":["JetBrains Mono"],"label-lg":["JetBrains Mono"],"body-sm":["Inter"],"headline-md":["Plus Jakarta Sans"],"body-lg":["Inter"],"label-sm":["JetBrains Mono"],"headline-xl":["Plus Jakarta Sans"]},"fontSize":{"body-md":["14px",{"lineHeight":"20px","fontWeight":"400"}],"headline-lg":["24px",{"lineHeight":"32px","fontWeight":"600"}],"label-md":["13px",{"lineHeight":"16px","fontWeight":"500"}],"label-lg":["16px",{"lineHeight":"20px","fontWeight":"600"}],"body-sm":["12px",{"lineHeight":"16px","fontWeight":"400"}],"headline-md":["18px",{"lineHeight":"24px","fontWeight":"600"}],"body-lg":["16px",{"lineHeight":"24px","fontWeight":"400"}],"label-sm":["11px",{"lineHeight":"14px","fontWeight":"500"}],"headline-xl":["32px",{"lineHeight":"40px","fontWeight":"700"}]}}}}</script></head><body class="bg-surface font-body-md text-body-md text-on-surface antialiased">
+<!-- Sidebar Institucional Autos Colombia -->
+<aside class="fixed left-0 top-0 h-screen w-64 bg-surface-container-low z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-r border-outline-variant/30"><div class="flex flex-col"><div class="h-16 px-space-md flex items-center justify-between border-b border-surface-container"><div class="flex items-center gap-space-sm"><span class="font-headline-md text-headline-md tracking-tight text-primary font-bold">Autos Colombia</span><span class="px-space-xs py-0.5 bg-emerald-100 text-emerald-800 font-label-sm text-label-sm font-semibold rounded-md">24/7</span></div><button aria-label="Colapsar menú" class="p-1 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">menu_open</span></button></div>
+<div class="px-space-md py-space-sm"><div class="w-full flex items-center gap-space-xs py-2 px-space-sm bg-primary/10 text-primary border border-primary/20 font-label-sm text-label-sm rounded-lg"><span class="material-symbols-outlined text-[18px]">verified_user</span><span class="">Sistema Mensualidades</span></div></div>
+<nav class="flex flex-col gap-1 px-space-md mt-1"><div class="px-space-xs py-1 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider font-semibold">Operación en Turno</div>
+<a class="flex items-center gap-space-sm px-space-md py-2.5 rounded-lg bg-primary text-on-primary font-medium shadow-sm transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">sync_alt</span><span class="font-body-md text-body-md">Control Entrada / Salida</span></a>
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">grid_view</span><span class="font-body-md text-body-md">Mapa de Celdas en Vivo</span></a>
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">report_problem</span><span class="font-body-md text-body-md">Bitácora de Novedades</span></a>
+<div class="px-space-xs pt-3 pb-1 text-on-surface-variant font-label-sm text-label-sm uppercase tracking-wider font-semibold">Abonados y Gestión</div>
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">badge</span><span class="font-body-md text-body-md">Padrón de Mensualidades</span></a>
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span class="font-body-md text-body-md">Configuración y Tarifas</span></a>
+<a class="flex items-center gap-space-sm px-space-md py-2 rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors" href="#"><span class="material-symbols-outlined text-[20px]">bar_chart</span><span class="font-body-md text-body-md">Reportes y Estadísticas</span></a></nav></div>
+<div class="p-space-md bg-surface-container rounded-t-lg mx-space-sm mb-space-sm border border-outline-variant/30"><div class="flex items-center justify-between text-on-surface-variant font-label-sm text-label-sm"><span class="font-semibold">TERMINAL OPERADOR</span><span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span></div><div class="font-label-md text-label-md text-on-surface font-bold mt-1">Gabinete Central 01</div><div class="text-on-surface-variant font-body-sm text-[11px] mt-0.5">Control de Barreras LPR / TAG</div></div></aside>
+<!-- Header Superior Fijo -->
+<div class="pl-64"><header class="fixed top-0 left-64 right-0 h-16 bg-surface/90 backdrop-blur-md shadow-sm border-b border-outline-variant/30 z-40 flex items-center justify-between px-space-lg"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><div class="h-9 w-9 rounded-lg bg-primary flex items-center justify-center text-on-primary font-bold"><span class="font-headline-md text-body-md text-on-surface font-bold leading-tight block">Autos Colombia · Control 24 Horas</span><span class="font-label-sm text-[12px] text-on-surface-variant font-medium">Control Simple de Entrada y Salida para Mensualidades</span></div><div><span class="font-headline-md text-body-md text-on-surface font-bold leading-tight block">Autos Colombia · Control 24 Horas</span><span class="font-label-sm text-[12px] text-on-surface-variant font-medium">Control Simple de Entrada y Salida para Mensualidades</span></div></div><div class="h-6 w-px bg-surface-container-high"></div><div class="flex items-center gap-space-xs bg-surface-container px-space-sm py-1.5 rounded-lg border border-outline-variant/20"><span class="material-symbols-outlined text-primary text-[20px]">local_parking</span><span class="font-body-md text-sm text-on-surface font-semibold">Sede Principal · 80 Puestos Totales</span></div></div><div class="flex items-center gap-space-md"><div class="flex items-center gap-2 px-space-md py-1.5 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-full font-label-sm text-label-sm font-semibold"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-600"></span></span><span id="live-time-badge" class="">Operación 24/7 Activa</span></div><div class="h-6 w-px bg-surface-container-high"></div><div class="flex items-center gap-space-sm"><div class="text-right"><span class="font-headline-md text-body-md text-on-surface font-bold leading-tight block">Autos Colombia · Control 24 Horas</span><span class="font-label-sm text-[12px] text-on-surface-variant font-medium">Control Simple de Entrada y Salida para Mensualidades</span></div><div class="w-9 h-9 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center text-primary font-bold font-label-md"><span class="font-headline-md text-body-md text-on-surface font-bold leading-tight block">Autos Colombia · Control 24 Horas</span><span class="font-label-sm text-[12px] text-on-surface-variant font-medium">Control Simple de Entrada y Salida para Mensualidades</span></div></div></div></header>
+<!-- Área de Trabajo Principal -->
+<main class="relative w-full pt-20 px-space-lg pb-space-xl"><div class="flex flex-col gap-space-lg w-full max-w-[1600px] mx-auto"><!-- 1. BARRA SUPERIOR DE PUESTOS Y ESTADO (CLARA, LIMPIA Y SIN CÓDIGOS) -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+  <!-- Tarjeta Carros -->
+  <div class="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-primary/20 shadow-sm flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3.5">
+      <div class="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[36px]">directions_car</span>
+      </div>
+      <div>
+        <span class="font-label-sm text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Puestos de Carros</span>
+        <div class="flex items-baseline gap-1.5">
+          <span class="font-headline-xl text-3xl font-extrabold text-on-surface" id="cars-free-count">18 Libres</span>
+          <span class="font-body-sm text-sm text-on-surface-variant font-medium">de 70</span>
+        </div>
+        <div class="w-36 bg-surface-container rounded-full h-2 mt-1.5 overflow-hidden">
+          <div class="bg-primary h-2 rounded-full" style="width: 74%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="text-right pl-2 border-l border-surface-container">
+      <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-label-sm text-xs font-bold block mb-1">Hay Puesto</span>
+      <span class="font-body-sm text-xs text-on-surface-variant block font-medium">Mes: $250.000</span>
+    </div>
+  </div>
+
+  <!-- Tarjeta Motos -->
+  <div class="rounded-2xl bg-surface-container-lowest p-space-md border-2 border-tertiary/20 shadow-sm flex items-center justify-between gap-4">
+    <div class="flex items-center gap-3.5">
+      <div class="w-16 h-16 rounded-2xl bg-tertiary-container/10 text-tertiary flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined text-[36px]">two_wheeler</span>
+      </div>
+      <div>
+        <span class="font-label-sm text-xs font-bold text-on-surface-variant uppercase tracking-wider block">Puestos de Motos</span>
+        <div class="flex items-baseline gap-1.5">
+          <span class="font-headline-xl text-3xl font-extrabold text-on-surface" id="motos-free-count">3 Libres</span>
+          <span class="font-body-sm text-sm text-on-surface-variant font-medium">de 10</span>
+        </div>
+        <div class="w-36 bg-surface-container rounded-full h-2 mt-1.5 overflow-hidden">
+          <div class="bg-tertiary h-2 rounded-full" style="width: 70%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="text-right pl-2 border-l border-surface-container">
+      <span class="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 font-label-sm text-xs font-bold block mb-1">Hay Puesto</span>
+      <span class="font-body-sm text-xs text-on-surface-variant block font-medium">Mes: $100.000</span>
+    </div>
+  </div>
+
+  <!-- Estado Abierto y Operador -->
+  <div class="rounded-2xl bg-gradient-to-r from-emerald-50 to-surface-container-low p-space-md border-2 border-emerald-200 shadow-sm flex items-center justify-between">
+    <div class="flex items-center gap-3.5">
+      <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/30">
+        <span class="material-symbols-outlined text-[32px]">check</span>
+      </div>
+      <div>
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span class="font-headline-md text-body-lg font-bold text-emerald-900">Abierto 24 Horas</span>
+        </div>
+        <span class="font-body-md text-sm text-emerald-800 font-medium block mt-0.5">Operador a cargo: <strong class="font-bold text-on-surface">Carlos M.</strong></span>
+      </div>
+    </div>
+    <div class="text-right bg-white/80 px-3 py-1.5 rounded-xl border border-emerald-200">
+      <span class="font-label-lg text-lg font-black text-on-surface tracking-tight" id="clock-live">20:21:12</span>
+      <span class="font-body-sm text-[11px] text-on-surface-variant block font-medium">Hora en vivo</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2. PANELES PRINCIPALES: ENTRADA (IZQ) Y VEHÍCULOS ADENTRO (DER) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+  
+  <!-- PANEL IZQUIERDO: 1. REGISTRAR ENTRADA (5 Cols) -->
+  <div class="lg:col-span-5 flex flex-col gap-space-md">
+    <div class="rounded-2xl bg-surface-container-lowest p-space-lg border-2 border-outline-variant/30 shadow-sm flex flex-col gap-space-md">
+      
+      <!-- Título Grande y Amigable -->
+      <div class="flex items-center justify-between pb-space-sm border-b border-surface-container">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-xl bg-primary text-on-primary font-black font-headline-lg flex items-center justify-center text-xl shadow-sm">1</span>
+          <div>
+            <h2 class="font-headline-xl text-2xl font-black text-on-surface">Registrar Entrada</h2>
+            <span class="font-body-sm text-sm text-on-surface-variant font-medium">Escribe la placa que va a ingresar</span>
+          </div>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-primary/10 text-primary font-label-sm text-xs font-bold">Solo Mensualidades</span>
+      </div>
+
+      <!-- Buscador de Placa Ultra Claro -->
+      <div class="flex flex-col gap-2">
+        <label class="font-label-md text-sm font-bold text-on-surface flex items-center justify-between" for="plate-input">
+          <span class="">Placa del Vehículo</span>
+          <span class="font-normal text-xs text-on-surface-variant">Ejemplo: ABC-123</span>
+        </label>
+        <div class="flex items-stretch gap-2.5">
+          <div class="relative flex-1">
+            <input type="text" id="plate-input" value="ABC-123" placeholder="ABC-123" class="w-full text-center py-3.5 px-4 rounded-xl border-2 border-primary bg-blue-50/50 font-label-lg text-2xl font-black uppercase tracking-widest text-primary focus:ring-0 focus:border-primary shadow-inner">
+          </div>
+          <button type="button" id="btn-validate" onclick="validateCurrentPlate()" class="px-space-lg bg-primary hover:bg-surface-tint active:scale-95 text-on-primary font-headline-md text-base rounded-xl shadow-md transition-all flex items-center gap-2 font-bold">
+            <span class="material-symbols-outlined text-[22px]">search</span>
+            <span class="">Buscar Placa</span>
+          </button>
+        </div>
+
+        <!-- Botones directos para probar -->
+        <div class="flex items-center gap-2 pt-1">
+          <span class="font-body-sm text-xs text-on-surface-variant font-semibold">Prueba con 1 clic:</span>
+          <button type="button" onclick="setDemoPlate('ABC-123', true, 'carro')" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-label-sm text-xs font-bold transition-colors">ABC-123 (Vigente)</button>
+          <button type="button" onclick="setDemoPlate('MOT-808', true, 'moto')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-800 border border-blue-300 font-label-sm text-xs font-bold transition-colors">MOT-808 (Moto)</button>
+          <button type="button" onclick="setDemoPlate('XYZ-999', false)" class="px-2.5 py-1 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-800 border border-rose-300 font-label-sm text-xs font-bold transition-colors">XYZ-999 (Vencida)</button>
+        </div>
+      </div>
+
+      <!-- CASO A: MENSUALIDAD AL DÍA (VIGENTE) -->
+      <div id="state-vigente" class="flex flex-col gap-space-md">
+        
+        <!-- Ficha Limpia del Vehículo -->
+        <div class="rounded-2xl bg-surface-container-low p-space-md border border-outline-variant/30 flex items-center justify-between gap-3">
+          <div class="flex items-center gap-3">
+            <div class="w-14 h-14 rounded-xl bg-white border border-outline-variant/30 flex items-center justify-center text-primary shadow-xs shrink-0" id="detail-icon-wrap">
+              <span class="material-symbols-outlined text-[32px]" id="detail-icon">directions_car</span>
+            </div>
+            <div>
+              <span class="font-headline-md text-lg font-bold text-on-surface block" id="detail-brand-line">Renault Duster · Gris Plata</span>
+              <div class="flex items-center gap-1.5 text-on-surface-variant font-body-sm text-sm mt-0.5">
+                <span class="material-symbols-outlined text-[16px] text-primary">person</span>
+                <span class="font-medium" id="detail-owner">Juan Carlos Pérez</span>
+              </div>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-lg bg-surface-container text-on-surface-variant font-label-sm text-xs font-bold" id="detail-type-tag">Carro</span>
+        </div>
+
+        <!-- Alerta Verde Gigante: Mensualidad Pagada -->
+        <div class="rounded-2xl bg-emerald-500 text-white p-3.5 shadow-md flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <span class="material-symbols-outlined text-[28px]">verified</span>
+            <div>
+              <span class="font-headline-md text-base font-extrabold uppercase tracking-wide block">Mensualidad Pagada - Al Día</span>
+              <span class="font-body-sm text-xs text-emerald-100 font-medium">Tiene permiso total de entrada 24/7</span>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-full bg-white text-emerald-800 font-black font-label-sm text-xs">ACTIVO</span>
+        </div>
+
+        <!-- Puesto Asignado Gigante y Vibrante -->
+        <div class="rounded-2xl bg-gradient-to-r from-blue-900 to-indigo-950 p-space-md text-white shadow-lg flex items-center justify-between border-2 border-blue-400/50">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-2xl bg-blue-500/20 border-2 border-blue-400/40 flex items-center justify-center text-blue-200 shrink-0">
+              <span class="material-symbols-outlined text-[36px]">local_parking</span>
+            </div>
+            <div>
+              <span class="font-label-sm text-xs font-bold text-blue-200 uppercase tracking-widest block">Tu Puesto Asignado</span>
+              <div class="font-headline-xl text-4xl font-black text-white tracking-wider" id="slot-assigned">C-24</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="px-3 py-1 rounded-full bg-emerald-400 text-emerald-950 font-label-sm text-xs font-extrabold block mb-1">Puesto Libre</span>
+            <span class="font-body-sm text-sm text-blue-200 font-medium" id="slot-location">Piso 1 · Zona Norte</span>
+          </div>
+        </div>
+
+        <!-- Botón Gigante Abrir Barrera -->
+        <button type="button" id="btn-confirm-entry" onclick="confirmVehicleEntry()" class="w-full py-4 px-space-md rounded-2xl bg-emerald-600 hover:bg-emerald-500 active:scale-[0.99] text-white font-headline-xl text-xl font-black shadow-lg shadow-emerald-700/30 transition-all flex items-center justify-center gap-3 cursor-pointer">
+          <span class="material-symbols-outlined text-[32px]">door_sliding</span>
+          <span class="">¡ABRIR BARRERA DE ENTRADA!</span>
+        </button>
+      </div>
+
+      <!-- CASO B: DENEGADO / VENCIDO -->
+      <div id="state-denegado" class="hidden flex-col gap-space-md">
+        <div class="rounded-2xl bg-rose-50 border-2 border-red-300 p-space-md flex flex-col gap-3 text-red-950">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-red-600 text-white flex items-center justify-center shrink-0">
+              <span class="material-symbols-outlined text-[28px]">block</span>
+            </div>
+            <div>
+              <h3 class="font-headline-md text-lg font-bold text-red-900">¡NO PUEDE ENTRAR!</h3>
+              <span class="font-body-sm text-sm text-red-700 font-medium">Mensualidad Vencida o No Registrada</span>
+            </div>
+          </div>
+          <p class="font-body-md text-sm text-red-800 leading-snug bg-white/80 p-3 rounded-xl border border-red-200">
+            El vehículo <strong class="font-mono font-bold text-red-950" id="denied-plate-label">XYZ-999</strong> no tiene el pago del mes al día o el cupo se encuentra vencido. Debe acercarse a administración.
+          </p>
+        </div>
+
+        <!-- Botón Bloqueado -->
+        <button type="button" disabled="" class="w-full py-4 px-space-md rounded-2xl bg-surface-container text-on-surface-variant font-headline-md text-base font-bold cursor-not-allowed opacity-75 border-2 border-outline-variant/40 flex items-center justify-center gap-2">
+          <span class="material-symbols-outlined text-[24px]">lock</span>
+          <span class="">BARRERA CERRADA (ACCESO BLOQUEADO)</span>
+        </button>
+      </div>
+
+      <!-- Alternador de Simulación Rápido -->
+      <div class="pt-2 border-t border-surface-container flex items-center justify-between text-on-surface-variant font-body-sm text-xs">
+        <span class="flex items-center gap-1 font-medium">
+          <span class="material-symbols-outlined text-[16px] text-primary">touch_app</span> Modo de prueba:
+        </span>
+        <div class="inline-flex rounded-xl bg-surface-container p-1 border border-outline-variant/30 gap-1">
+          <button type="button" id="toggle-case-a" onclick="switchCase('vigente')" class="px-3 py-1 rounded-lg bg-white text-emerald-800 font-bold shadow-xs text-xs">Ver Vigente (Permitir)</button>
+          <button type="button" id="toggle-case-b" onclick="switchCase('denegado')" class="px-3 py-1 rounded-lg text-on-surface-variant hover:text-on-surface font-semibold text-xs">Ver Denegado (Bloquear)</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PANEL DERECHO: 2. VEHÍCULOS ADENTRO (7 Cols) -->
+  <div class="lg:col-span-7 flex flex-col gap-space-md">
+    <div class="rounded-2xl bg-surface-container-lowest p-space-lg border-2 border-outline-variant/30 shadow-sm flex flex-col gap-space-md">
+      
+      <!-- Encabezado Limpio y Directo -->
+      <div class="flex flex-wrap items-center justify-between gap-space-sm pb-space-sm border-b border-surface-container">
+        <div class="flex items-center gap-3">
+          <span class="w-10 h-10 rounded-xl bg-emerald-600 text-white font-black font-headline-lg flex items-center justify-center text-xl shadow-sm">2</span>
+          <div>
+            <div class="flex items-center gap-2.5">
+              <h2 class="font-headline-xl text-2xl font-black text-on-surface">Vehículos Adentro</h2>
+              <span class="px-3 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-label-lg text-sm font-extrabold" id="badge-total-inside">59 estacionados</span>
+            </div>
+            <span class="font-body-sm text-sm text-on-surface-variant font-medium">Toca "Dar Salida" cuando un vehículo se retire</span>
+          </div>
+        </div>
+        <button type="button" onclick="renderCards()" class="px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-on-surface font-body-sm text-xs font-semibold flex items-center gap-1.5 transition-colors" title="Actualizar lista">
+          <span class="material-symbols-outlined text-[18px]">refresh</span> Refrescar
+        </button>
+      </div>
+
+      <!-- Buscador Rápido de Placa -->
+      <div class="relative">
+        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-on-surface-variant">
+          <span class="material-symbols-outlined text-[20px]">search</span>
+        </span>
+        <input type="text" id="table-search" oninput="filterVehicles()" placeholder="Buscar por placa, modelo o puesto..." class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-outline-variant/60 bg-surface-container-low font-body-md text-base text-on-surface placeholder:text-outline focus:ring-0 focus:border-primary">
+      </div>
+
+      <!-- LISTA DE TARJETAS TÁCTILES Y GRANDES (Reemplaza la tabla densa) -->
+      <div id="cards-container" class="flex flex-col gap-3 max-h-[640px] overflow-y-auto pr-1">
+        <!-- Generado dinámicamente con renderCards() -->
+      </div>
+
+      <!-- Pie de Ayuda -->
+      <div class="flex items-center justify-between text-on-surface-variant font-body-sm text-xs pt-1 border-t border-surface-container">
+        <div class="flex items-center gap-1.5 text-emerald-800 font-semibold">
+          <span class="material-symbols-outlined text-[16px]">check_circle</span>
+          <span class="">Al dar salida, el puesto se libera en 1 solo clic. Sin cobros de dinero.</span>
+        </div>
+        <span class="font-label-sm text-xs font-bold text-primary" id="card-counter-label">Mostrando 6 vehículos</span>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL ULTRA SIMPLE: REGISTRAR RAYÓN / NOVEDAD -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-inverse-surface/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200" id="novedad-modal">
+  <div class="relative w-full max-w-md rounded-2xl bg-surface-container-lowest p-space-lg shadow-2xl flex flex-col gap-space-md border border-outline-variant/40 transform scale-95 transition-transform duration-200" id="novedad-modal-card">
+    <div class="flex items-center justify-between pb-2 border-b border-surface-container">
+      <div class="flex items-center gap-2.5">
+        <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-800 flex items-center justify-center">
+          <span class="material-symbols-outlined text-[24px]">edit_note</span>
+        </div>
+        <div>
+          <h3 class="font-headline-md text-lg font-bold text-on-surface">Anotar Novedad o Rayón</h3>
+          <span class="font-body-sm text-xs text-on-surface-variant">Para que el cliente sepa cómo entró</span>
+        </div>
+      </div>
+      <button type="button" onclick="closeNovedadModal()" class="p-1.5 rounded-xl hover:bg-surface-container text-on-surface-variant hover:text-on-surface">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Ficha rápida vehículo -->
+    <div class="rounded-xl bg-surface-container-low p-3 flex items-center justify-between border border-outline-variant/20">
+      <div>
+        <span class="font-body-sm text-[11px] text-on-surface-variant uppercase font-semibold block">Vehículo</span>
+        <span class="font-label-lg text-lg font-black text-on-surface font-mono" id="modal-plate">KST-892</span>
+      </div>
+      <div class="text-right">
+        <span class="font-body-sm text-[11px] text-on-surface-variant uppercase font-semibold block">Puesto</span>
+        <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-900 font-bold font-mono text-sm" id="modal-slot">C-12</span>
+      </div>
+    </div>
+
+    <!-- Campo de texto -->
+    <div class="flex flex-col gap-2">
+      <label for="novedad-text" class="font-body-md text-sm font-semibold text-on-surface">
+        ¿Qué novedad o detalle presenta el vehículo?
+      </label>
+      <textarea id="novedad-text" rows="3" placeholder="Ejemplo: Tiene rayón en puerta derecha, deja casco en el retrovisor..." class="w-full p-3 rounded-xl border border-outline-variant bg-white font-body-md text-on-surface text-sm focus:ring-0 focus:border-primary"></textarea>
+      
+      <!-- Botones con 1 clic -->
+      <div class="flex flex-wrap gap-1.5 pt-1">
+        <button type="button" onclick="appendQuickTag('⚠️ Rayón lateral derecho')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-body-sm text-xs font-semibold">+ Rayón lateral</button>
+        <button type="button" onclick="appendQuickTag('⚠️ 1 Casco en custodia')" class="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-900 border border-blue-300 font-body-sm text-xs font-semibold">+ Casco guardado</button>
+        <button type="button" onclick="appendQuickTag('⚠️ Golpe leve bómper')" class="px-2.5 py-1 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 font-body-sm text-xs font-semibold">+ Golpe en bómper</button>
+      </div>
+    </div>
+
+    <!-- Botones Guardar / Cancelar -->
+    <div class="flex items-center justify-end gap-2 pt-2 border-t border-surface-container">
+      <button type="button" onclick="closeNovedadModal()" class="px-4 py-2 rounded-xl bg-surface-container text-on-surface font-body-md text-sm font-semibold">
+        Cancelar
+      </button>
+      <button type="button" onclick="saveNovedad()" class="px-5 py-2.5 rounded-xl bg-primary hover:bg-surface-tint text-on-primary font-headline-md text-sm font-bold shadow-md flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-[18px]">check</span> Guardar Novedad
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICACIÓN TOAST LIMPIA -->
+<div id="action-toast" class="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-5 py-3.5 rounded-2xl bg-slate-900 text-white shadow-2xl opacity-0 pointer-events-none transition-all duration-300 transform translate-y-4">
+  <span class="material-symbols-outlined text-emerald-400 text-[26px]" id="toast-icon">check_circle</span>
+  <div class="flex flex-col">
+    <span class="font-headline-md text-sm font-bold" id="toast-title">¡Operación Realizada!</span>
+    <span class="font-body-sm text-xs text-slate-300 font-medium" id="toast-message">Vehículo procesado con éxito.</span>
+  </div>
+</div></div></main></div>
+<!-- Script Lógico de Funcionamiento 24/7 (Sin Pasarelas, Sin Cobros Por Hora, Sin Creación de Usuarios) -->
+<script>
+  // Datos precargados de vehículos en parqueadero (Simulación activa de los 59 vehículos)
+  let vehiclesInside = [
+    { placa: "KST-892", tipo: "Carro", icon: "directions_car", vehiculo: "Mazda 3 - Blanco", celda: "C-12", hora: "Hoy 06:45 AM", novedad: "⚠️ Rayón lateral derecho", novedadBadge: "bg-amber-100 text-amber-900 border-amber-300" },
+    { placa: "WQR-918", tipo: "Carro", icon: "directions_car", vehiculo: "Chevrolet Onix - Azul", celda: "C-05", hora: "Hoy 07:15 AM", novedad: "Sin novedades", novedadBadge: "bg-surface-container text-on-surface-variant border-transparent" },
+    { placa: "FRK-401", tipo: "Carro", icon: "directions_car", vehiculo: "Toyota Corolla - Gris", celda: "C-18", hora: "Hoy 07:30 AM", novedad: "Sin novedades", novedadBadge: "bg-surface-container text-on-surface-variant border-transparent" },
+    { placa: "UPR-651", tipo: "Carro", icon: "directions_car", vehiculo: "Kia Picanto - Rojo", celda: "C-31", hora: "Hoy 07:55 AM", novedad: "Sin novedades", novedadBadge: "bg-surface-container text-on-surface-variant border-transparent" },
+    { placa: "MTO-332", tipo: "Moto", icon: "two_wheeler", vehiculo: "Yamaha NMAX - Negro", celda: "M-04", hora: "Hoy 08:05 AM", novedad: "⚠️ 1 Casco en custodia", novedadBadge: "bg-blue-100 text-blue-900 border-blue-300" },
+    { placa: "HYK-114", tipo: "Moto", icon: "two_wheeler", vehiculo: "Bajaj Pulsar 200 - Gris", celda: "M-07", hora: "Hoy 08:20 AM", novedad: "Sin novedades", novedadBadge: "bg-surface-container text-on-surface-variant border-transparent" }
+  ];
+
+  let currentNovedadPlaca = "";
+
+  // Renderizar la tabla HU-02 / HU-03
+  function renderTable(data = vehiclesInside) {
+    const tbody = document.getElementById("table-body");
+    tbody.innerHTML = "";
+
+    data.forEach((v) => {
+      const tr = document.createElement("tr");
+      tr.className = "hover:bg-surface-container-low/60 transition-colors";
+      tr.innerHTML = `
+        <td class="py-2.5 px-3">
+          <span class="font-label-md text-xs font-bold text-on-surface bg-surface-container px-2 py-0.5 rounded border border-outline-variant/30 font-mono tracking-wider">${v.placa}</span>
+        </td>
+        <td class="py-2.5 px-3">
+          <span class="inline-flex items-center gap-1 text-xs font-semibold ${v.tipo === 'Carro' ? 'text-primary' : 'text-tertiary'}">
+            <span class="material-symbols-outlined text-[16px]">${v.icon}</span> ${v.tipo}
+          </span>
+        </td>
+        <td class="py-2.5 px-3 font-medium text-on-surface text-xs">${v.vehiculo}</td>
+        <td class="py-2.5 px-3 text-center">
+          <span class="px-2 py-0.5 rounded bg-blue-100 text-blue-900 font-bold font-mono text-xs border border-blue-200">${v.celda}</span>
+        </td>
+        <td class="py-2.5 px-3 font-label-sm text-[11px] text-on-surface-variant">${v.hora}</td>
+        <td class="py-2.5 px-3">
+          <span class="inline-block px-2 py-0.5 rounded-full text-[11px] font-medium border ${v.novedadBadge}">
+            ${v.novedad}
+          </span>
+        </td>
+        <td class="py-2.5 px-3 text-right">
+          <div class="flex items-center justify-end gap-1.5">
+            <button type="button" class="px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface font-label-sm text-[11px] font-semibold transition-colors flex items-center gap-1 border border-outline-variant/30" title="Anotar novedad o custodia" onclick="openNovedadModal('${v.placa}', '${v.celda}', '${v.novedad}')">
+              <span class="material-symbols-outlined text-[14px] text-amber-600">edit_note</span> Novedad
+            </button>
+            <button type="button" class="px-2.5 py-1 rounded bg-rose-50 hover:bg-rose-100 text-rose-700 hover:text-rose-800 font-label-sm text-[11px] font-bold transition-colors flex items-center gap-1 border border-rose-200" title="Registrar salida y liberar cupo" onclick="registerExit('${v.placa}', '${v.celda}')">
+              <span class="material-symbols-outlined text-[14px]">logout</span> Salida
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    document.getElementById("table-filtered-count").textContent = `Mostrando ${data.length} de 59`;
+  }
+
+  // Filtro de búsqueda en la tabla
+  function filterVehicles() {
+    const q = document.getElementById("table-search").value.toLowerCase();
+    const filtered = vehiclesInside.filter(v => 
+      v.placa.toLowerCase().includes(q) ||
+      v.celda.toLowerCase().includes(q) ||
+      v.vehiculo.toLowerCase().includes(q) ||
+      v.tipo.toLowerCase().includes(q)
+    );
+    renderTable(filtered);
+  }
+
+  // Registrar Salida (HU-03)
+  function registerExit(placa, celda) {
+    vehiclesInside = vehiclesInside.filter(v => v.placa !== placa);
+    renderTable();
+    showToast("Salida Registrada (HU-03)", `Vehículo ${placa} ha salido. Celda ${celda} liberada a DISPONIBLE.`);
+  }
+
+  // Modal Novedades (HU-02)
+  function openNovedadModal(placa, celda, currentNovedad) {
+    currentNovedadPlaca = placa;
+    document.getElementById("modal-plate").textContent = placa;
+    document.getElementById("modal-slot").textContent = celda;
+    document.getElementById("novedad-text").value = currentNovedad === "Sin novedades" ? "" : currentNovedad.replace("⚠️ ", "");
+    
+    const modal = document.getElementById("novedad-modal");
+    const card = document.getElementById("novedad-modal-card");
+    modal.classList.remove("opacity-0", "pointer-events-none");
+    card.classList.remove("scale-95");
+    card.classList.add("scale-100");
+  }
+
+  function closeNovedadModal() {
+    const modal = document.getElementById("novedad-modal");
+    const card = document.getElementById("novedad-modal-card");
+    modal.classList.add("opacity-0", "pointer-events-none");
+    card.classList.remove("scale-100");
+    card.classList.add("scale-95");
+  }
+
+  function appendQuickTag(tag) {
+    const txt = document.getElementById("novedad-text");
+    if (txt.value.length > 0) {
+      txt.value += ", " + tag.replace("⚠️ ", "");
+    } else {
+      txt.value = tag.replace("⚠️ ", "");
+    }
+  }
+
+  function saveNovedad() {
+    const txt = document.getElementById("novedad-text").value.trim();
+    const item = vehiclesInside.find(v => v.placa === currentNovedadPlaca);
+    if (item) {
+      if (txt.length > 0) {
+        item.novedad = "⚠️ " + txt;
+        item.novedadBadge = "bg-amber-100 text-amber-900 border-amber-300";
+      } else {
+        item.novedad = "Sin novedades";
+        item.novedadBadge = "bg-surface-container text-on-surface-variant border-transparent";
+      }
+      renderTable();
+      showToast("Novedad Guardada (HU-02)", `Bitácora actualizada para ${currentNovedadPlaca}`);
+    }
+    closeNovedadModal();
+  }
+
+  // Alternar Caso A y Caso B en Panel Izquierdo HU-01
+  function switchCase(tipo) {
+    const caseA = document.getElementById("state-vigente");
+    const caseB = document.getElementById("state-denegado");
+    const btnA = document.getElementById("toggle-case-a");
+    const btnB = document.getElementById("toggle-case-b");
+
+    if (tipo === 'vigente') {
+      caseA.classList.remove("hidden");
+      caseB.classList.add("hidden");
+      btnA.className = "px-2.5 py-1 rounded-md bg-white text-emerald-800 font-bold shadow-xs text-xs";
+      btnB.className = "px-2.5 py-1 rounded-md text-on-surface-variant hover:text-on-surface font-semibold text-xs";
+    } else {
+      caseA.classList.add("hidden");
+      caseB.classList.remove("hidden");
+      btnB.className = "px-2.5 py-1 rounded-md bg-white text-red-800 font-bold shadow-xs text-xs";
+      btnA.className = "px-2.5 py-1 rounded-md text-on-surface-variant hover:text-on-surface font-semibold text-xs";
+    }
+  }
+
+  // Prellenar Placa de Demostración
+  function setDemoPlate(placa, esVigente, tipo = 'carro') {
+    document.getElementById("plate-input").value = placa;
+    
+    if (tipo === 'moto') {
+      document.getElementById("detail-type").innerHTML = '<span class="material-symbols-outlined text-[18px] text-tertiary">two_wheeler</span> Motocicleta';
+      document.getElementById("detail-brand").textContent = "Yamaha MT-03";
+      document.getElementById("detail-model").textContent = "2024";
+      document.getElementById("detail-color").textContent = "Negro Mate";
+      document.getElementById("detail-owner").textContent = "Camila Rodríguez Torres";
+      document.getElementById("detail-doc").textContent = "C.C. 1.032.889.001";
+      document.getElementById("slot-assigned").innerHTML = 'M-02 <span class="text-xs font-normal text-emerald-300 px-2 py-0.5 rounded-full bg-emerald-900/60 border border-emerald-500/40">Celda Libre</span>';
+    } else {
+      document.getElementById("detail-type").innerHTML = '<span class="material-symbols-outlined text-[18px] text-primary">directions_car</span> Carro (Automóvil)';
+      document.getElementById("detail-brand").textContent = "Renault Duster";
+      document.getElementById("detail-model").textContent = "2023";
+      document.getElementById("detail-color").textContent = "Gris Plata";
+      document.getElementById("detail-owner").textContent = "Juan Carlos Pérez Gómez";
+      document.getElementById("detail-doc").textContent = "C.C. 1.020.450.123";
+      document.getElementById("slot-assigned").innerHTML = 'C-24 <span class="text-xs font-normal text-emerald-300 px-2 py-0.5 rounded-full bg-emerald-900/60 border border-emerald-500/40">Celda Libre</span>';
+    }
+
+    if (esVigente) {
+      switchCase('vigente');
+    } else {
+      document.getElementById("denied-plate-label").textContent = placa;
+      switchCase('denegado');
+    }
+  }
+
+  function validateCurrentPlate() {
+    const val = document.getElementById("plate-input").value.trim().toUpperCase();
+    if (val === "XYZ-999" || val.includes("VENC") || val.includes("999")) {
+      setDemoPlate(val || "XYZ-999", false);
+    } else if (val.includes("MOT") || val.includes("M")) {
+      setDemoPlate(val || "MOT-808", true, 'moto');
+    } else {
+      setDemoPlate(val || "ABC-123", true, 'carro');
+    }
+  }
+
+  // Confirmar Entrada (HU-01)
+  function confirmVehicleEntry() {
+    const placa = document.getElementById("plate-input").value.trim().toUpperCase() || "ABC-123";
+    const brand = document.getElementById("detail-brand").textContent;
+    const color = document.getElementById("detail-color").textContent;
+    const isMoto = document.getElementById("detail-type").textContent.includes("Moto");
+    const celda = isMoto ? "M-02" : "C-24";
+
+    // Agregar a la tabla de adentro si no existe
+    if (!vehiclesInside.some(v => v.placa === placa)) {
+      vehiclesInside.unshift({
+        placa: placa,
+        tipo: isMoto ? "Moto" : "Carro",
+        icon: isMoto ? "two_wheeler" : "directions_car",
+        vehiculo: `${brand} - ${color}`,
+        celda: celda,
+        hora: "Hoy " + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        novedad: "Sin novedades",
+        novedadBadge: "bg-surface-container text-on-surface-variant border-transparent"
+      });
+      renderTable();
+    }
+
+    showToast("Entrada Autorizada (HU-01)", `Barrera abierta para ${placa}. Celda asignada: ${celda}`);
+  }
+
+  // Toast Notificador
+  function showToast(title, msg) {
+    const toast = document.getElementById("action-toast");
+    document.getElementById("toast-title").textContent = title;
+    document.getElementById("toast-message").textContent = msg;
+    
+    toast.classList.remove("opacity-0", "pointer-events-none", "translate-y-4");
+    toast.classList.add("opacity-100", "translate-y-0");
+
+    setTimeout(() => {
+      toast.classList.remove("opacity-100", "translate-y-0");
+      toast.classList.add("opacity-0", "pointer-events-none", "translate-y-4");
+    }, 3800);
+  }
+
+  // Reloj en tiempo real
+  function updateClock() {
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    const clockEl = document.getElementById("clock-live");
+    if (clockEl) {
+      clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+    }
+  }
+
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Render inicial de tabla
+  renderTable();
+</script>
+
+
+</body></html>

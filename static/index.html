@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-slate-50">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Autos Colombia 24/7 - Control de Entrada y Salida (Iteración 1)</title>
+  
+  <!-- Tailwind CSS & Fuentes Oficiales del Sistema Cobalt Bay OS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    .font-mono-plate { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
+    .font-inter { font-family: 'Inter', sans-serif; }
+    .view-container { display: none; }
+    .view-container.active { display: block; animation: fadeIn 0.22s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+    .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .badge-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .45; } }
+  </style>
+</head>
+
+<body class="h-full bg-[#f8faff] text-slate-800 flex flex-col antialiased select-none">
+
+  <!-- ==================================================================== -->
+  <!-- BARRA SUPERIOR DE ESTADO 24/7 Y CONTROL DE VISTAS                     -->
+  <!-- ==================================================================== -->
+  <header class="bg-slate-900 text-white px-5 py-2.5 flex items-center justify-between border-b border-slate-800 shadow-sm z-50 flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 bg-blue-600/30 border border-blue-500/40 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-semibold">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
+        SISTEMA AUTOS COLOMBIA 24/7 · ITERACIÓN 1
+      </div>
+      <span class="text-xs text-slate-400 hidden lg:inline">Profesor Reinaldo Rojas · Entrada, Salida y 80 Celdas Dinámicas</span>
+    </div>
+
+    <!-- PESTAÑAS DE NAVEGACIÓN RÁPIDA -->
+    <div class="flex items-center gap-1.5 overflow-x-auto text-xs py-0.5">
+      <button class="nav-tab px-3 py-1 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm" data-target="view-control" onclick="cambiarVista('view-control')">
+        1. Entrada / Salida
+      </button>
+      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-mapa" onclick="cambiarVista('view-mapa')">
+        2. Mapa 80 Celdas
+      </button>
+      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-abonados" onclick="cambiarVista('view-abonados')">
+        3. Padrón de Abonados
+      </button>
+      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-historial" onclick="cambiarVista('view-historial')">
+        4. Historial 24/7
+      </button>
+      <button class="ml-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1 rounded-md flex items-center gap-1 text-xs shadow-sm transition-all" onclick="abrirModalReglas()">
+        <span>✓ Ver Dictamen Requerimientos</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ==================================================================== -->
+  <!-- CONTENEDOR PRINCIPAL: SIDEBAR + MAIN WORKSPACE                       -->
+  <!-- ==================================================================== -->
+  <div class="flex-1 flex overflow-hidden">
+    
+    <!-- SIDEBAR DE NAVEGACIÓN Y MÉTRICAS -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shadow-[2px_0_12px_-4px_rgba(0,0,0,0.03)] z-40 flex-shrink-0">
+      <div class="p-5 flex flex-col gap-5">
+        <!-- LOGO AUTOS COLOMBIA -->
+        <div class="cursor-pointer" onclick="cambiarVista('view-control')">
+          <div class="flex items-center gap-2.5">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20">
+              P
+            </div>
+            <div>
+              <div class="flex items-center gap-1.5">
+                <span class="font-extrabold text-slate-900 text-base tracking-tight leading-tight">Autos Colombia</span>
+                <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-1.5 py-0.5 rounded-md">24/7</span>
+              </div>
+              <span class="text-[11px] font-semibold text-blue-700 tracking-wide uppercase">Solo Mensualidades</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- TARJETA RESUMEN DE CAPACIDAD EN TIEMPO REAL -->
+        <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-3">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Capacidad Sede</span>
+            <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full" id="side-badge-libres">
+              ● 80 Libres
+            </span>
+          </div>
+          <div class="text-sm font-extrabold text-slate-900 flex justify-between">
+            <span>80 Celdas Fijas</span>
+            <span class="text-xs font-semibold text-slate-500" id="side-ocupadas-total">0 Ocupadas</span>
+          </div>
+          <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
+            <div id="side-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- NAVEGACIÓN LATERAL -->
+        <nav class="flex flex-col gap-1 text-sm font-bold">
+          <div class="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-2 px-3">
+            Módulos del Sistema
+          </div>
+          <button class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all bg-blue-700 text-white shadow-sm" id="side-link-control" onclick="cambiarVista('view-control')">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            <span>Control Entrada y Salida</span>
+          </button>
+          <button class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-mapa" onclick="cambiarVista('view-mapa')">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            <span>Mapa Celdas (80 Puestos)</span>
+          </button>
+          <button class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-abonados" onclick="cambiarVista('view-abonados')">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            <span>Padrón de Abonados</span>
+          </button>
+          <button class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-historial" onclick="cambiarVista('view-historial')">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            <span>Auditoría de Movimientos</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- FOOTER DEL OPERADOR Y RELOJ 24/7 -->
+      <div class="p-4 border-t border-slate-100 bg-slate-50/80">
+        <div class="flex items-center justify-between mb-1.5">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 badge-pulse"></span>
+            <span class="text-[11px] font-black text-slate-700 tracking-wider">OPERACIÓN 24/7</span>
+          </div>
+          <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">En Línea</span>
+        </div>
+        <div class="text-xs font-bold text-slate-800" id="reloj-vivo">--:--:--</div>
+        <div class="text-[11px] text-slate-500">Cabina de Control #1</div>
+      </div>
+    </aside>
+
+    <!-- ÁREA DE CONTENIDO PRINCIPAL DINÁMICO -->
+    <main class="flex-1 overflow-y-auto custom-scroll bg-[#f4f7fc] p-6">
+      
+      <!-- ==================================================================== -->
+      <!-- VISTA 1: CONTROL DE ENTRADA Y SALIDA                                 -->
+      <!-- ==================================================================== -->
+      <section class="view-container active space-y-6 max-w-7xl mx-auto" id="view-control">
+        
+        <!-- HEADER DE VISTA CON SEMÁFORO DE DISPONIBILIDAD -->
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="w-11 h-11 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-700">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-xl font-black text-slate-900 tracking-tight">Punto de Control de Acceso 24 Horas</h1>
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Operativo 24/7
+                </span>
+              </div>
+              <p class="text-xs text-slate-500 font-medium">Validación de mensualidad, asignación aleatoria de celda y liberación en 1 clic.</p>
+            </div>
+          </div>
+
+          <!-- CONTADORES RÁPIDOS POR TIPO DE VEHÍCULO -->
+          <div class="flex items-center gap-3">
+            <div class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3">
+              <div class="text-2xl">🚗</div>
+              <div>
+                <div class="text-[10px] uppercase font-bold text-slate-500">Carros ($250k)</div>
+                <div class="text-sm font-extrabold text-slate-900">
+                  <span class="text-emerald-600" id="card-carros-libres">70 Libres</span> / 70
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 flex items-center gap-3">
+              <div class="text-2xl">🏍️</div>
+              <div>
+                <div class="text-[10px] uppercase font-bold text-slate-500">Motos ($100k)</div>
+                <div class="text-sm font-extrabold text-slate-900">
+                  <span class="text-emerald-600" id="card-motos-libres">10 Libres</span> / 10
+                </div>
+              </div>
+            </div>
+
+            <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2.5 rounded-xl transition flex items-center gap-1.5" onclick="cargarEstadoParqueadero()">
+              <span>↻ Actualizar</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- LAYOUT DE 2 COLUMNAS (ENTRADA IZQUIERDA / SALIDA DERECHA) -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- COLUMNA 1: REGISTRAR ENTRADA (5 COLS) -->
+          <div class="lg:col-span-5 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/90 flex flex-col justify-between">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-8 h-8 rounded-lg bg-blue-700 text-white font-black flex items-center justify-center text-sm shadow">1</span>
+                  <div>
+                    <h2 class="text-base font-black text-slate-900">Registrar Entrada de Vehículo</h2>
+                    <span class="text-[11px] text-slate-500 font-medium">Validación de placa y mensualidad</span>
+                  </div>
+                </div>
+                <span class="text-[10px] font-extrabold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-md">Solo Abonados</span>
+              </div>
+
+              <!-- INPUT DE PLACA MONOSPACE -->
+              <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Placa del Vehículo:</label>
+                <div class="flex gap-2">
+                  <div class="relative flex-1">
+                    <input 
+                      type="text" 
+                      id="input-placa" 
+                      maxlength="7" 
+                      placeholder="ABC-123" 
+                      class="w-full font-mono-plate text-2xl font-black uppercase text-center bg-slate-50 border-2 border-blue-500 rounded-xl py-2.5 text-slate-900 tracking-widest focus:outline-none focus:ring-4 focus:ring-blue-500/20 shadow-inner"
+                      value="ABC-123"
+                      oninput="onPlacaInput()"
+                      onkeypress="if(event.key==='Enter') consultarPlaca()"
+                    />
+                  </div>
+                  <button class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-4 rounded-xl flex items-center gap-1.5 text-xs shadow transition-all active:scale-95" onclick="consultarPlaca()">
+                    <span>🔍 Verificar</span>
+                  </button>
+                </div>
+
+                <!-- BOTONES DE PRUEBA 1-CLIC PARA EL DOCENTE -->
+                <div class="mt-2.5 pt-2 border-t border-slate-100">
+                  <div class="text-[10px] font-bold text-slate-400 uppercase mb-1">Pruebas Rápidas para el Docente:</div>
+                  <div class="flex flex-wrap gap-1.5">
+                    <button class="text-[11px] font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100 px-2 py-1 rounded-md border border-emerald-200 transition" onclick="cargarPlacaTest('ABC-123')">
+                      ABC-123 (Carro Al Día)
+                    </button>
+                    <button class="text-[11px] font-bold bg-blue-50 text-blue-700 hover:bg-blue-100 px-2 py-1 rounded-md border border-blue-200 transition" onclick="cargarPlacaTest('MOT-808')">
+                      MOT-808 (Moto Al Día)
+                    </button>
+                    <button class="text-[11px] font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 px-2 py-1 rounded-md border border-rose-200 transition" onclick="cargarPlacaTest('XYZ-999')">
+                      XYZ-999 (Carro Vencido)
+                    </button>
+                    <button class="text-[11px] font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 px-2 py-1 rounded-md border border-rose-200 transition" onclick="cargarPlacaTest('MOT-101')">
+                      MOT-101 (Moto Vencida)
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- TARJETA VISUAL DEL VEHÍCULO Y ESTADO -->
+              <div id="ficha-vehiculo-card" class="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-all">
+                <div class="flex items-start justify-between">
+                  <div class="flex items-center gap-3">
+                    <div id="ficha-icono" class="w-12 h-12 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-2xl font-bold">
+                      🚗
+                    </div>
+                    <div>
+                      <div class="font-extrabold text-slate-900 text-base" id="ficha-modelo">Renault Duster Intens 2.0</div>
+                      <div class="text-xs text-slate-500 font-medium" id="ficha-detalles">Color: Gris Plata · Carro</div>
+                      <div class="text-xs font-semibold text-slate-700 flex items-center gap-1 mt-0.5">
+                        <span>👤 Conductor:</span> <span id="ficha-conductor" class="text-slate-900 font-bold">Juan Carlos Pérez</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span id="ficha-tag-tipo" class="text-xs font-black uppercase px-2 py-0.5 rounded bg-blue-100 text-blue-800">CARRO</span>
+                </div>
+
+                <!-- ALERTA DE ESTADO DE MENSUALIDAD -->
+                <div id="alerta-mensualidad" class="mt-3.5 p-3 rounded-xl bg-emerald-500 text-white flex items-center justify-between shadow-sm">
+                  <div class="flex items-center gap-2.5">
+                    <div id="alerta-icono" class="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center text-sm font-black">✓</div>
+                    <div>
+                      <div id="alerta-titulo" class="text-xs font-black tracking-wide uppercase">MENSUALIDAD AL DÍA</div>
+                      <div id="alerta-subtitulo" class="text-[11px] text-emerald-100">Vence en 20 días · Autorizado para ingreso</div>
+                    </div>
+                  </div>
+                  <span id="alerta-badge" class="text-[10px] font-black uppercase px-2 py-0.5 rounded bg-white text-emerald-800">Activo</span>
+                </div>
+
+                <!-- AVISO DE ASIGNACIÓN DINÁMICA / ALEATORIA -->
+                <div class="mt-3 bg-slate-900 text-white rounded-xl p-3 flex items-center justify-between">
+                  <div>
+                    <div class="text-[10px] uppercase font-bold text-slate-400">Asignación de Celda:</div>
+                    <div class="text-xs text-emerald-400 font-bold">Dinámica / Aleatoria</div>
+                    <div class="text-[11px] text-slate-300">Se sortea entre celdas libres disponibles</div>
+                  </div>
+                  <div class="text-right">
+                    <span class="inline-block bg-blue-600 text-white font-black text-xs px-2.5 py-1 rounded-md">Regla Oficial</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- BOTÓN PRINCIPAL DE APERTURA -->
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <button 
+                id="btn-autorizar-entrada" 
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-4 px-6 rounded-2xl text-lg flex items-center justify-center gap-3 shadow-lg shadow-emerald-600/25 transition-all transform active:scale-98" 
+                onclick="ejecutarIngreso()"
+              >
+                <span class="text-2xl">🟢</span>
+                <span>¡ABRIR BARRERA DE ENTRADA!</span>
+              </button>
+              <div id="feedback-entrada" class="text-center text-xs font-bold mt-2 hidden"></div>
+            </div>
+          </div>
+
+          <!-- COLUMNA 2: VEHÍCULOS ADENTRO Y SALIDA RÁPIDA (7 COLS) -->
+          <div class="lg:col-span-7 bg-white rounded-2xl p-6 shadow-sm border border-slate-200/90 flex flex-col justify-between">
+            <div>
+              <div class="flex flex-wrap items-center justify-between pb-3 border-b border-slate-100 gap-2">
+                <div class="flex items-center gap-2.5">
+                  <span class="w-8 h-8 rounded-lg bg-emerald-600 text-white font-black flex items-center justify-center text-sm shadow">2</span>
+                  <div>
+                    <h2 class="text-base font-black text-slate-900">Vehículos Estacionados Adentro</h2>
+                    <span class="text-[11px] text-slate-500 font-medium">Clic en "Dar Salida" para liberar la celda al instante</span>
+                  </div>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="bg-blue-100 text-blue-800 text-xs font-black px-2.5 py-1 rounded-lg">
+                    <span id="contador-adentro-badge">0</span> estacionados
+                  </span>
+                </div>
+              </div>
+
+              <!-- BUSCADOR EN VIVO DE VEHÍCULOS ADENTRO -->
+              <div class="mt-4 mb-3">
+                <div class="relative">
+                  <input 
+                    type="text" 
+                    id="input-filtro-adentro" 
+                    placeholder="Filtrar por placa, modelo o celda..." 
+                    class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    oninput="filtrarVehiculosAdentro()"
+                  />
+                  <span class="absolute right-3 top-2.5 text-xs text-slate-400">🔍</span>
+                </div>
+              </div>
+
+              <!-- CONTENEDOR DE TARJETAS DE VEHÍCULOS ADENTRO -->
+              <div id="lista-vehiculos-adentro" class="space-y-2.5 max-h-[460px] overflow-y-auto pr-1 custom-scroll">
+                <!-- Se llena dinámicamente con JavaScript -->
+              </div>
+            </div>
+
+            <!-- PIE INFORMATIVO -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+              <span class="flex items-center gap-1.5 text-emerald-700 font-bold">
+                <span>✓</span> Salida en 1 clic: La celda se libera de inmediato sin cobros en efectivo.
+              </span>
+              <span class="text-[11px] text-slate-400" id="lbl-total-vehiculos-adentro">Mostrando 0 vehículos</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VISTA 2: MAPA EN VIVO DE LAS 80 CELDAS                               -->
+      <!-- ==================================================================== -->
+      <section class="view-container space-y-6 max-w-7xl mx-auto" id="view-mapa">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xl">
+              🗺️
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-xl font-black text-slate-900 tracking-tight">Mapa Visual de las 80 Celdas</h1>
+                <span class="bg-blue-100 text-blue-800 text-xs font-black px-2 py-0.5 rounded-full">Sincronización en Tiempo Real</span>
+              </div>
+              <p class="text-xs text-slate-500">Distribución física reglamentaria: 10 Motos (M-01 a M-10) y 70 Carros (C-01 a C-70).</p>
+            </div>
+          </div>
+
+          <!-- FILTROS DEL MAPA -->
+          <div class="flex items-center gap-2">
+            <button class="filtro-mapa-btn bg-slate-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition" onclick="filtrarMapa('TODOS')">Todas (80)</button>
+            <button class="filtro-mapa-btn bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 transition" onclick="filtrarMapa('CARRO')">Carros (70)</button>
+            <button class="filtro-mapa-btn bg-slate-100 text-slate-700 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-slate-200 transition" onclick="filtrarMapa('MOTO')">Motos (10)</button>
+            <button class="filtro-mapa-btn bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-emerald-100 transition" onclick="filtrarMapa('DISPONIBLE')">Solo Libres</button>
+            <button class="filtro-mapa-btn bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold px-3 py-1.5 rounded-lg hover:bg-rose-100 transition" onclick="filtrarMapa('OCUPADA')">Solo Ocupadas</button>
+          </div>
+        </div>
+
+        <!-- 3 CARDS RESUMEN -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-emerald-500 text-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-xs uppercase font-extrabold tracking-wider text-emerald-100">Celdas Libres</div>
+              <div class="text-3xl font-black mt-1" id="metric-libres-mapa">80 <span class="text-sm font-semibold text-emerald-100">disponibles</span></div>
+              <div class="text-xs text-emerald-100 mt-0.5" id="metric-sub-libres">70 Carros · 10 Motos</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl font-bold">✓</div>
+          </div>
+
+          <div class="bg-rose-500 text-white p-4 rounded-2xl shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-xs uppercase font-extrabold tracking-wider text-rose-100">Celdas Ocupadas</div>
+              <div class="text-3xl font-black mt-1" id="metric-ocupadas-mapa">0 <span class="text-sm font-semibold text-rose-100">en uso</span></div>
+              <div class="text-xs text-rose-100 mt-0.5" id="metric-sub-ocupadas">0 Carros · 0 Motos</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center text-2xl font-bold">🚗</div>
+          </div>
+
+          <div class="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex items-center justify-between">
+            <div>
+              <div class="text-xs uppercase font-extrabold tracking-wider text-slate-400">Aforo Total Oficial</div>
+              <div class="text-3xl font-black text-slate-900 mt-1">80 <span class="text-sm font-semibold text-slate-500">celdas</span></div>
+              <div class="text-xs text-slate-500 mt-0.5">Asignación Aleatoria por Software</div>
+            </div>
+            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center text-2xl font-bold">🅿️</div>
+          </div>
+        </div>
+
+        <!-- GRILLA DE LAS 80 CELDAS Y DETALLE AL SELECCIONAR -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <div class="lg:col-span-8 bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">Plano de Celdas (Haz clic en una celda para ver información)</h3>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="flex items-center gap-1 font-bold text-emerald-700"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> Disponible</span>
+                <span class="flex items-center gap-1 font-bold text-rose-700"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> Ocupada</span>
+              </div>
+            </div>
+
+            <!-- MATRIZ DE CELDAS DINÁMICAS -->
+            <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 max-h-[520px] overflow-y-auto pr-1 custom-scroll" id="grilla-celdas">
+              <!-- Generado dinámicamente -->
+            </div>
+          </div>
+
+          <!-- DETALLE DE LA CELDA SELECCIONADA -->
+          <div class="lg:col-span-4 bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span class="text-xs font-bold text-slate-400 uppercase">Inspección de Celda</span>
+                <span class="px-2 py-0.5 rounded text-xs font-black bg-emerald-100 text-emerald-800" id="detalle-celda-badge">Disponible</span>
+              </div>
+              <div class="my-4 text-center">
+                <div class="text-[11px] font-bold text-slate-400 uppercase">Identificador de Puesto</div>
+                <div class="text-4xl font-black font-mono-plate text-blue-700 tracking-wider" id="detalle-celda-codigo">C-01</div>
+                <div class="text-xs font-bold text-slate-600 mt-1" id="detalle-celda-tipo">Carros y Camionetas · Zona A</div>
+              </div>
+
+              <div class="space-y-2 text-xs">
+                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                  <span class="text-slate-500">Placa Ocupante:</span>
+                  <span class="font-bold font-mono-plate text-slate-900" id="detalle-celda-placa">Ninguna (Libre)</span>
+                </div>
+                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                  <span class="text-slate-500">Vehículo:</span>
+                  <span class="font-bold text-slate-900" id="detalle-celda-vehiculo">-</span>
+                </div>
+                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                  <span class="text-slate-500">Conductor:</span>
+                  <span class="font-bold text-slate-900" id="detalle-celda-conductor">-</span>
+                </div>
+                <div class="flex justify-between py-1.5 border-b border-slate-100">
+                  <span class="text-slate-500">Modalidad:</span>
+                  <span class="font-bold text-emerald-700">Mensualidad Exclusiva 24/7</span>
+                </div>
+                <div class="flex justify-between py-1.5">
+                  <span class="text-slate-500">Piso / Nivel:</span>
+                  <span class="font-bold text-slate-900" id="detalle-celda-piso">Piso 1</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100" id="detalle-celda-acciones">
+              <button class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-xs transition" onclick="cambiarVista('view-control')">
+                Ir a Punto de Control
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VISTA 3: PADRÓN DE ABONADOS (REGISTRO Y PRUEBA)                      -->
+      <!-- ==================================================================== -->
+      <section class="view-container space-y-6 max-w-7xl mx-auto" id="view-abonados">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-700 font-bold text-xl">
+              👥
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-xl font-black text-slate-900 tracking-tight">Padrón de Vehículos y Mensualidades</h1>
+                <span class="bg-emerald-100 text-emerald-800 text-xs font-black px-2 py-0.5 rounded-full">Base de Datos SQLite</span>
+              </div>
+              <p class="text-xs text-slate-500">Validación de tarifas: $250.000 Carro, $100.000 Moto. Pago mensual por vehículo.</p>
+            </div>
+          </div>
+
+          <button class="bg-blue-700 hover:bg-blue-800 text-white text-xs font-black px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow transition" onclick="abrirModalNuevoAbonado()">
+            <span>+ Registrar Nuevo Vehículo de Prueba</span>
+          </button>
+        </div>
+
+        <!-- TABLA DE VEHÍCULOS SEMILLA PARA PRUEBA -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3">
+            <div class="font-black text-sm text-slate-900">Vehículos Registrados para Demostración</div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-slate-500">Tarifas vigentes:</span>
+              <span class="bg-blue-50 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded border border-blue-200">Carro: $250.000 / mes</span>
+              <span class="bg-emerald-50 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded border border-emerald-200">Moto: $100.000 / mes</span>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 uppercase font-black tracking-wider text-[10px] border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Placa</th>
+                  <th class="py-3 px-4">Tipo</th>
+                  <th class="py-3 px-4">Marca y Modelo</th>
+                  <th class="py-3 px-4">Color</th>
+                  <th class="py-3 px-4">Propietario</th>
+                  <th class="py-3 px-4">Tarifa Pagada</th>
+                  <th class="py-3 px-4">Estado Mensualidad</th>
+                  <th class="py-3 px-4 text-right">Probar Acceso</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 font-medium">
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-mono-plate font-black text-slate-900">ABC-123</td>
+                  <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-bold">CARRO</span></td>
+                  <td class="py-3 px-4 font-bold text-slate-900">Renault Duster Intens 2.0</td>
+                  <td class="py-3 px-4 text-slate-600">Gris Plata</td>
+                  <td class="py-3 px-4 text-slate-700">Juan Carlos Pérez</td>
+                  <td class="py-3 px-4 font-bold text-slate-900">$250.000 COP</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">● Al Día (Vigente)</span></td>
+                  <td class="py-3 px-4 text-right">
+                    <button class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="cargarPlacaTest('ABC-123'); cambiarVista('view-control');">
+                      Cargar en Entrada
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-mono-plate font-black text-slate-900">MOT-808</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">MOTO</span></td>
+                  <td class="py-3 px-4 font-bold text-slate-900">Yamaha NMAX 155</td>
+                  <td class="py-3 px-4 text-slate-600">Azul Mate</td>
+                  <td class="py-3 px-4 text-slate-700">David Gómez</td>
+                  <td class="py-3 px-4 font-bold text-slate-900">$100.000 COP</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">● Al Día (Vigente)</span></td>
+                  <td class="py-3 px-4 text-right">
+                    <button class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="cargarPlacaTest('MOT-808'); cambiarVista('view-control');">
+                      Cargar en Entrada
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-mono-plate font-black text-slate-900">XYZ-999</td>
+                  <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-bold">CARRO</span></td>
+                  <td class="py-3 px-4 font-bold text-slate-900">Chevrolet Onix Turbo</td>
+                  <td class="py-3 px-4 text-slate-600">Rojo Carmesí</td>
+                  <td class="py-3 px-4 text-slate-700">Pedro Infante</td>
+                  <td class="py-3 px-4 font-bold text-slate-900">$250.000 COP</td>
+                  <td class="py-3 px-4"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-black">⛔ VENCIDA (-15 días)</span></td>
+                  <td class="py-3 px-4 text-right">
+                    <button class="bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="cargarPlacaTest('XYZ-999'); cambiarVista('view-control');">
+                      Cargar en Entrada
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-mono-plate font-black text-slate-900">MOT-101</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">MOTO</span></td>
+                  <td class="py-3 px-4 font-bold text-slate-900">Bajaj Pulsar NS 200</td>
+                  <td class="py-3 px-4 text-slate-600">Negro Nebulosa</td>
+                  <td class="py-3 px-4 text-slate-700">Pedro Infante</td>
+                  <td class="py-3 px-4 font-bold text-slate-900">$100.000 COP</td>
+                  <td class="py-3 px-4"><span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-black">⛔ VENCIDA (-10 días)</span></td>
+                  <td class="py-3 px-4 text-right">
+                    <button class="bg-rose-50 text-rose-700 hover:bg-rose-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="cargarPlacaTest('MOT-101'); cambiarVista('view-control');">
+                      Cargar en Entrada
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-mono-plate font-black text-slate-900">KLR-500</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded text-[10px] font-bold">MOTO</span></td>
+                  <td class="py-3 px-4 font-bold text-slate-900">Kawasaki KLR 650</td>
+                  <td class="py-3 px-4 text-slate-600">Verde Militar</td>
+                  <td class="py-3 px-4 text-slate-700">Camila Restrepo</td>
+                  <td class="py-3 px-4 font-bold text-slate-900">$100.000 COP</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">● Al Día (Vigente)</span></td>
+                  <td class="py-3 px-4 text-right">
+                    <button class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="cargarPlacaTest('KLR-500'); cambiarVista('view-control');">
+                      Cargar en Entrada
+                    </button>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="py-3 px-4 font-mono-plate font-black text-slate-900">TOY-456</td>
+                  <td class="py-3 px-4"><span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-bold">CARRO</span></td>
+                  <td class="py-3 px-4 font-bold text-slate-900">Toyota Corolla Cross</td>
+                  <td class="py-3 px-4 text-slate-600">Blanco Perlado</td>
+                  <td class="py-3 px-4 text-slate-700">Andrés Felipe Morales</td>
+                  <td class="py-3 px-4 font-bold text-slate-900">$250.000 COP</td>
+                  <td class="py-3 px-4"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">● Al Día (Vigente)</span></td>
+                  <td class="py-3 px-4 text-right">
+                    <button class="bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-2.5 py-1 rounded-md text-[11px]" onclick="cargarPlacaTest('TOY-456'); cambiarVista('view-control');">
+                      Cargar en Entrada
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VISTA 4: HISTORIAL DE MOVIMIENTOS 24/7 (AUDITORÍA)                  -->
+      <!-- ==================================================================== -->
+      <section class="view-container space-y-6 max-w-7xl mx-auto" id="view-historial">
+        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200/80 flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-3">
+            <div class="w-11 h-11 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-700 font-bold text-xl">
+              🕒
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h1 class="text-xl font-black text-slate-900 tracking-tight">Auditoría de Entradas y Salidas 24/7</h1>
+                <span class="bg-blue-100 text-blue-800 text-xs font-black px-2 py-0.5 rounded-full">Trazabilidad Total</span>
+              </div>
+              <p class="text-xs text-slate-500">Registro con timestamp exacto de cada movimiento, celda asignada y liberación de cupo.</p>
+            </div>
+          </div>
+          <button class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition" onclick="cargarEstadoParqueadero()">
+            ↻ Refrescar Historial
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 uppercase font-black tracking-wider text-[10px] border-b border-slate-200">
+                <tr>
+                  <th class="py-3 px-4">Vehículo</th>
+                  <th class="py-3 px-4">Tipo</th>
+                  <th class="py-3 px-4">Celda Asignada</th>
+                  <th class="py-3 px-4">Fecha y Hora Ingreso</th>
+                  <th class="py-3 px-4">Fecha y Hora Salida</th>
+                  <th class="py-3 px-4">Estado</th>
+                </tr>
+              </thead>
+              <tbody id="tabla-historial-body" class="divide-y divide-slate-100 font-medium">
+                <!-- Se llena con JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: REGISTRO DE NUEVO VEHÍCULO DE PRUEBA                          -->
+  <!-- ==================================================================== -->
+  <div id="modal-nuevo-abonado" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <h3 class="text-base font-black text-slate-900">Registrar Vehículo para Pruebas</h3>
+        <button class="text-slate-400 hover:text-slate-600 font-black text-lg" onclick="cerrarModalNuevoAbonado()">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">Placa (ej: BOG-789):</label>
+          <input type="text" id="modal-input-placa" class="w-full border border-slate-300 rounded-lg p-2 font-mono-plate uppercase font-bold text-sm" placeholder="XYZ-123" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Tipo de Vehículo:</label>
+            <select id="modal-select-tipo" class="w-full border border-slate-300 rounded-lg p-2 font-bold">
+              <option value="CARRO">Carro ($250.000)</option>
+              <option value="MOTO">Moto ($100.000)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Estado Mensualidad:</label>
+            <select id="modal-select-estado" class="w-full border border-slate-300 rounded-lg p-2 font-bold">
+              <option value="ACTIVA">Al Día (Vigente)</option>
+              <option value="VENCIDA">Vencida (Mora)</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Marca:</label>
+            <input type="text" id="modal-input-marca" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Mazda / Yamaha" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Modelo:</label>
+            <input type="text" id="modal-input-modelo" class="w-full border border-slate-300 rounded-lg p-2" placeholder="2024" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Color:</label>
+            <input type="text" id="modal-input-color" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Gris" />
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 mb-1">Conductor / Titular:</label>
+            <input type="text" id="modal-input-conductor" class="w-full border border-slate-300 rounded-lg p-2" placeholder="Nombre completo" />
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-2 pt-3 border-t border-slate-100">
+        <button class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl text-xs transition" onclick="cerrarModalNuevoAbonado()">
+          Cancelar
+        </button>
+        <button class="flex-1 bg-blue-700 hover:bg-blue-800 text-white font-bold py-2.5 rounded-xl text-xs shadow transition" onclick="guardarNuevoAbonado()">
+          Guardar Vehículo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL: DICTAMEN DE CUMPLIMIENTO DE REGLAS DE NEGOCIO                -->
+  <!-- ==================================================================== -->
+  <div id="modal-reglas" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+    <div class="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl border border-slate-200 space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <span class="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-800 font-black flex items-center justify-center text-xs">✓</span>
+          <h3 class="text-base font-black text-slate-900">Dictamen Técnico: Requerimientos Docente Reinaldo Rojas</h3>
+        </div>
+        <button class="text-slate-400 hover:text-slate-600 font-black text-lg" onclick="cerrarModalReglas()">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs leading-relaxed text-slate-700">
+        <div class="p-3 rounded-xl bg-blue-50 border border-blue-200">
+          <div class="font-bold text-blue-900 mb-1">1. Alcance Exclusivo - Iteración 1:</div>
+          <p>Se implementa exclusivamente el módulo de <strong>Entrada y Salida</strong>. No se incluyen módulos complejos de gestión de usuarios ni pasarelas de pago (postergados a iteraciones 2 y 3).</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-50 border border-slate-200">
+          <div class="font-bold text-slate-900 mb-1">2. Modalidad Exclusiva de Mensualidad:</div>
+          <p>El parqueadero opera 100% por mensualidad. No existen cobros por fracción, hora o día. Tarifas oficiales: <strong>$250.000 (Carro)</strong> y <strong>$100.000 (Moto)</strong>. El cobro es por vehículo.</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+          <div class="font-bold text-emerald-900 mb-1">3. Capacidad Exacta de 80 Celdas:</div>
+          <p>Dispone de exactamente 80 celdas fijas: <strong>10 para Motos (M-01 a M-10)</strong> y <strong>70 para Carros (C-01 a C-70)</strong>. El sistema bloquea el ingreso si no hay cupo disponible.</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-indigo-50 border border-indigo-200">
+          <div class="font-bold text-indigo-900 mb-1">4. Asignación Dinámica / Aleatoria:</div>
+          <p>La celda se selecciona aleatoriamente por software entre las celdas disponibles para ese tipo de vehículo. No hay celdas fijas por cliente.</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-rose-50 border border-rose-200">
+          <div class="font-bold text-rose-900 mb-1">5. Validación Estricta de Pago y Seguridad:</div>
+          <p>Si la mensualidad está vencida, el sistema <strong>deniega el ingreso</strong>. Se valida y muestra: Placa, Tipo, Marca, Modelo y Color.</p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-amber-50 border border-amber-200">
+          <div class="font-bold text-amber-900 mb-1">6. Operación 24/7:</div>
+          <p>El sistema cuenta con reloj operativo en tiempo real, registro de timestamps de entrada y salida, y liberación de celda inmediata al egreso.</p>
+        </div>
+      </div>
+
+      <div class="pt-3 border-t border-slate-100 text-right">
+        <button class="bg-blue-700 hover:bg-blue-800 text-white font-bold px-5 py-2 rounded-xl text-xs transition" onclick="cerrarModalReglas()">
+          Entendido
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT CLIENTE DINÁMICO -->
+  <script src="/app.js"></script>
+</body>
+</html>
