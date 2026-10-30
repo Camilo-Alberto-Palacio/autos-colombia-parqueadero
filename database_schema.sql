@@ -1,25 +1,26 @@
 -- ====================================================================
 -- PARQUEADERO AUTOS COLOMBIA 24/7 - SISTEMA DE CONTROL DE ACCESO
--- MODELO FÍSICO DE BASE DE DATOS (DDL & DML) - ITERACIÓN 1
--- Docente: Reinaldo Rojas
--- Reglas de Negocio:
---   - 80 Celdas: 10 Motos (M-01 a M-10), 70 Carros (C-01 a C-70)
---   - Modalidad exclusiva: Mensualidad ($250.000 Carro, $100.000 Moto)
---   - Asignación dinámica/aleatoria de celda según tipo de vehículo
---   - Validación estricta de mensualidad vigente y capacidad
+-- MODELO FÍSICO DE BASE DE DATOS (DDL & DML) - ITERACIÓN 1 & 2 UNIFICADA
+-- Asignatura: Ingeniería de Software - PREICA2602B020053
+-- Docente: Reinaldo Rojas | Grupo: 25
+-- Integrantes:
+--   - Camilo Alberto Palacios Turriago
+--   - Adriana Andrea Agudelo Agudelo
+--   - Juan Daniel Pulgarin García
 -- ====================================================================
 
--- 1. TABLA: PROPIETARIO / CLIENTE ABONADO
+-- 1. TABLA: PROPIETARIO / CLIENTE ABONADO (Gestión de Abonados)
 CREATE TABLE IF NOT EXISTS propietario (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     documento VARCHAR(20) NOT NULL UNIQUE,
     nombre_completo VARCHAR(120) NOT NULL,
     telefono VARCHAR(20) NOT NULL,
     email VARCHAR(100),
+    direccion VARCHAR(120),
     fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. TABLA: VEHICULO
+-- 2. TABLA: VEHICULO (Catálogo de Automotores)
 CREATE TABLE IF NOT EXISTS vehiculo (
     placa VARCHAR(10) PRIMARY KEY,
     tipo_vehiculo VARCHAR(10) NOT NULL CHECK (tipo_vehiculo IN ('CARRO', 'MOTO')),
@@ -32,7 +33,7 @@ CREATE TABLE IF NOT EXISTS vehiculo (
     FOREIGN KEY (propietario_id) REFERENCES propietario(id) ON DELETE RESTRICT
 );
 
--- 3. TABLA: MENSUALIDAD (Cobro por vehículo)
+-- 3. TABLA: MENSUALIDAD (Contratos de Parqueo por Mensualidad)
 CREATE TABLE IF NOT EXISTS mensualidad (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     vehiculo_placa VARCHAR(10) NOT NULL,
@@ -43,16 +44,31 @@ CREATE TABLE IF NOT EXISTS mensualidad (
     FOREIGN KEY (vehiculo_placa) REFERENCES vehiculo(placa) ON DELETE CASCADE
 );
 
--- 4. TABLA: CELDA (Exactamente 80 celdas fijas)
+-- 4. TABLA: CELDA (80 Celdas: 10 Motos M-01 a M-10, 70 Carros C-01 a C-70)
 CREATE TABLE IF NOT EXISTS celda (
     codigo VARCHAR(10) PRIMARY KEY,
     tipo_permitido VARCHAR(10) NOT NULL CHECK (tipo_permitido IN ('CARRO', 'MOTO')),
-    estado VARCHAR(15) NOT NULL DEFAULT 'DISPONIBLE' CHECK (estado IN ('DISPONIBLE', 'OCUPADA', 'MANTENIMIENTO')),
+    estado VARCHAR(15) NOT NULL DEFAULT 'DISPONIBLE' CHECK (estado IN ('DISPONIBLE', 'OCUPADA', 'MANTENIMIENTO', 'INACTIVA')),
     piso INTEGER DEFAULT 1,
-    zona VARCHAR(20) DEFAULT 'PRINCIPAL'
+    zona VARCHAR(20) DEFAULT 'PRINCIPAL',
+    motivo_bloqueo TEXT
 );
 
--- 5. TABLA: REGISTRO_ACCESO (Control de Entrada y Salida 24/7)
+-- 5. TABLA: USUARIO (Control de Acceso al Sistema, Roles y Permisos)
+CREATE TABLE IF NOT EXISTS usuario (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password_hash VARCHAR(128) NOT NULL,
+    nombre_completo VARCHAR(120) NOT NULL,
+    email VARCHAR(100) NOT NULL UNIQUE,
+    rol VARCHAR(20) NOT NULL CHECK (rol IN ('ADMIN', 'OPERARIO', 'AUDITOR')),
+    cargo VARCHAR(60) DEFAULT 'Operador de Turno',
+    activo BOOLEAN NOT NULL DEFAULT 1,
+    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ultimo_login DATETIME
+);
+
+-- 6. TABLA: REGISTRO_ACCESO (Control Operativo de Entrada y Salida 24/7)
 CREATE TABLE IF NOT EXISTS registro_acceso (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     vehiculo_placa VARCHAR(10) NOT NULL,
@@ -61,18 +77,47 @@ CREATE TABLE IF NOT EXISTS registro_acceso (
     fecha_salida DATETIME,
     estado VARCHAR(15) NOT NULL DEFAULT 'ADENTRO' CHECK (estado IN ('ADENTRO', 'FINALIZADO')),
     observaciones TEXT,
+    usuario_id INTEGER,
     FOREIGN KEY (vehiculo_placa) REFERENCES vehiculo(placa) ON DELETE RESTRICT,
-    FOREIGN KEY (celda_codigo) REFERENCES celda(codigo) ON DELETE RESTRICT
+    FOREIGN KEY (celda_codigo) REFERENCES celda(codigo) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE SET NULL
 );
 
--- ÍNDICES PARA ALTO RENDIMIENTO EN BÚSQUEDAS
+-- 7. TABLA: HISTORIAL_CELDA (Trazabilidad y Mantenimiento de Celdas)
+CREATE TABLE IF NOT EXISTS historial_celda (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    celda_codigo VARCHAR(10) NOT NULL,
+    estado_anterior VARCHAR(15) NOT NULL,
+    estado_nuevo VARCHAR(15) NOT NULL,
+    motivo TEXT,
+    usuario_id INTEGER,
+    fecha_cambio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (celda_codigo) REFERENCES celda(codigo) ON DELETE CASCADE,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE SET NULL
+);
+
+-- 8. TABLA: AUDITORIA_ACCION (Trazabilidad y Seguridad 24/7)
+CREATE TABLE IF NOT EXISTS auditoria_accion (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    usuario_id INTEGER,
+    modulo VARCHAR(50) NOT NULL,
+    accion VARCHAR(50) NOT NULL,
+    detalle TEXT,
+    ip_terminal VARCHAR(50) DEFAULT 'Terminal Local',
+    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE SET NULL
+);
+
+-- ÍNDICES DE ALTO RENDIMIENTO
 CREATE INDEX IF NOT EXISTS idx_vehiculo_placa ON vehiculo(placa);
 CREATE INDEX IF NOT EXISTS idx_celda_estado_tipo ON celda(tipo_permitido, estado);
 CREATE INDEX IF NOT EXISTS idx_registro_activo ON registro_acceso(vehiculo_placa, estado);
 CREATE INDEX IF NOT EXISTS idx_mensualidad_placa ON mensualidad(vehiculo_placa, fecha_vencimiento);
+CREATE INDEX IF NOT EXISTS idx_usuario_user ON usuario(username);
+CREATE INDEX IF NOT EXISTS idx_historial_celda ON historial_celda(celda_codigo);
 
 -- ====================================================================
--- INSERCIÓN DE DATOS SEMILLA (80 CELDAS REGLAMENTARIAS)
+-- DATOS SEMILLA: CELDAS, CLIENTES, VEHÍCULOS Y USUARIOS
 -- ====================================================================
 
 -- 10 Celdas de Motos: M-01 a M-10
@@ -161,25 +206,26 @@ INSERT OR IGNORE INTO celda (codigo, tipo_permitido, estado, piso, zona) VALUES
 ('C-69', 'CARRO', 'DISPONIBLE', 2, 'PISO 2 - ZONA E'),
 ('C-70', 'CARRO', 'DISPONIBLE', 2, 'PISO 2 - ZONA E');
 
--- ====================================================================
--- CLIENTES Y VEHÍCULOS DE PRUEBA PARA VALIDACIÓN DOCENTE
--- ====================================================================
+-- Usuarios Semilla (Claves SHA-256)
+-- admin: admin123 -> 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+-- adriana_op: operario123 -> 8c9e54a36279f...
+-- daniel_op: operario123 -> 8c9e54a36279f...
+-- auditor: auditor123 -> 7c72f7e4...
+INSERT OR IGNORE INTO usuario (id, username, password_hash, nombre_completo, email, rol, cargo, activo) VALUES
+(1, 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Camilo Alberto Palacios Turriago', 'camilo.palacios@autoscolombia.com', 'ADMIN', 'Administrador General', 1),
+(2, 'adriana_op', '4c478e727de91ec0be54284bd97cf43666dca0df7cf542fb4fa996c5aa5a3c26', 'Adriana Andrea Agudelo Agudelo', 'adriana.agudelo@autoscolombia.com', 'OPERARIO', 'Operador de Turno Norte', 1),
+(3, 'daniel_op', '4c478e727de91ec0be54284bd97cf43666dca0df7cf542fb4fa996c5aa5a3c26', 'Juan Daniel Pulgarin García', 'daniel.pulgarin@autoscolombia.com', 'OPERARIO', 'Operador de Turno Sur', 1),
+(4, 'auditor', 'c637a23c7f99996bb3caebdc698547b715a2eb41e42a98ef3879d924ae0c0e52', 'Auditor de Calidad y Seguridad', 'auditoria@autoscolombia.com', 'AUDITOR', 'Auditor de Sistemas', 1);
 
 -- Propietarios de prueba
-INSERT OR IGNORE INTO propietario (id, documento, nombre_completo, telefono, email) VALUES
-(1, '1020304050', 'Juan Carlos Pérez', '3104567890', 'juan.perez@email.com'),
-(2, '1030405060', 'David Gómez', '3129876543', 'david.gomez@email.com'),
-(3, '1040506070', 'Pedro Infante', '3151122334', 'pedro.infante@email.com'),
-(4, '1050607080', 'Camila Restrepo', '3005544332', 'camila.restrepo@email.com'),
-(5, '1060708090', 'Andrés Felipe Morales', '3206677889', 'andres.morales@email.com');
+INSERT OR IGNORE INTO propietario (id, documento, nombre_completo, telefono, email, direccion) VALUES
+(1, '1020304050', 'Juan Carlos Pérez', '3104567890', 'juan.perez@email.com', 'Calle 50 # 45-20, Medellín'),
+(2, '1030405060', 'David Gómez', '3129876543', 'david.gomez@email.com', 'Cra 70 # 32-15, Medellín'),
+(3, '1040506070', 'Pedro Infante', '3151122334', 'pedro.infante@email.com', 'Av. El Poblado # 10-50, Medellín'),
+(4, '1050607080', 'Camila Restrepo', '3005544332', 'camila.restrepo@email.com', 'Circular 4 # 73-10, Medellín'),
+(5, '1060708090', 'Andrés Felipe Morales', '3206677889', 'andres.morales@email.com', 'Calle 10 # 30-22, Medellín');
 
 -- Vehículos registrados
--- ABC123: Carro con mensualidad vigente (Al día)
--- MOT808: Moto con mensualidad vigente (Al día)
--- XYZ999: Carro con mensualidad VENCIDA (Para probar denegación)
--- MOT101: Moto con mensualidad VENCIDA (Para probar denegación)
--- KLR500: Moto con mensualidad vigente (Al día)
--- TOY456: Carro con mensualidad vigente (Al día)
 INSERT OR IGNORE INTO vehiculo (placa, tipo_vehiculo, marca, modelo, color, propietario_id, activo) VALUES
 ('ABC123', 'CARRO', 'Renault', 'Duster Intens 2.0', 'Gris Plata', 1, 1),
 ('MOT808', 'MOTO', 'Yamaha', 'NMAX 155 Connected', 'Azul Mate', 2, 1),
@@ -188,8 +234,7 @@ INSERT OR IGNORE INTO vehiculo (placa, tipo_vehiculo, marca, modelo, color, prop
 ('KLR500', 'MOTO', 'Kawasaki', 'KLR 650 Adventure', 'Verde Militar', 4, 1),
 ('TOY456', 'CARRO', 'Toyota', 'Corolla Cross Híbrido', 'Blanco Perlado', 5, 1);
 
--- Mensualidades registradas (Tarifas oficiales: $250.000 Carro, $100.000 Moto)
--- ABC123: Vigente hasta dentro de 20 días
+-- Mensualidades registradas
 INSERT OR IGNORE INTO mensualidad (vehiculo_placa, fecha_pago, fecha_vencimiento, valor_pagado, estado) VALUES
 ('ABC123', date('now', '-10 days'), date('now', '+20 days'), 250000.00, 'ACTIVA'),
 ('MOT808', date('now', '-5 days'), date('now', '+25 days'), 100000.00, 'ACTIVA'),

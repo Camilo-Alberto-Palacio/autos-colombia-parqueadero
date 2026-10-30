@@ -1,7 +1,7 @@
 """
 Servidor Principal Concurrente (Multi-Operario) - Autos Colombia 24/7
-Iteración 1: Módulo Exclusivo de Entrada y Salida de Vehículos
-Docente: Reinaldo Rojas
+Iteración 1 y 2 Unificada: Gestión de Usuarios, Gestión de Celdas y Control de Acceso
+Docente: Reinaldo Rojas | Grupo: 25
 Ejecución: python app.py
 """
 
@@ -54,10 +54,12 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
         path = parsed.path
         params = urllib.parse.parse_qs(parsed.query)
 
+        # 1. Resumen Operativo General (Dashboard)
         if path == "/api/resumen":
             data = models.obtener_resumen_operativo()
             return self._send_json(data)
 
+        # 2. Consulta de Vehículo por Placa
         elif path == "/api/vehiculo":
             placa = params.get("placa", [""])[0]
             if not placa:
@@ -68,17 +70,47 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
             else:
                 return self._send_json({"error": f"Vehículo con placa '{placa}' no encontrado"}, 404)
 
+        # 3. Lista de Usuarios del Sistema (Gestión de Usuarios - Iteración 2)
+        elif path == "/api/usuarios":
+            rol_filtro = params.get("rol", [None])[0]
+            solo_activos = params.get("activos", ["false"])[0].lower() == "true"
+            usuarios = models.listar_usuarios(rol_filtro, solo_activos)
+            return self._send_json({"total": len(usuarios), "usuarios": usuarios})
+
+        # 4. Administración de Celdas (Gestión de Celdas - Iteración 2)
+        elif path == "/api/celdas":
+            tipo = params.get("tipo", [None])[0]
+            estado = params.get("estado", [None])[0]
+            zona = params.get("zona", [None])[0]
+            celdas = models.listar_celdas_administracion(tipo, estado, zona)
+            return self._send_json({"total": len(celdas), "celdas": celdas})
+
+        # 5. Bitácora de Auditoría del Sistema
+        elif path == "/api/auditoria":
+            limite = int(params.get("limite", [50])[0])
+            items = models.obtener_auditoria_sistema(limite)
+            return self._send_json({"total": len(items), "auditoria": items})
+
+        # 6. Historial de Cambios de Celdas
+        elif path == "/api/historial_celdas":
+            limite = int(params.get("limite", [50])[0])
+            items = models.obtener_historial_celdas(limite)
+            return self._send_json({"total": len(items), "historial": items})
+
+        # 7. Endpoint de Salud del Sistema
         elif path == "/api/salud":
             return self._send_json({
                 "status": "OK",
-                "sistema": "Autos Colombia 24/7 - Iteración 1 (Multi-Operario Concurrente)",
+                "sistema": "Autos Colombia 24/7 - Iteración 1 y 2 Unificada",
                 "docente": "Reinaldo Rojas",
-                "timestamp": datetime.now().isoformat()
+                "grupo": "25",
+                "modulos": ["Control de Acceso", "Gestión de Usuarios y Roles", "Gestión y Mantenimiento de Celdas", "Padrón de Abonados"],
+                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             })
 
+        # Servir Frontend SPA
         if path == "/" or path == "":
             self.path = "/index.html"
-            return super().do_GET()
 
         return super().do_GET()
 
@@ -87,64 +119,112 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
         path = parsed.path
 
         content_length = int(self.headers.get("Content-Length", 0))
-        body_bytes = self.rfile.read(content_length) if content_length > 0 else b"{}"
+        body = self.rfile.read(content_length)
+
         try:
-            body = json.loads(body_bytes.decode("utf-8")) if body_bytes else {}
-        except Exception:
-            body = {}
+            datos = json.loads(body.decode("utf-8")) if body else {}
+        except json.JSONDecodeError:
+            return self._send_json({"success": False, "mensaje": "Cuerpo JSON inválido"}, 400)
 
-        if path == "/api/ingreso":
-            placa = body.get("placa")
-            observaciones = body.get("observaciones", "")
-            puerta = body.get("puerta", "Puerta 1 (Norte)")
-            if not placa:
-                return self._send_json({"success": False, "mensaje": "La placa es obligatoria"}, 400)
-            
-            resultado = models.registrar_ingreso(placa, observaciones, puerta)
-            status_code = 200 if resultado.get("success") else 400
-            return self._send_json(resultado, status_code)
+        # 1. Autenticación / Login de Usuario (Iteración 2)
+        if path == "/api/auth/login":
+            username = datos.get("username", "")
+            password = datos.get("password", "")
+            ip = datos.get("terminal", "Cabina Principal")
+            resultado = models.autenticar_usuario(username, password, ip)
+            status = 200 if resultado["success"] else 401
+            return self._send_json(resultado, status)
 
+        # 2. Crear Nuevo Usuario del Sistema (Iteración 2)
+        elif path == "/api/usuarios":
+            admin_id = int(datos.get("admin_id", 1))
+            resultado = models.crear_usuario(datos, admin_id)
+            status = 201 if resultado["success"] else 400
+            return self._send_json(resultado, status)
+
+        # 3. Actualizar Usuario del Sistema (Iteración 2)
+        elif path == "/api/usuarios/actualizar":
+            user_id = int(datos.get("user_id", 0))
+            admin_id = int(datos.get("admin_id", 1))
+            resultado = models.actualizar_usuario(user_id, datos, admin_id)
+            status = 200 if resultado["success"] else 400
+            return self._send_json(resultado, status)
+
+        # 4. Cambiar Contraseña de Usuario (Iteración 2)
+        elif path == "/api/usuarios/clave":
+            user_id = int(datos.get("user_id", 0))
+            nueva_clave = datos.get("nueva_password", "")
+            admin_id = int(datos.get("admin_id", 1))
+            resultado = models.cambiar_password(user_id, nueva_clave, admin_id)
+            status = 200 if resultado["success"] else 400
+            return self._send_json(resultado, status)
+
+        # 5. Cambiar Estado de Celda (Mantenimiento, Disponible, Inactiva) (Iteración 2)
+        elif path == "/api/celdas/estado":
+            codigo = datos.get("codigo", "")
+            nuevo_estado = datos.get("nuevo_estado", "")
+            motivo = datos.get("motivo", "")
+            usuario_id = int(datos.get("usuario_id", 1))
+            resultado = models.cambiar_estado_celda(codigo, nuevo_estado, motivo, usuario_id)
+            status = 200 if resultado["success"] else 400
+            return self._send_json(resultado, status)
+
+        # 6. Reubicar Vehículo entre Celdas (Iteración 2)
+        elif path == "/api/celdas/reubicar":
+            placa = datos.get("placa", "")
+            nueva_celda = datos.get("nueva_celda", "")
+            motivo = datos.get("motivo", "")
+            marcar_mantenimiento = datos.get("marcar_anterior_mantenimiento", False)
+            usuario_id = int(datos.get("usuario_id", 1))
+            resultado = models.reubicar_vehiculo_celda(placa, nueva_celda, motivo, marcar_mantenimiento, usuario_id)
+            status = 200 if resultado["success"] else 400
+            return self._send_json(resultado, status)
+
+        # 7. Registrar Entrada de Vehículo (Iteración 1 & 2)
+        elif path == "/api/ingreso":
+            placa = datos.get("placa", "")
+            observaciones = datos.get("observaciones", None)
+            puerta = datos.get("puerta", "Puerta 1 (Norte)")
+            usuario_id = int(datos.get("usuario_id", 2))
+            resultado = models.registrar_ingreso(placa, observaciones, puerta, usuario_id)
+            status = 200 if resultado["success"] else 400
+            return self._send_json(resultado, status)
+
+        # 8. Registrar Salida de Vehículo (Iteración 1 & 2)
         elif path == "/api/salida":
-            placa = body.get("placa")
-            observaciones = body.get("observaciones", "")
-            puerta = body.get("puerta", "Puerta 1 (Norte)")
-            if not placa:
-                return self._send_json({"success": False, "mensaje": "La placa es obligatoria"}, 400)
-            
-            resultado = models.registrar_salida(placa, observaciones, puerta)
-            status_code = 200 if resultado.get("success") else 400
-            return self._send_json(resultado, status_code)
+            placa = datos.get("placa", "")
+            observaciones_salida = datos.get("observaciones_salida", None)
+            puerta = datos.get("puerta", "Puerta 1 (Norte)")
+            usuario_id = int(datos.get("usuario_id", 2))
+            resultado = models.registrar_salida(placa, observaciones_salida, puerta, usuario_id)
+            status = 200 if resultado["success"] else 400
+            return self._send_json(resultado, status)
 
+        # 9. Registrar Nuevo Abonado (Padrón de Abonados)
         elif path == "/api/abonado":
-            resultado = models.registrar_nuevo_abonado(body)
-            status_code = 200 if resultado.get("success") else 400
-            return self._send_json(resultado, status_code)
+            usuario_id = int(datos.get("usuario_id", 1))
+            resultado = models.registrar_nuevo_abonado(datos, usuario_id)
+            status = 200 if resultado["success"] else 400
+            return self._send_json(resultado, status)
 
-        return self._send_json({"error": "Endpoint no encontrado"}, 404)
+        return self._send_json({"error": "Ruta POST no encontrada"}, 404)
 
 def iniciar_servidor():
-    """Inicializa la base de datos y arranca el servidor web multi-hilo local."""
-    print("=" * 72)
-    print(" PARQUEADERO AUTOS COLOMBIA 24/7 - ITERACIÓN 1 (MULTI-OPERARIO)")
-    print(" Docente: Reinaldo Rojas")
-    print(" Control Exclusivo de Entrada y Salida por Mensualidad")
-    print("=" * 72)
-    
     database.inicializar_base_datos()
-    resumen = models.obtener_resumen_operativo()
-    print(f"-> Capacidad Total: {resumen['capacidad_total']} celdas")
-    print(f"   - Carros: {resumen['carros']['total']} celdas ({resumen['carros']['libres']} libres)")
-    print(f"   - Motos:  {resumen['motos']['total']} celdas ({resumen['motos']['libres']} libres)")
-    
     with ThreadedHTTPServer(("", PORT), AutosColombiaHandler) as httpd:
-        url = f"http://localhost:{PORT}"
-        print(f"\n[OK] Servidor Concurrente en ejecución en: {url}")
-        print("-> Soportando múltiples operarios / puertas de acceso simultáneas.")
-        print("-> Presiona Ctrl + C en cualquier momento para detener el servidor.\n")
+        print("=" * 70)
+        print("   SISTEMA DE GESTIÓN AUTOS COLOMBIA 24/7 - ITERACIÓN 1 & 2")
+        print("   Docente: Prof. Reinaldo Rojas | Grupo: 25 | IU Digital")
+        print(f"   Servidor activo en: http://localhost:{PORT}")
+        print("   - Módulo 1: Gestión de Entrada y Salida 24/7")
+        print("   - Módulo 2: Gestión de Usuarios y Roles (RBAC: Admin, Operario, Auditor)")
+        print("   - Módulo 3: Gestión y Mantenimiento de Celdas (80 Celdas)")
+        print("   - Módulo 4: Padrón de Abonados y Auditoría")
+        print("=" * 70)
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
-            print("\nServidor detenido por el usuario.")
+            print("\nServidor detenido ordenadamente.")
 
 if __name__ == "__main__":
     iniciar_servidor()
