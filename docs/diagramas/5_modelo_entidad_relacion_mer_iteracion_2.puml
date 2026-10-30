@@ -1,0 +1,141 @@
+@startuml
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+hide circle
+skinparam linetype ortho
+title Modelo Entidad-Relación Físico en 3FN (8 Tablas SQLite WAL) — Iteraciones 1 y 2
+
+entity "PROPIETARIO" as e_prop {
+  * **id** : INTEGER <<PK>>
+  --
+  * documento : VARCHAR(20) <<UNIQUE>>
+  * nombre_completo : VARCHAR(120)
+  * telefono : VARCHAR(20)
+  email : VARCHAR(100)
+  direccion : VARCHAR(120)
+  fecha_registro : DATETIME
+}
+
+entity "VEHICULO" as e_veh {
+  * **placa** : VARCHAR(10) <<PK>>
+  --
+  * tipo_vehiculo : VARCHAR(10) <<CHECK CARRO|MOTO>>
+  * marca : VARCHAR(50)
+  * modelo : VARCHAR(50)
+  * color : VARCHAR(30)
+  * propietario_id : INTEGER <<FK>>
+  activo : BOOLEAN
+  fecha_creacion : DATETIME
+}
+
+entity "MENSUALIDAD" as e_mens {
+  * **id** : INTEGER <<PK>>
+  --
+  * vehiculo_placa : VARCHAR(10) <<FK>>
+  * fecha_pago : DATE
+  * fecha_vencimiento : DATE
+  * valor_pagado : DECIMAL(10,2)
+  * estado : VARCHAR(15) <<CHECK>>
+}
+
+entity "CELDA" as e_celda {
+  * **codigo** : VARCHAR(10) <<PK>>
+  --
+  * tipo_permitido : VARCHAR(10) <<CHECK CARRO|MOTO>>
+  * estado : VARCHAR(15) <<DISPONIBLE|OCUPADA|MANTENIMIENTO|INACTIVA>>
+  piso : INTEGER
+  zona : VARCHAR(20)
+  motivo_bloqueo : TEXT
+}
+
+entity "USUARIO" as e_user {
+  * **id** : INTEGER <<PK>>
+  --
+  * username : VARCHAR(50) <<UNIQUE>>
+  * password_hash : VARCHAR(128) <<SHA-256>>
+  * nombre_completo : VARCHAR(120)
+  * email : VARCHAR(100) <<UNIQUE>>
+  * rol : VARCHAR(20) <<ADMIN|OPERARIO|AUDITOR>>
+  cargo : VARCHAR(60)
+  * activo : BOOLEAN
+  ultimo_login : DATETIME
+}
+
+entity "REGISTRO_ACCESO" as e_reg {
+  * **id** : INTEGER <<PK>>
+  --
+  * vehiculo_placa : VARCHAR(10) <<FK>>
+  * celda_codigo : VARCHAR(10) <<FK>>
+  * fecha_ingreso : DATETIME
+  fecha_salida : DATETIME
+  * estado : VARCHAR(15) <<ADENTRO|FINALIZADO>>
+  observaciones : TEXT
+  usuario_id : INTEGER <<FK>>
+}
+
+entity "HISTORIAL_CELDA" as e_hist {
+  * **id** : INTEGER <<PK>>
+  --
+  * celda_codigo : VARCHAR(10) <<FK>>
+  * estado_anterior : VARCHAR(15)
+  * estado_nuevo : VARCHAR(15)
+  motivo : TEXT
+  usuario_id : INTEGER <<FK>>
+  fecha_cambio : DATETIME
+}
+
+entity "AUDITORIA_ACCION" as e_aud {
+  * **id** : INTEGER <<PK>>
+  --
+  usuario_id : INTEGER <<FK>>
+  * modulo : VARCHAR(50)
+  * accion : VARCHAR(50)
+  detalle : TEXT
+  ip_terminal : VARCHAR(50)
+  fecha : DATETIME
+}
+
+e_prop ||--o{ e_veh : "1:N"
+e_veh ||--o{ e_mens : "1:N"
+e_veh ||--o{ e_reg : "1:N"
+e_celda ||--o{ e_reg : "1:N"
+e_celda ||--o{ e_hist : "1:N"
+e_user ||--o{ e_reg : "1:N"
+e_user ||--o{ e_hist : "1:N"
+e_user ||--o{ e_aud : "1:N"
+@enduml

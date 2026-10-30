@@ -1,0 +1,101 @@
+@startuml
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+autonumber "<b>[00]"
+title Diagrama de Secuencia 2B — Mantenimiento de Celdas y Reubicación Transaccional (Iteración 2)
+
+actor "Operario / Admin" as Actor
+boundary "VistaCeldasSPA\n(Cobalt Bay OS)" as UI
+control "AutosColombiaHandler\n(app.py)" as API
+control "ModuloCeldasService\n(models.py)" as Domain
+database "SQLite WAL\n(autos_colombia.db)" as DB
+
+== Escenario 1: Bloqueo Operativo de Celda por Mantenimiento (CU-08) ==
+Actor -> UI : Selecciona celda (ej. C-10) -> Estado MANTENIMIENTO + motivo
+activate UI
+UI -> API : POST /api/celdas/estado (codigo, nuevo_estado, motivo, usuario_id)
+activate API
+API -> Domain : cambiar_estado_celda(codigo, nuevo_estado, motivo, usuario_id)
+activate Domain
+Domain -> Domain : verificar_permiso(usuario_id, 'MANTENIMIENTO_CELDAS')
+Domain -> DB : SELECT vehiculo_placa FROM registro_acceso WHERE celda_codigo=? AND estado='ADENTRO'
+activate DB
+DB --> Domain : Verificación de ocupación activa
+deactivate DB
+
+alt Celda ocupada por un vehículo
+  Domain --> API : {success: false, mensaje: 'Conflicto: Reubique primero el vehículo'}
+  API --> UI : HTTP 400 Bad Request
+  UI --> Actor : Notifica prohibición de bloqueo sobre celda ocupada
+else Celda libre (Sin ocupante activo)
+  Domain -> DB : UPDATE celda SET estado='MANTENIMIENTO', motivo_bloqueo=?
+  Domain -> DB : INSERT INTO historial_celda (estado_anterior, estado_nuevo, motivo)
+  Domain -> DB : INSERT INTO auditoria_accion ('CAMBIO_ESTADO')
+  Domain --> API : {success: true, mensaje}
+  API --> UI : HTTP 200 OK
+  UI --> Actor : Actualiza Mapa de 80 Celdas y excluye celda del sorteo
+end
+deactivate Domain
+deactivate API
+deactivate UI
+
+== Escenario 2: Reubicación Atómica de Vehículo Estacionado (CU-09) ==
+Actor -> UI : Solicita trasladar vehículo de celda origen a nueva celda libre
+activate UI
+UI -> API : POST /api/celdas/reubicar (placa, nueva_celda, marcar_mantenimiento, usuario_id)
+activate API
+API -> Domain : reubicar_vehiculo_celda(...)
+activate Domain
+Domain -> DB : BEGIN IMMEDIATE TRANSACTION
+activate DB
+Domain -> DB : SELECT id, celda_codigo, tipo_vehiculo FROM registro_acceso JOIN vehiculo
+Domain -> DB : SELECT tipo_permitido, estado FROM celda WHERE codigo = nueva_celda
+Domain -> DB : UPDATE celda SET estado='OCUPADA' WHERE codigo = nueva_celda
+Domain -> DB : UPDATE celda SET estado='MANTENIMIENTO' WHERE codigo = celda_origen
+Domain -> DB : UPDATE registro_acceso SET celda_codigo = nueva_celda WHERE id = mov_id
+Domain -> DB : INSERT INTO historial_celda (celda_origen y nueva_celda)
+Domain -> DB : COMMIT TRANSACTION
+deactivate DB
+Domain -> DB : INSERT INTO auditoria_accion ('REUBICACION_VEHICULO')
+Domain --> API : {success: true, celda_origen, celda_destino}
+deactivate Domain
+API --> UI : HTTP 200 OK
+deactivate API
+UI --> Actor : Confirma traslado atómico sin inconsistencias de aforo
+deactivate UI
+@enduml

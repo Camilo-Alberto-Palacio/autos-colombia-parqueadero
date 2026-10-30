@@ -1,117 +1,114 @@
-# 🚗 Autos Colombia 24/7 - Sistema de Control de Acceso
-### Proyecto Académico: Desarrollo de Software / Ingeniería de Software
-**Docente:** Reinaldo Rojas  
-**Iteración:** 1 (Módulo Exclusivo de Entrada y Salida de Vehículos)  
-**Modalidad de Operación:** Exclusiva por Mensualidad · 24 Horas / 7 Días a la Semana  
-**Capacidad Oficial:** 80 Celdas (70 Carros y 10 Motos)
+# 🚗 Autos Colombia 24/7 — Sistema Integral de Operaciones de Parqueadero
+### Institución Universitaria Digital de Antioquia (IU Digital) • Ingeniería de Software (`PREICA2602B020053`)
+**Docente:** Prof. Reinaldo Rojas | **Grupo:** 25  
+**Integrantes:** Adriana Andrea Agudelo Agudelo · Camilo Alberto Palacios Turriago · Juan Daniel Pulgarin García  
+**Alcance Actual:** **Iteraciones 1 y 2 Unificadas** *(Control de Acceso 24/7 + Gestión de Usuarios RBAC + Gestión CRUD de 80 Celdas)*  
+**Delimitación Evolutiva:** *El módulo financiero de **Gestión de Pagos** queda reservado exclusivamente para la **Iteración 3**.*
 
 ---
 
-## 📌 1. Descripción del Proyecto
+## 📌 1. Descripción Arquitectónica (Iteraciones 1 y 2)
 
-**Autos Colombia 24/7** es una aplicación integral desarrollada para la gestión automatizada del control de acceso vehicular en parqueaderos corporativos que operan bajo el modelo de suscripción mensual. 
+**Autos Colombia 24/7** es una aplicación web transaccional multi-operario diseñada para administrar la operación continua (24 horas / 7 días) de un parqueadero corporativo bajo contratos exclusivos de mensualidad sobre un aforo físico reglamentario de **80 celdas numeradas** (**70 para automóviles `C-01..C-70`** en Pisos 1 y 2, y **10 para motocicletas `M-01..M-10`**).
 
-Conforme a las directrices de la **Iteración 1** dictadas por el profesor Reinaldo Rojas:
-* El sistema se enfoca **exclusivamente en la gestión de Entrada y Salida de vehículos**.
-* Se excluye para esta entrega la administración compleja de usuarios y pasarelas de pago (programadas para iteraciones 2 y 3).
-* La asignación de celdas es **100% dinámica y aleatoria** por software entre las celdas disponibles para el tipo de automotor (no hay celdas fijas por cliente).
-* El cobro se realiza **por vehículo** (\$250.000 COP Carro, \$100.000 COP Moto). Si la mensualidad está vencida, el sistema **deniega el ingreso**.
-* Aforo estricto de **80 celdas físicas** (10 para motos y 70 para vehículos/carros).
+### Módulos Integrados en esta Entrega:
+1. **Control de Acceso 24/7 (Iteración 1 + Integración Iteración 2):**
+   - Verificación estricta de vigencia mensual sin días de gracia (`$250.000 COP` Carro / `$100.000 COP` Moto).
+   - Sorteo dinámico aleatorio sobre celdas `DISPONIBLE` compatibles, **excluyendo automáticamente toda celda en estado `MANTENIMIENTO` o `INACTIVA`**.
+   - Registro de novedades físicas de seguridad en ronda y salida con liberación atómica de celda.
+2. **Gestión de Usuarios, Roles y Permisos — RBAC + SHA-256 (Iteración 2):**
+   - Dispersión criptográfica de contraseñas mediante `SHA-256` (cero claves en texto plano).
+   - Matriz declarativa de Control de Acceso Basado en Roles (**`ADMIN`**, **`OPERARIO`**, **`AUDITOR`**) validada en cada endpoint HTTP (`401 Unauthorized` / `403 Forbidden`).
+   - CRUD completo de usuarios internos, restablecimiento de clave, protección contra desactivación/degradación del último `ADMIN` activo y baja lógica (`activo = 0`) para preservar llaves foráneas de auditoría.
+   - Padrón CRUD de Clientes Abonados y actualización de datos de titulares y vehículos asociados.
+3. **Administración CRUD, Mantenimiento y Reubicación de 80 Celdas (Iteración 2):**
+   - Alta, consulta multicriterio, edición estructural (zona, piso, categoría) y eliminación validada de celdas físicas.
+   - Bloqueo operativo (`MANTENIMIENTO` / `INACTIVA`) con motivo técnico y bitácora en `historial_celda`.
+   - **Reubicación transaccional atómica (`BEGIN IMMEDIATE`)** de vehículos estacionados ante contingencias físicas, permitiendo bloquear simultáneamente la celda origen en mantenimiento.
+4. **Bitácora Central Inmutable de Auditoría 24/7:**
+   - Trazabilidad cronológica inalterable en `auditoria_accion` de cada inicio de sesión, rechazo RBAC, operación CRUD, reubicación y movimiento de barrera.
 
 ---
 
-## 🚀 2. Ejecución Rápida en 1 Solo Paso
+## 🚀 2. Ejecución Rápida (Cero Dependencias Externas)
 
-La aplicación fue desarrollada en **Python 3** utilizando la librería estándar para garantizar **cero dependencias externas**. No requiere configurar entornos virtuales complejos ni instalar librerías pesadas con `pip`.
+El proyecto utiliza exclusivamente la **librería estándar de Python 3** (`http.server.ThreadingHTTPServer`, `sqlite3` en modo `WAL`, `hashlib`, `threading`, `unittest`). No requiere `pip install`.
 
-### Paso 1: Iniciar el Servidor
-Abre tu terminal en la carpeta del proyecto y ejecuta:
-
-```bash
+### Iniciar el Servidor Web Concurrente
+```powershell
 python app.py
 ```
+Luego abre en cualquier navegador: 👉 **[http://localhost:8000](http://localhost:8000)**
 
-### Paso 2: Abrir la Aplicación Web
-Ingresa en cualquier navegador web a:
-👉 **[http://localhost:8000](http://localhost:8000)**
-
----
-
-## 🧪 3. Guía de Pruebas Rápidas para el Docente
-
-La interfaz cuenta con **botones de prueba rápida en 1 clic** en el módulo de entrada para verificar inmediatamente todas las reglas de negocio:
-
-1. **Prueba de Ingreso Autorizado (Carro):**
-   - Haz clic en el botón `ABC-123 (Carro Al Día)`.
-   - Se cargarán los datos: *Renault Duster Intens 2.0 (Gris Plata)*, conductor *Juan Carlos Pérez*, mensualidad vigente.
-   - Pulsa **`🟢 ¡ABRIR BARRERA DE ENTRADA!`**.
-   - El sistema sorteará y asignará una celda aleatoria disponible (ej: `C-24`), marcará la celda como ocupada, guardará el timestamp y actualizará los contadores.
-
-2. **Prueba de Ingreso Autorizado (Moto):**
-   - Haz clic en el botón `MOT-808 (Moto Al Día)`.
-   - Se cargarán los datos: *Yamaha NMAX 155 (Azul Mate)*.
-   - Pulsa **`🟢 ¡ABRIR BARRERA DE ENTRADA!`**.
-   - Se asignará una celda aleatoria exclusiva para motos entre `M-01` y `M-10`.
-
-3. **Prueba de Bloqueo por Mensualidad Vencida (Mora):**
-   - Haz clic en `XYZ-999 (Carro Vencido)` o `MOT-101 (Moto Vencida)`.
-   - El sistema mostrará una tarjeta en color rojo: **`MENSUALIDAD VENCIDA - ACCESO DENEGADO`**.
-   - El botón de apertura quedará deshabilitado para impedir el paso.
-
-4. **Prueba de Salida Rápida y Liberación Inmediata de Celda:**
-   - En la columna derecha ("Vehículos Estacionados Adentro"), pulsa el botón **`Dar Salida`** de cualquier vehículo.
-   - La celda se liberará inmediatamente, volverá al pool de disponibles y se calculará el tiempo de permanencia sin cobros adicionales en efectivo.
-
-5. **Inspección del Mapa de las 80 Celdas:**
-   - Navega a la pestaña **`2. Mapa 80 Celdas`**.
-   - Observa la matriz de 80 celdas en tiempo real con semáforo verde (libre) y rojo (ocupado).
-   - Haz clic sobre cualquier celda para ver su ficha técnica, placa ocupante y conductor.
+### Ejecutar la Suite de 20 Pruebas Automatizadas (QA Iteraciones 1 y 2)
+```powershell
+python -X utf8 tests_iteracion2.py
+```
+Resultado verificado: **`Ran 20 tests in ~1.4s — OK (100% Aprobado)`** *(restaura automáticamente `autos_colombia.db` al estado semilla limpio de 80 celdas al finalizar).*
 
 ---
 
-## 📂 4. Estructura del Repositorio y Entregables
+## 🔐 3. Cuentas Semilla RBAC para Pruebas y Sustentación
+
+| Usuario (`username`) | Contraseña | Rol RBAC | Titular Asignado | Privilegios Verificables |
+| :--- | :--- | :---: | :--- | :--- |
+| **`admin`** | `admin123` | `ADMIN` | Camilo Alberto Palacios Turriago | Control total: CRUD Usuarios, CRUD estructural de Celdas, Mantenimiento, Reubicación, Abonados y Acceso 24/7. |
+| **`adriana_op`** | `operario123` | `OPERARIO` | Adriana Andrea Agudelo Agudelo | Cabina Norte 24/7: Entrada/Salida, Novedades, Mantenimiento/Reubicación de Celdas y Padrón Abonados (`HTTP 403` en CRUD Admin). |
+| **`daniel_op`** | `operario123` | `OPERARIO` | Juan Daniel Pulgarin García | Cabina Sur 24/7: Operación multi-cabina concurrente sobre SQLite WAL. |
+| **`auditor`** | `auditor123` | `AUDITOR` | Auditor de Calidad y Seguridad | Supervisión estricta de Solo Lectura: bloquea con `HTTP 403` cualquier escritura. |
+
+---
+
+## 🔌 4. Resumen de Endpoints REST API (`app.py`)
+
+| Método | Ruta | Permiso RBAC Requerido | Descripción |
+| :---: | :--- | :--- | :--- |
+| `GET` | `/api/salud` | Público / Monitoreo | Estado del servidor concurrente y motor SQLite WAL. |
+| `GET` | `/api/resumen` | `CONSULTA_AUDITORIA` | KPIs de las 80 celdas, vehículos adentro y abonados. |
+| `GET` | `/api/vehiculo?placa=...` | `CONSULTA_AUDITORIA` | Ficha técnica, titular y vigencia estricta por placa. |
+| `GET` | `/api/celdas` | `CONSULTA_AUDITORIA` | Inventario filtrable de celdas (`estado`, `tipo`, `zona`, `q`). |
+| `GET` | `/api/celdas/historial` | `CONSULTA_AUDITORIA` | Bitácora técnica de cambios y mantenimientos (`historial_celda`). |
+| `GET` | `/api/usuarios` | `CONSULTA_AUDITORIA` | Listado de usuarios internos sin exponer `password_hash`. |
+| `GET` | `/api/roles` | `CONSULTA_AUDITORIA` | Matriz declarativa de roles y permisos RBAC. |
+| `GET` | `/api/abonados` | `CONSULTA_AUDITORIA` | Padrón completo de propietarios, vehículos y vigencias. |
+| `GET` | `/api/auditoria` | `CONSULTA_AUDITORIA` | Bitácora central inmutable filtrable por `modulo`. |
+| `POST` | `/api/auth/login` | Autenticación `SHA-256` | Valida credenciales, actualiza `ultimo_login` y emite sesión RBAC. |
+| `POST` | `/api/usuarios` | `GESTION_USUARIOS` (`ADMIN`) | Crea nuevo usuario interno con dispersión `SHA-256`. |
+| `POST` | `/api/usuarios/actualizar` | `GESTION_USUARIOS` (`ADMIN`) | Actualiza perfil, rol RBAC y estado protegiendo al último `ADMIN`. |
+| `POST` | `/api/usuarios/clave` | `GESTION_USUARIOS` (`ADMIN`) | Restablece contraseña con nuevo hash `SHA-256`. |
+| `POST` | `/api/usuarios/eliminar` | `GESTION_USUARIOS` (`ADMIN`) | Elimina cuenta o aplica baja lógica si posee historial de auditoría. |
+| `POST` | `/api/abonado` | `GESTION_ABONADOS` | Registra nuevo cliente abonado y vehículo asociado. |
+| `POST` | `/api/abonado/actualizar` | `GESTION_ABONADOS` | Actualiza contacto del titular o características del vehículo. |
+| `POST` | `/api/celdas` | `CRUD_CELDAS` (`ADMIN`) | Registra nueva celda física de expansión. |
+| `POST` | `/api/celdas/actualizar` | `CRUD_CELDAS` (`ADMIN`) | Edita zona, piso, categoría o estado operativo de celda. |
+| `POST` | `/api/celdas/eliminar` | `CRUD_CELDAS` (`ADMIN`) | Elimina celda libre sin historial referencial. |
+| `POST` | `/api/celdas/estado` | `MANTENIMIENTO_CELDAS` | Cambia estado (`DISPONIBLE` / `MANTENIMIENTO` / `INACTIVA`). |
+| `POST` | `/api/celdas/reubicar` | `MANTENIMIENTO_CELDAS` | Traslado transaccional atómico (`BEGIN IMMEDIATE`) entre celdas. |
+| `POST` | `/api/ingreso` | `OPERACION_ACCESO` | Entrada 24/7 con sorteo aleatorio excluyendo celdas en mantenimiento. |
+| `POST` | `/api/novedad` | `OPERACION_ACCESO` | Anexa novedad física de seguridad sobre vehículo estacionado. |
+| `POST` | `/api/salida` | `OPERACION_ACCESO` | Registra salida, calcula permanencia y libera celda a `DISPONIBLE`. |
+
+---
+
+## 📂 5. Estructura del Repositorio
 
 ```text
 aplicacion de parqueo/
-├── app.py                      # Servidor HTTP nativo y API REST (Python 3)
-├── database.py                 # Conexión SQLite, ORM transaccional y DDL automático
-├── models.py                   # Lógica del dominio (asignación aleatoria, control de aforo)
-├── database_schema.sql         # Script SQL físico DDL/DML (Entregable Base de Datos)
-├── autos_colombia.db           # Base de datos SQLite inicializada con 80 celdas
-│
-├── static/                     # Frontend SPA basado en Cobalt Bay OS (Stitch)
-│   ├── index.html              # Interfaz de usuario interactiva y responsiva
-│   └── app.js                  # Lógica del cliente, polling 24/7 y mapa de celdas
-│
-├── docs/                       # Documentación técnica completa exigida
-│   ├── DOCUMENTACION_TECNICA_ITERACION_1.md # Documento formal (RF, RNF, Historias de Usuario)
-│   ├── MODELADO_STARUML_Y_ARQUITECTURA.md  # Arquitectura en capas y diagramas UML
-│   ├── staruml_diagrams.puml               # Código fuente PlantUML compatible con StarUML
-│   ├── BASE_DE_DATOS_MER_MR.md             # MER Conceptual, MR Lógico y Diccionario de Datos
-│   ├── DISENO_VISUAL_FIGMA_Y_STITCH.md     # Especificación de tokens, Figma y Cobalt Bay OS
-│   └── GUIA_GITHUB_Y_ENTREGA.md            # Guía para subir a GitHub y checklist de entrega
-│
-└── stitch_parking_app_design/  # Diseños y capturas de alta fidelidad provistas en Stitch
+├── app.py                        # Servidor HTTP multi-hilo (ThreadedHTTPServer) y 24 endpoints REST
+├── models.py                     # Dominio unificado: RBAC, Usuarios, Celdas CRUD/Reubicación, Acceso 24/7
+├── database.py                   # Conexión SQLite WAL concurrente, migración idempotente y semillas
+├── database_schema.sql           # DDL físico 3FN (8 tablas, 6 índices, 80 celdas y hashes SHA-256 reales)
+├── tests_iteracion2.py           # Suite QA automatizada de 20 casos de prueba (CP-01 a CP-20)
+├── autos_colombia.db             # Base de datos SQLite inicializada y limpia (80 celdas disponibles)
+├── static/
+│   ├── index.html                # Interfaz SPA Cobalt Bay OS (6 módulos + 8 modales no bloqueantes)
+│   └── app.js                    # Estado reactivo RBAC, cliente Fetch API y sincronización en vivo
+└── docs/
+    ├── DOCUMENTACION_TECNICA_ITERACION_2.pdf   # Informe oficial compilado en Norma APA 7 (26 págs.)
+    ├── DOCUMENTACION_TECNICA_ITERACION_2.docx  # Versión editable en Microsoft Word
+    ├── Autos_Colombia_StarUML_Iteracion_2.mdj  # Proyecto editable StarUML (Casos de Uso, Secuencia, Componentes, Clases)
+    ├── Plan_de_Pruebas_Resumido_Iteracion_2.xlsx # Matriz Excel de 20 casos de prueba (CP-01..CP-20)
+    ├── Guion_Sustentacion_Video_Iteracion_2.md # Guion estructurado para el video demostrativo
+    ├── diagramas/                              # Diagramas UML 2.5 en alta resolución (.png, .svg, .puml)
+    └── mockups/                                # 6 Mockups de alta resolución (1600x960) del sistema
 ```
-
----
-
-## 📑 5. Resumen de Entregables Académicos
-
-| Entregable | Ubicación / Archivo | Estado |
-|---|---|---|
-| **Documentación Escrita (PDF/MD)** | `docs/DOCUMENTACION_TECNICA_ITERACION_1.md` | ✅ Completo (Portada, RF, RNF, Historias de Usuario Gherkin) |
-| **Modelado en StarUML** | `docs/MODELADO_STARUML_Y_ARQUITECTURA.md` y `docs/staruml_diagrams.puml` | ✅ Completo (Arquitectura, Casos de Uso, Clases, Paquetes, Secuencia) |
-| **Base de Datos (MER, MR y SQL Físico)** | `docs/BASE_DE_DATOS_MER_MR.md` y `database_schema.sql` | ✅ Completo (80 celdas: 10 motos + 70 carros, datos semilla de prueba) |
-| **Diseño Visual (Figma / Stitch)** | `docs/DISENO_VISUAL_FIGMA_Y_STITCH.md` y `stitch_parking_app_design/` | ✅ Completo (Sistema Cobalt Bay OS, interfaz responsiva 24/7) |
-| **Código Fuente y Repositorio** | `app.py`, `models.py`, `database.py`, `static/` | ✅ Completo (Funcional, cero dependencias, listo para GitHub) |
-
----
-
-## 🛠️ Tecnologías Utilizadas
-
-* **Backend:** Python 3 (HTTP REST API, SQLite3 transaccional, PRAGMA Foreign Keys ON).
-* **Frontend:** HTML5, Tailwind CSS, JavaScript Vanilla (Fetch API, Reactividad DOM).
-* **Tipografías:** Plus Jakarta Sans (Encabezados), JetBrains Mono (Placas y Códigos LPR), Inter (Tablas y métricas).
-* **Diseño e Iconografía:** Cobalt Bay OS (Stitch Design System), SVG estándar.
-* **Control de Versiones:** Git & GitHub.

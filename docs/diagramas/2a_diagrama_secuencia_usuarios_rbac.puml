@@ -1,0 +1,107 @@
+@startuml
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+autonumber "<b>[00]"
+title Diagrama de Secuencia 2A — Autenticación SHA-256, Control RBAC y CRUD de Usuarios (Iteración 2)
+
+actor "Usuario Interno\n(Admin / Operario)" as Actor
+boundary "VistaUsuariosSPA\n(Cobalt Bay OS)" as UI
+control "AutosColombiaHandler\n(app.py)" as API
+control "ModuloUsuariosRBAC\n(models.py)" as Domain
+database "SQLite WAL\n(autos_colombia.db)" as DB
+
+== Fase 1: Inicio de Sesión Criptográfico (CU-04) ==
+Actor -> UI : Ingresa username y password
+activate UI
+UI -> API : POST /api/auth/login (username, password, terminal)
+activate API
+API -> Domain : autenticar_usuario(username, password, ip)
+activate Domain
+Domain -> Domain : hash_password(password) [SHA-256]
+Domain -> DB : SELECT id, password_hash, rol, activo FROM usuario
+activate DB
+DB --> Domain : Registro de usuario
+deactivate DB
+
+alt Cuenta activa y hash SHA-256 coincide
+  Domain -> DB : UPDATE usuario SET ultimo_login = NOW()
+  Domain -> DB : INSERT INTO auditoria_accion ('LOGIN_EXITOSO')
+  Domain --> API : {success: true, usuario, permisos: PERMISOS_POR_ROL[rol]}
+  API --> UI : HTTP 200 OK (Sesión RBAC autenticada)
+  UI --> Actor : Habilita vistas según permisos del rol
+else Credenciales inválidas o cuenta suspendida
+  Domain -> DB : INSERT INTO auditoria_accion ('LOGIN_FALLIDO' / 'LOGIN_BLOQUEADO')
+  Domain --> API : {success: false, mensaje}
+  API --> UI : HTTP 401 Unauthorized
+  UI --> Actor : Muestra notificación de rechazo
+end
+deactivate Domain
+deactivate API
+deactivate UI
+
+== Fase 2: Creación CRUD de Usuario Protegida por RBAC (CU-05) ==
+Actor -> UI : Diligencia formulario Nuevo Usuario y pulsa Guardar
+activate UI
+UI -> API : POST /api/usuarios (datos, admin_id)
+activate API
+API -> Domain : crear_usuario(datos, admin_id)
+activate Domain
+Domain -> Domain : verificar_permiso(admin_id, 'GESTION_USUARIOS')
+Domain -> DB : SELECT rol, activo FROM usuario WHERE id = admin_id
+activate DB
+DB --> Domain : Datos del actor solicitante
+deactivate DB
+
+alt Rol == ADMIN (Permiso Concedido)
+  Domain -> DB : SELECT id FROM usuario WHERE username = ? OR email = ?
+  Domain -> Domain : hash_password(datos.password) [SHA-256]
+  Domain -> DB : INSERT INTO usuario (username, password_hash, rol, activo=1)
+  Domain -> DB : INSERT INTO auditoria_accion ('CREAR_USUARIO')
+  Domain --> API : {success: true, usuario_id}
+  API --> UI : HTTP 201 Created
+  UI --> Actor : Refresca tabla CRUD de usuarios
+else Rol == OPERARIO o AUDITOR (Acceso Denegado RBAC)
+  Domain -> DB : INSERT INTO auditoria_accion ('ACCESO_DENEGADO_RBAC')
+  Domain --> API : {success: false, codigo_error: 'PERMISO_DENEGADO'}
+  API --> UI : HTTP 403 Forbidden
+  UI --> Actor : Alerta de bloqueo de seguridad RBAC
+end
+deactivate Domain
+deactivate API
+deactivate UI
+@enduml

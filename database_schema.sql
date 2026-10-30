@@ -206,16 +206,16 @@ INSERT OR IGNORE INTO celda (codigo, tipo_permitido, estado, piso, zona) VALUES
 ('C-69', 'CARRO', 'DISPONIBLE', 2, 'PISO 2 - ZONA E'),
 ('C-70', 'CARRO', 'DISPONIBLE', 2, 'PISO 2 - ZONA E');
 
--- Usuarios Semilla (Claves SHA-256)
--- admin: admin123 -> 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
--- adriana_op: operario123 -> 8c9e54a36279f...
--- daniel_op: operario123 -> 8c9e54a36279f...
--- auditor: auditor123 -> 7c72f7e4...
+-- Usuarios Semilla (Claves SHA-256 verificadas)
+-- admin: admin123       -> 240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9
+-- adriana_op: operario123 -> ea66d0295003394ff7f847590fe43af491ded28bb3837d543d55dfa130c9b2f3
+-- daniel_op: operario123  -> ea66d0295003394ff7f847590fe43af491ded28bb3837d543d55dfa130c9b2f3
+-- auditor: auditor123     -> 5b92db4dfb561dc69c949f34d36f5db0f8b30811be3a2949d85c5001279e9b1a
 INSERT OR IGNORE INTO usuario (id, username, password_hash, nombre_completo, email, rol, cargo, activo) VALUES
 (1, 'admin', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'Camilo Alberto Palacios Turriago', 'camilo.palacios@autoscolombia.com', 'ADMIN', 'Administrador General', 1),
-(2, 'adriana_op', '4c478e727de91ec0be54284bd97cf43666dca0df7cf542fb4fa996c5aa5a3c26', 'Adriana Andrea Agudelo Agudelo', 'adriana.agudelo@autoscolombia.com', 'OPERARIO', 'Operador de Turno Norte', 1),
-(3, 'daniel_op', '4c478e727de91ec0be54284bd97cf43666dca0df7cf542fb4fa996c5aa5a3c26', 'Juan Daniel Pulgarin García', 'daniel.pulgarin@autoscolombia.com', 'OPERARIO', 'Operador de Turno Sur', 1),
-(4, 'auditor', 'c637a23c7f99996bb3caebdc698547b715a2eb41e42a98ef3879d924ae0c0e52', 'Auditor de Calidad y Seguridad', 'auditoria@autoscolombia.com', 'AUDITOR', 'Auditor de Sistemas', 1);
+(2, 'adriana_op', 'ea66d0295003394ff7f847590fe43af491ded28bb3837d543d55dfa130c9b2f3', 'Adriana Andrea Agudelo Agudelo', 'adriana.agudelo@autoscolombia.com', 'OPERARIO', 'Operador de Turno Norte', 1),
+(3, 'daniel_op', 'ea66d0295003394ff7f847590fe43af491ded28bb3837d543d55dfa130c9b2f3', 'Juan Daniel Pulgarin García', 'daniel.pulgarin@autoscolombia.com', 'OPERARIO', 'Operador de Turno Sur', 1),
+(4, 'auditor', '5b92db4dfb561dc69c949f34d36f5db0f8b30811be3a2949d85c5001279e9b1a', 'Auditor de Calidad y Seguridad', 'auditoria@autoscolombia.com', 'AUDITOR', 'Auditor de Sistemas', 1);
 
 -- Propietarios de prueba
 INSERT OR IGNORE INTO propietario (id, documento, nombre_completo, telefono, email, direccion) VALUES

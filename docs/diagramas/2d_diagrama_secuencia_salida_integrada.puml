@@ -1,0 +1,89 @@
+@startuml
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+autonumber "<b>[00]"
+title Diagrama de Secuencia 2D — Integración Iteraciones 1 y 2: Novedad Física, Salida y Liberación de Celda
+
+actor "Operario de Cabina" as Operario
+boundary "VistaControlAcceso\n(Cobalt Bay OS)" as UI
+control "AutosColombiaHandler\n(app.py)" as API
+control "ControlAccesoService\n(models.py)" as Domain
+database "SQLite WAL\n(autos_colombia.db)" as DB
+
+== Registro Opcional de Novedad en Ronda de Seguridad (CU-03) ==
+Operario -> UI : Pulsa "+ Novedad" en vehículo estacionado y describe hallazgo
+activate UI
+UI -> API : POST /api/novedad (placa, novedad, usuario_id)
+activate API
+API -> Domain : registrar_novedad_vehiculo(placa, novedad, usuario_id)
+activate Domain
+Domain -> Domain : verificar_permiso(usuario_id, 'OPERACION_ACCESO')
+Domain -> DB : UPDATE registro_acceso SET observaciones = observaciones || novedad
+Domain -> DB : INSERT INTO auditoria_accion ('NOVEDAD_VEHICULO')
+Domain --> API : {success: true, mensaje}
+deactivate Domain
+API --> UI : HTTP 200 OK
+deactivate API
+UI --> Operario : Actualiza bitácora del vehículo adentro
+deactivate UI
+
+== Salida Vehicular y Liberación Atómica de Celda (CU-02) ==
+Operario -> UI : Pulsa "Dar Salida" y confirma observación de retiro
+activate UI
+UI -> API : POST /api/salida (placa, observaciones_salida, puerta, usuario_id)
+activate API
+API -> Domain : registrar_salida(placa, observaciones_salida, puerta, usuario_id)
+activate Domain
+Domain -> Domain : verificar_permiso(usuario_id, 'OPERACION_ACCESO')
+Domain -> DB : SELECT id, celda_codigo, fecha_ingreso FROM registro_acceso WHERE estado='ADENTRO'
+activate DB
+DB --> Domain : Movimiento activo encontrado
+Domain -> Domain : Calcular tiempo_permanencia = fecha_salida - fecha_ingreso
+Domain -> DB : BEGIN IMMEDIATE TRANSACTION
+Domain -> DB : UPDATE registro_acceso SET fecha_salida=NOW(), estado='FINALIZADO'
+Domain -> DB : UPDATE celda SET estado='DISPONIBLE', motivo_bloqueo=NULL WHERE codigo=celda_codigo
+Domain -> DB : COMMIT TRANSACTION
+deactivate DB
+Domain -> DB : INSERT INTO auditoria_accion ('SALIDA_VEHICULO')
+Domain --> API : {success: true, celda_liberada, tiempo_permanencia}
+deactivate Domain
+API --> UI : HTTP 200 OK
+deactivate API
+UI --> Operario : Abre barrera de salida y restituye celda al sorteo 24/7
+deactivate UI
+@enduml

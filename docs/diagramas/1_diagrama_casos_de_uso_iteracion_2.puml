@@ -1,0 +1,110 @@
+@startuml
+left to right direction
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+skinparam nodesep 28
+skinparam ranksep 55
+title Diagrama de Casos de Uso — Autos Colombia 24/7 (Iteración 2: Usuarios RBAC y CRUD Celdas)
+
+actor "Administrador\n(ADMIN)" as Admin
+actor "Operario de Cabina\n(OPERARIO 24/7)" as Operario
+actor "Auditor de Calidad\n(AUDITOR)" as Auditor
+
+' Generalización jerárquica RBAC entre actores (UML 2.5)
+Admin -down-|> Operario : hereda permisos
+Operario -down-|> Auditor : hereda supervisión
+
+rectangle "Sistema de Información Autos Colombia 24/7 (Iteraciones 1 y 2)" {
+
+  package "1. Seguridad, Usuarios y Roles (RBAC)" {
+    usecase "CU-04: Autenticar Sesión\ncon Hash SHA-256" as CU04
+    usecase "CU-05: Gestionar CRUD de Usuarios,\nRoles y Contraseñas" as CU05
+    usecase "Verificar Permiso\nen Matriz RBAC" as UC_RBAC
+  }
+
+  package "2. Administración y CRUD de 80 Celdas" {
+    usecase "CU-07: Administrar CRUD Estructural\nde Celdas (Alta, Zona, Piso, Baja)" as CU07
+    usecase "CU-08: Cambiar Estado Operativo\n(Disponible / Mantenimiento / Inactiva)" as CU08
+    usecase "CU-09: Reubicar Vehículo entre\nCeldas de Forma Atómica" as CU09
+    usecase "Bloquear Celda Origen\nen MANTENIMIENTO" as UC_BloqOrigen
+  }
+
+  package "3. Clientes Abonados y Control 24/7 Integrado" {
+    usecase "CU-06: Registrar y Actualizar\nCliente Abonado y Vehículo" as CU06
+    usecase "CU-01: Registrar Entrada con Sorteo\n(Excluyendo Celdas en Mantenimiento)" as CU01
+    usecase "CU-02: Registrar Salida y\nLiberar Celda a DISPONIBLE" as CU02
+    usecase "CU-03: Registrar Novedad Física\nsobre Vehículo Estacionado" as CU03
+    usecase "CU-10: Consultar Bitácora Inmutable\nde Auditoría e Historial Técnico" as CU10
+    usecase "Registrar Traza\nen Auditoría" as UC_Audit
+  }
+}
+
+' Asociaciones limpias según herencia de roles RBAC
+Admin --> CU05
+Admin --> CU07
+
+Operario --> CU06
+Operario --> CU08
+Operario --> CU09
+Operario --> CU01
+Operario --> CU02
+Operario --> CU03
+
+Auditor --> CU04
+Auditor --> CU10
+
+CU05 ..> UC_RBAC : <<include>>
+CU07 ..> UC_RBAC : <<include>>
+CU08 ..> UC_RBAC : <<include>>
+CU09 ..> UC_RBAC : <<include>>
+CU01 ..> UC_RBAC : <<include>>
+
+CU05 ..> UC_Audit : <<include>>
+CU07 ..> UC_Audit : <<include>>
+CU08 ..> UC_Audit : <<include>>
+CU09 ..> UC_Audit : <<include>>
+
+UC_BloqOrigen .up.> CU09 : <<extend>>
+
+note right of CU07
+  Alcance Iteración 2:
+  80 celdas (70 Carros + 10 Motos).
+  Gestión de Pagos queda reservada
+  exclusivamente para Iteración 3.
+end note
+@enduml

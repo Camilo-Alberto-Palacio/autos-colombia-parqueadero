@@ -1,0 +1,524 @@
+{
+  "_type": "Project",
+  "_id": "PROJ_AUTOS_COLOMBIA_IT2",
+  "name": "Autos_Colombia_24_7_Iteraciones_1_y_2",
+  "ownedElements": [
+    {
+      "_type": "UMLModel",
+      "_id": "MODEL_CASOS_USO",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT2"
+      },
+      "name": "01_Modelo_Casos_de_Uso_Iteracion_2",
+      "ownedElements": [
+        {
+          "_type": "UMLUseCaseDiagram",
+          "_id": "DIAG_UC_IT2",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "Diagrama_Casos_Uso_Usuarios_y_Celdas"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_ADMIN",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "Administrador (ADMIN)"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_OPER",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "Operario de Cabina (OPERARIO)"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_AUDIT",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "Auditor de Calidad (AUDITOR)"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_04",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-04 Autenticar Usuario SHA-256"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_05",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-05 Gestionar CRUD Usuarios y Roles RBAC"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_06",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-06 Gestionar CRUD Clientes Abonados y Vehiculos"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_07",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-07 Administrar CRUD Estructural de 80 Celdas"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_08",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-08 Cambiar Estado Operativo / Mantenimiento Celda"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_09",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-09 Reubicar Vehiculo entre Celdas"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_01",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-01 Registrar Entrada Excluyendo Mantenimiento"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_02",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-02 Registrar Salida y Liberar Celda"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_03",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-03 Registrar Novedad Fisica"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_10",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO"
+          },
+          "name": "CU-10 Consultar Bitacora Inmutable de Auditoria"
+        }
+      ]
+    },
+    {
+      "_type": "UMLModel",
+      "_id": "MODEL_COMPONENTES",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT2"
+      },
+      "name": "02_Arquitectura_Componentes_Iteraciones_1_y_2",
+      "ownedElements": [
+        {
+          "_type": "UMLComponentDiagram",
+          "_id": "DIAG_COMP_IT2",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "Diagrama_Componentes_Unificado"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_SPA",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "SPA_Cobalt_Bay_OS (index.html + app.js)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_HTTP",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "AutosColombiaHandler_REST (app.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_RBAC",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "Servicio_Usuarios_y_RBAC (models.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_CELDAS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "Servicio_CRUD_y_Mantenimiento_Celdas (models.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_ACCESO",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "Servicio_Control_Acceso_24_7 (models.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_WAL",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "Gestor_SQLite_WAL (database.py)"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_RBAC",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "IAutenticacionRBAC"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_USERS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "IGestionUsuarios"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_CELDAS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "IGestionCeldas"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_ABONADOS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "IGestionAbonados"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_ACCESO",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "IControlAcceso"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_WAL",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES"
+          },
+          "name": "IPersistenciaWAL"
+        }
+      ]
+    },
+    {
+      "_type": "UMLModel",
+      "_id": "MODEL_CLASES",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT2"
+      },
+      "name": "03_Modelo_Clases_Dominio_3FN",
+      "ownedElements": [
+        {
+          "_type": "UMLClassDiagram",
+          "_id": "DIAG_CLS_IT2",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "Diagrama_Clases_Dominio_Iteraciones_1_y_2"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_USUARIO",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "Usuario",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_U1",
+              "name": "id",
+              "type": "int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_U2",
+              "name": "username",
+              "type": "str"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_U3",
+              "name": "password_hash",
+              "type": "str",
+              "visibility": "private"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_U4",
+              "name": "rol",
+              "type": "RolRBAC"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_U5",
+              "name": "activo",
+              "type": "bool"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_U1",
+              "name": "autenticar_usuario"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_U2",
+              "name": "crear_usuario"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_U3",
+              "name": "actualizar_usuario"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_U4",
+              "name": "cambiar_password"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_U5",
+              "name": "eliminar_usuario"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_CELDA",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "Celda",
+          "attributes": [
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_C1",
+              "name": "codigo",
+              "type": "str"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_C2",
+              "name": "tipo_permitido",
+              "type": "TipoVehiculo"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_C3",
+              "name": "estado",
+              "type": "EstadoCelda"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_C4",
+              "name": "piso",
+              "type": "int"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_C5",
+              "name": "zona",
+              "type": "str"
+            },
+            {
+              "_type": "UMLAttribute",
+              "_id": "AT_C6",
+              "name": "motivo_bloqueo",
+              "type": "str"
+            }
+          ],
+          "operations": [
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_C1",
+              "name": "crear_celda"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_C2",
+              "name": "actualizar_celda"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_C3",
+              "name": "eliminar_celda"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_C4",
+              "name": "cambiar_estado_celda"
+            },
+            {
+              "_type": "UMLOperation",
+              "_id": "OP_C5",
+              "name": "reubicar_vehiculo_celda"
+            }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_PROP",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "Propietario"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_VEH",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "Vehiculo"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_MENS",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "Mensualidad"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_REG",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "RegistroAcceso"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_HIST",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "HistorialCelda"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_AUD",
+          "_parent": {
+            "$ref": "MODEL_CLASES"
+          },
+          "name": "AuditoriaAccion"
+        }
+      ]
+    },
+    {
+      "_type": "UMLCollaboration",
+      "_id": "COLLAB_SEQ_IT1_IT2",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT2"
+      },
+      "name": "04_Interacciones_Secuencia_Iteraciones_1_y_2",
+      "ownedElements": [
+        {
+          "_type": "UMLInteraction",
+          "_id": "INTER_SEQ",
+          "_parent": {
+            "$ref": "COLLAB_SEQ_IT1_IT2"
+          },
+          "name": "Secuencia_Integrada_Usuarios_Celdas_y_Acceso",
+          "ownedElements": [
+            {
+              "_type": "UMLSequenceDiagram",
+              "_id": "DIAG_SEQ_1",
+              "_parent": {
+                "$ref": "INTER_SEQ"
+              },
+              "name": "2A_Autenticacion_y_CRUD_Usuarios_RBAC"
+            },
+            {
+              "_type": "UMLSequenceDiagram",
+              "_id": "DIAG_SEQ_2",
+              "_parent": {
+                "$ref": "INTER_SEQ"
+              },
+              "name": "2B_Mantenimiento_y_Reubicacion_Celdas"
+            },
+            {
+              "_type": "UMLSequenceDiagram",
+              "_id": "DIAG_SEQ_3",
+              "_parent": {
+                "$ref": "INTER_SEQ"
+              },
+              "name": "2C_Entrada_Integrada_Sorteo_80_Celdas"
+            },
+            {
+              "_type": "UMLSequenceDiagram",
+              "_id": "DIAG_SEQ_4",
+              "_parent": {
+                "$ref": "INTER_SEQ"
+              },
+              "name": "2D_Salida_y_Liberacion_Celda"
+            }
+          ],
+          "participants": [
+            {
+              "_type": "UMLLifeline",
+              "_id": "LF_UI",
+              "name": "CobaltBaySPA (app.js)"
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "LF_API",
+              "name": "AutosColombiaHandler (app.py)"
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "LF_DOM",
+              "name": "ServiciosDominioRBAC (models.py)"
+            },
+            {
+              "_type": "UMLLifeline",
+              "_id": "LF_DB",
+              "name": "SQLiteWAL (autos_colombia.db)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

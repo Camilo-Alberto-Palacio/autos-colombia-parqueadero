@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Evidencia de Aprendizaje 2 — Iteración 2 Autos Colombia (Grupo 25)</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 18mm 16mm 18mm 16mm;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Calibri", "Segoe UI", Arial, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.48;
+      color: #1e293b;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+    }
+    .cover {
+      min-height: 238mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      padding: 16mm 12mm 12mm 12mm;
+      border: 1.5px solid #cbd5e1;
+      border-top: 8px solid #1e3a8a;
+      border-radius: 6px;
+      page-break-after: always;
+    }
+    .cover-badge {
+      display: inline-block;
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #bfdbfe;
+      font-weight: 700;
+      font-size: 9.5pt;
+      padding: 4px 14px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .cover-title {
+      font-size: 19pt;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+      margin: 14px 0 10px 0;
+      max-width: 92%;
+    }
+    .cover-subtitle {
+      font-size: 12pt;
+      font-weight: 700;
+      color: #1e40af;
+      max-width: 88%;
+      margin: 0 auto;
+    }
+    .cover-authors {
+      margin: 18px 0;
+      font-size: 11.5pt;
+    }
+    .cover-authors p { margin: 4px 0; font-weight: 600; color: #0f172a; }
+    .cover-inst p { margin: 3px 0; font-size: 10.5pt; color: #334155; }
+    .page-break { page-break-before: always; }
+    h1 {
+      font-size: 15pt;
+      color: #0f172a;
+      border-bottom: 2.5px solid #1d4ed8;
+      padding-bottom: 5px;
+      margin-top: 0;
+      margin-bottom: 12px;
+      page-break-after: avoid;
+    }
+    h2 {
+      font-size: 12.2pt;
+      color: #1e3a8a;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      page-break-after: avoid;
+    }
+    p {
+      text-align: justify;
+      margin: 0 0 9px 0;
+    }
+    .toc-box {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 16px 22px;
+    }
+    .toc-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .toc-list li {
+      padding: 5px 0;
+      border-bottom: 1px dashed #cbd5e1;
+      font-size: 10.2pt;
+      display: flex;
+      justify-content: space-between;
+      font-weight: 600;
+      color: #1e293b;
+    }
+    .toc-list li:last-child { border-bottom: none; }
+    .callout {
+      background: #eff6ff;
+      border-left: 4px solid #1d4ed8;
+      border-top: 1px solid #bfdbfe;
+      border-right: 1px solid #bfdbfe;
+      border-bottom: 1px solid #bfdbfe;
+      padding: 10px 14px;
+      border-radius: 6px;
+      margin: 10px 0 14px 0;
+      font-size: 9.8pt;
+      break-inside: avoid;
+    }
+    .callout-warn {
+      background: #fffbeb;
+      border-left: 4px solid #d97706;
+      border-color: #fde68a;
+      border-left-color: #d97706;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0 16px 0;
+      font-size: 8.7pt;
+    }
+    thead { display: table-header-group; }
+    tr { break-inside: avoid; }
+    th {
+      background: #1e3a8a;
+      color: #ffffff;
+      font-weight: 700;
+      padding: 7px 6px;
+      border: 1px solid #1e3a8a;
+      text-align: center;
+    }
+    td {
+      padding: 6px 6px;
+      border: 1px solid #cbd5e1;
+      vertical-align: top;
+      text-align: left;
+    }
+    tbody tr:nth-child(even) td { background: #f8fafc; }
+    .center { text-align: center; }
+    .bold { font-weight: 700; }
+    .mono { font-family: "Consolas", "Courier New", monospace; font-size: 8.4pt; }
+    .ok { color: #065f46; }
+    .deny { color: #9f1239; }
+    .pill {
+      display: inline-block;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-size: 7.8pt;
+      font-weight: 800;
+    }
+    .pill-blue { background: #dbeafe; color: #1e40af; }
+    .pill-ok { background: #d1fae5; color: #065f46; }
+    .hu-card {
+      border: 1px solid #cbd5e1;
+      border-left: 4px solid #2563eb;
+      border-radius: 7px;
+      margin-bottom: 12px;
+      background: #ffffff;
+      break-inside: avoid;
+    }
+    .hu-header {
+      background: #f8fafc;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .hu-badge {
+      background: #1e3a8a;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 8.8pt;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+    .hu-title { font-weight: 800; color: #0f172a; font-size: 10.2pt; }
+    .hu-meta { font-size: 8.6pt; color: #475569; margin-top: 3px; }
+    .hu-body { padding: 9px 12px; }
+    .hu-narrative { margin-bottom: 7px; font-size: 9.8pt; }
+    .gherkin-box {
+      background: #f1f5f9;
+      border-radius: 5px;
+      padding: 7px 10px;
+      font-size: 8.9pt;
+    }
+    .gherkin-label { font-weight: 700; color: #1e3a8a; margin-bottom: 3px; }
+    .gherkin-box ul { margin: 0; padding-left: 17px; }
+    .gherkin-box li { margin-bottom: 4px; }
+    .figure-card {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px;
+      margin: 12px 0 16px 0;
+      background: #ffffff;
+      text-align: center;
+      break-inside: avoid;
+    }
+    .figure-card img {
+      max-width: 100%;
+      max-height: 185mm;
+      height: auto;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
+    }
+    .figure-card img.uml-seq-img {
+      max-height: 195mm;
+    }
+    .figure-caption {
+      margin-top: 7px;
+      font-size: 8.9pt;
+      color: #334155;
+      text-align: justify;
+    }
+    .link-box {
+      border: 2px solid #2563eb;
+      background: #eff6ff;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 12px 0;
+      break-inside: avoid;
+    }
+    .video-box {
+      border: 2px solid #059669;
+      background: #ecfdf5;
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 12px 0;
+      break-inside: avoid;
+    }
+    .apa-ref {
+      padding-left: 1.27cm;
+      text-indent: -1.27cm;
+      margin-bottom: 9px;
+      text-align: left;
+      font-size: 9.8pt;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PORTADA INSTITUCIONAL APA 7 -->
+  <section class="cover">
+    <div>
+      <span class="cover-badge">Evidencia de Aprendizaje 2 • Iteración 2</span>
+    </div>
+
+    <div>
+      <div class="cover-title">
+        Sistema de Gestión de Operaciones — Parqueadero “Autos Colombia”
+      </div>
+      <div class="cover-subtitle">
+        Iteración 2: Diseño e Implementación de los Módulos de Gestión de Usuarios (RBAC) y Administración CRUD de 80 Celdas Integrados con el Control de Acceso 24/7
+      </div>
+    </div>
+
+    <div class="cover-authors">
+      <div style="font-size:9.5pt;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:6px;">Integrantes — Grupo 25</div>
+      <p>Adriana Andrea Agudelo Agudelo</p>
+      <p>Camilo Alberto Palacios Turriago</p>
+      <p>Juan Daniel Pulgarin García</p>
+    </div>
+
+    <div class="cover-inst">
+      <p><strong>Docente: Prof. Reinaldo Rojas</strong></p>
+      <p>Asignatura: Ingeniería de Software (Código: PREICA2602B020053)</p>
+      <p>Facultad de Ingeniería y Ciencias Agropecuarias</p>
+      <p><strong>Institución Universitaria Digital de Antioquia (IU Digital)</strong></p>
+      <p>Medellín, Antioquia — Octubre de 2026</p>
+    </div>
+  </section>
+
+  <!-- TABLA DE CONTENIDO E INTRODUCCIÓN -->
+  <section>
+    <h1>Tabla de Contenido</h1>
+    <div class="toc-box">
+      <ul class="toc-list">
+        <li><span>Introducción y Delimitación de Alcance Evolutivo (Iteraciones 1, 2 y 3)</span><span>Sección 0</span></li>
+        <li><span>1. Especificación de Requerimientos Funcionales, No Funcionales y Matriz RBAC</span><span>Ítem A (15 pts)</span></li>
+        <li><span>2. Diagrama de Casos de Uso (StarUML) y Fichas de Especificación</span><span>Ítem B (10 pts)</span></li>
+        <li><span>3. Historias de Usuario Asociadas con Criterios de Aceptación Gherkin (HU-04 a HU-10)</span><span>Ítem C (10 pts)</span></li>
+        <li><span>4. Mockups e Interfaces Gráficas de Alta Fidelidad (Cobalt Bay OS / Figma)</span><span>Ítem D (10 pts)</span></li>
+        <li><span>5. Diagramas de Secuencia Integrados de las Iteraciones 1 y 2 (StarUML)</span><span>Ítem E (10 pts)</span></li>
+        <li><span>6. Diagrama de Componentes Unificado, Diagrama de Clases y Modelo 3FN (StarUML)</span><span>Ítem F (10 pts)</span></li>
+        <li><span>7. Plan de Pruebas Resumido Diligenciado y Ejecución Automatizada (CP-01 a CP-20)</span><span>Ítem G (10 pts)</span></li>
+        <li><span>8. Repositorio Fuente en GitHub y Enlace Público al Video Demostrativo</span><span>Ítems H e I (25 pts)</span></li>
+        <li><span>Conclusiones de Ingeniería y Referencias Bibliográficas (Norma APA 7.ª Edición)</span><span>Cierre</span></li>
+      </ul>
+    </div>
+
+    <h1 style="margin-top:20px;">Introducción</h1>
+    <p>
+      El presente informe técnico consolida los artefactos de ingeniería de requisitos, modelamiento arquitectónico UML 2.5, diseño de interfaces gráficas, persistencia relacional y verificación automatizada correspondientes a la <strong>Iteración 2</strong> del sistema de información para el parqueadero <strong>Autos Colombia</strong>, organización dedicada a la operación continua 24 horas al día, 7 días a la semana (24/7) bajo modalidad exclusiva de contratos de mensualidad para una capacidad física instalada de <strong>80 celdas numeradas</strong> (70 plazas destinadas a automóviles <code>C-01</code> a <code>C-70</code> y 10 plazas destinadas a motocicletas <code>M-01</code> a <code>M-10</code>).
+    </p>
+    <p>
+      Sobre la base funcional construida en la <strong>Iteración 1</strong> —donde se implementó el control transaccional de entradas, salidas, validación estricta de vigencia sin días de gracia y registro de novedades físicas—, esta segunda iteración incorpora dos pilares estructurales indispensables para la gobernanza y continuidad operativa del estacionamiento: (i) el <strong>Módulo de Gestión de Usuarios, Roles y Permisos (RBAC)</strong> con dispersión criptográfica <code>SHA-256</code>, control diferenciado para perfiles <code>ADMIN</code>, <code>OPERARIO</code> y <code>AUDITOR</code>, y actualización CRUD del padrón de titulares abonados y sus vehículos; y (ii) el <strong>Módulo de Administración CRUD, Mantenimiento Operativo y Reubicación Transaccional de Celdas</strong>, acoplado dinámicamente al motor de sorteo de ingresos para impedir la asignación de plazas bloqueadas por mantenimiento o avería física.
+    </p>
+    <div class="callout callout-warn">
+      <strong>Delimitación Estricta del Alcance (Iteración 2 vs. Iteración 3):</strong> En estricto apego a la guía oficial de la actividad, la presente entrega desarrolla e integra exclusivamente la <strong>Gestión de Usuarios</strong> y la <strong>Gestión de Celdas</strong> junto con el núcleo de acceso de la Iteración 1. Los procesos de liquidación financiera, recaudo en caja, facturación electrónica y pasarela de <strong>Gestión de Pagos</strong> quedan formalmente reservados para la <strong>Iteración 3</strong>.
+    </div>
+  </section>
+
+  <!-- SECCIÓN 1: REQUERIMIENTOS -->
+  <section class="page-break">
+    <h1>1. Requerimientos Funcionales, No Funcionales y Matriz RBAC (Ítem A)</h1>
+    <p>
+      Conservando la trazabilidad consecutiva respecto a la línea base de la Iteración 1 (<code>RF-01</code> a <code>RF-07</code> y <code>RNF-01</code> a <code>RNF-04</code>), a continuación se especifican los once requerimientos funcionales (<code>RF-08</code> a <code>RF-18</code>) y seis requerimientos no funcionales (<code>RNF-05</code> a <code>RNF-10</code>) que gobiernan la Iteración 2.
+    </p>
+
+    <h2>1.1. Especificación de Requerimientos Funcionales (Iteración 2)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:8%;">Código</th>
+          <th style="width:20%;">Nombre del Requerimiento</th>
+          <th style="width:9%;">Prioridad</th>
+          <th style="width:13%;">Trazabilidad</th>
+          <th style="width:50%;">Especificación Técnica Verificable</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono bold center">RF-08</td>
+          <td class="bold">Autenticación Criptográfica SHA-256</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-04 / HU-04</td>
+          <td>El sistema debe autenticar a todo usuario interno verificando su identificador (username), estado activo y contraseña dispersada mediante algoritmo criptográfico SHA-256 (sin almacenar nunca texto plano), actualizando la marca temporal ultimo_login.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-09</td>
+          <td class="bold">Control de Acceso Basado en Roles (RBAC)</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-04 / HU-04</td>
+          <td>El sistema debe hacer cumplir en backend y frontend una matriz declarativa de tres roles (ADMIN, OPERARIO y AUDITOR), bloqueando con código HTTP 403 Forbidden cualquier petición cuyo actor carezca del permiso específico.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-10</td>
+          <td class="bold">Gestión CRUD de Usuarios Internos</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-05 / HU-05</td>
+          <td>El sistema debe permitir exclusivamente al rol ADMIN crear, consultar, filtrar y actualizar cuentas de usuario (nombre completo, correo institucional único, username único, cargo y rol asignado).</td>
+        </tr><tr>
+          <td class="mono bold center">RF-11</td>
+          <td class="bold">Restablecimiento de Clave, Último Admin y Baja Lógica</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-05 / HU-05</td>
+          <td>El sistema debe permitir restablecer contraseñas con hash SHA-256, impedir la suspensión o degradación del único ADMIN activo y aplicar baja lógica (activo=0) cuando el usuario posea trazabilidad histórica en auditoría.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-12</td>
+          <td class="bold">Gestión CRUD de Clientes Abonados y Vehículos</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-06 / HU-06</td>
+          <td>El sistema debe permitir a ADMIN y OPERARIO registrar nuevos clientes abonados y actualizar los datos del titular (teléfono, dirección, correo) o de su vehículo asociado (color, modelo, marca, categoría) manteniendo la tarifa mensual reglamentaria ($250.000 Carro / $100.000 Moto).</td>
+        </tr><tr>
+          <td class="mono bold center">RF-13</td>
+          <td class="bold">Inventario Estructurado y Filtros de 80 Celdas</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-07 / HU-07</td>
+          <td>El sistema debe administrar el inventario reglamentario de 80 celdas numeradas (70 para carros C-01 a C-70 en Zonas A–E de Pisos 1 y 2; 10 para motos M-01 a M-10), permitiendo búsqueda en vivo por código, zona, piso, tipo permitido, estado u ocupante.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-14</td>
+          <td class="bold">Administración CRUD Estructural de Celdas Físicas</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-07 / HU-07</td>
+          <td>El sistema debe permitir al rol ADMIN dar de alta nuevas celdas físicas de expansión, modificar sus atributos de ubicación (piso, zona, categoría si está libre) y eliminar celdas sin historial referencial ni ocupación activa.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-15</td>
+          <td class="bold">Gestión de Estados Operativos y Exclusión en Sorteo</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-08 / HU-08</td>
+          <td>El sistema debe gestionar los estados DISPONIBLE, OCUPADA, MANTENIMIENTO e INACTIVA, prohibiendo bloquear manualmente celdas ocupadas y excluyendo automáticamente toda celda en MANTENIMIENTO o INACTIVA del sorteo aleatorio de entrada de la Iteración 1.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-16</td>
+          <td class="bold">Reubicación Transaccional Atómica de Vehículos</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-09 / HU-09</td>
+          <td>El sistema debe permitir trasladar en una única transacción atómica (BEGIN IMMEDIATE) un vehículo estacionado hacia otra celda DISPONIBLE de su misma categoría, con opción de marcar simultáneamente la celda origen en MANTENIMIENTO.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-17</td>
+          <td class="bold">Bitácora Técnica de Historial de Celdas</td>
+          <td class="center"><span class="pill pill-blue">Media</span></td>
+          <td class="mono center">CU-08, CU-09 / HU-08</td>
+          <td>El sistema debe registrar automáticamente cada cambio de estado, alta CRUD o reubicación en la tabla historial_celda detallando celda, estado anterior, estado nuevo, motivo técnico, usuario ejecutor y fecha exacta.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-18</td>
+          <td class="bold">Auditoría Central Inmutable 24/7</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-10 / HU-10</td>
+          <td>El sistema debe registrar de forma inmutable en auditoria_accion todos los eventos de seguridad, inicios de sesión exitosos/fallidos, rechazos RBAC, operaciones CRUD de usuarios/celdas/abonados y movimientos de barrera.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>1.2. Matriz Declarativa de Roles y Permisos (Modelo RBAC)</h2>
+    <p>
+      Siguiendo el estándar de Control de Acceso Basado en Roles de Sandhu et al. (1996), cada petición HTTP hacia el servidor es interceptada por el verificador <code>verificar_permiso(actor_id, permiso_requerido)</code> en <code>models.py</code>:
+    </p>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:21%;">Permiso del Sistema</th>
+          <th style="width:43%;">Alcance Operativo Autorizado</th>
+          <th style="width:11%;">ADMIN</th>
+          <th style="width:12%;">OPERARIO</th>
+          <th style="width:13%;">AUDITOR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono bold">OPERACION_ACCESO</td>
+          <td>Autorizar entrada, registrar novedad física en ronda y procesar salida vehicular 24/7</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">MANTENIMIENTO_CELDAS</td>
+          <td>Cambiar estado operativo (DISPONIBLE / MANTENIMIENTO / INACTIVA) y reubicar vehículos</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">GESTION_ABONADOS</td>
+          <td>Registrar nuevos clientes abonados y actualizar datos del titular o vehículo asociado</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">CRUD_CELDAS</td>
+          <td>Crear nuevas celdas físicas, editar parámetros estructurales (piso/zona/tipo) y eliminar celdas</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">GESTION_USUARIOS</td>
+          <td>Crear cuentas internas, asignar/cambiar roles RBAC, restablecer claves y suspender/dar de baja</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">CONSULTA_AUDITORIA</td>
+          <td>Visualizar Dashboard 24/7, Mapa de 80 Celdas, Historial Técnico y Bitácora de Auditoría</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ (Solo Lectura)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>1.3. Especificación de Requerimientos No Funcionales (ISO/IEC 25010)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:9%;">Código</th>
+          <th style="width:23%;">Atributo de Calidad</th>
+          <th style="width:18%;">Categoría ISO 25010</th>
+          <th style="width:50%;">Métrica Cuantitativa y Mecanismo Arquitectónico</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono bold center">RNF-05</td>
+          <td class="bold">Seguridad Criptográfica y Autorización</td>
+          <td class="center">ISO 25010 — Seguridad</td>
+          <td>100% de contraseñas almacenadas con hash SHA-256 de 64 caracteres hexadecimales; validación RBAC obligatoria en cada endpoint POST con respuestas HTTP 401/403 auditadas.</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-06</td>
+          <td class="bold">Concurrencia Multi-Operario 24/7</td>
+          <td class="center">ISO 25010 — Fiabilidad</td>
+          <td>Soporte simultáneo para múltiples cabinas (Puerta Norte / Puerta Sur) mediante ThreadedHTTPServer, exclusión mutua threading.Lock y motor SQLite en modo WAL (Write-Ahead Logging).</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-07</td>
+          <td class="bold">Atomicidad Transaccional</td>
+          <td class="center">ISO 25010 — Integridad</td>
+          <td>Cero inconsistencias de aforo durante ingresos, salidas y reubicaciones vehiculares mediante transacciones explícitas BEGIN IMMEDIATE y ROLLBACK automático ante fallo.</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-08</td>
+          <td class="bold">Integridad Referencial Estricta</td>
+          <td class="center">ISO 25010 — Mantenibilidad</td>
+          <td>Esquema normalizado en Tercera Forma Normal (3FN) sobre 8 tablas relacionales con PRAGMA foreign_keys = ON y restricciones CHECK de dominio.</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-09</td>
+          <td class="bold">Rendimiento y Tiempo de Respuesta</td>
+          <td class="center">ISO 25010 — Eficiencia</td>
+          <td>Latencia de respuesta inferior a 50 ms en consultas de placa, sorteo aleatorio sobre 80 celdas y filtrado de bitácoras gracias a 6 índices secundarios optimizados.</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-10</td>
+          <td class="bold">Usabilidad Operativa y Portabilidad</td>
+          <td class="center">ISO 25010 — Usabilidad</td>
+          <td>Interfaz SPA Cobalt Bay OS con notificaciones flotantes no bloqueantes (cero alert/prompt nativos) y ejecución 100% autónoma sobre la librería estándar de Python 3.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECCIÓN 2: CASOS DE USO -->
+  <section class="page-break">
+    <h1>2. Diagrama de Casos de Uso y Especificación Detallada (Ítem B)</h1>
+    <p>
+      El modelo de casos de uso diseñado en notación <strong>StarUML (UML 2.5)</strong> aplica generalización jerárquica entre actores (<code>Administrador --|&gt; Operario --|&gt; Auditor</code>), reflejando con fidelidad matemática cómo los privilegios superiores heredan las capacidades de supervisión y operación de cabina, al tiempo que restringe los casos de uso críticos de administración estructural (<code>CU-05</code> y <code>CU-07</code>) exclusivamente al rol <code>ADMIN</code>. Asimismo, modela relaciones obligatorias <code>&lt;&lt;include&gt;&gt;</code> hacia la verificación RBAC y el registro de auditoría, junto con la extensión condicional <code>&lt;&lt;extend&gt;&gt;</code> para bloquear la celda origen durante una reubicación vehicular.
+    </p>
+
+    <div class="figure-card">
+      <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/1_diagrama_casos_de_uso_iteracion_2.png" alt="Diagrama de Casos de Uso Iteración 2" />
+      <div class="figure-caption">
+        <strong>Figura 1. Diagrama de Casos de Uso Integrado — Gestión de Usuarios RBAC, Clientes Abonados y Administración CRUD de 80 Celdas (StarUML).</strong> Fuente: Elaboración propia (Archivo editable <code>Autos_Colombia_StarUML_Iteracion_2.mdj</code>).
+      </div>
+    </div>
+
+    <h2>2.1. Especificación Estructurada de Casos de Uso de la Iteración 2</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:7%;">ID</th>
+          <th style="width:17%;">Caso de Uso</th>
+          <th style="width:13%;">Actores</th>
+          <th style="width:15%;">Precondición</th>
+          <th style="width:26%;">Flujo Principal Exitoso</th>
+          <th style="width:22%;">Flujos Alternos / Reglas de Excepción</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono bold center">CU-04</td>
+          <td class="bold">Autenticar Sesión con Hash SHA-256</td>
+          <td class="center">ADMIN, OPERARIO, AUDITOR</td>
+          <td>Cuenta registrada en tabla usuario.</td>
+          <td>El actor ingresa username y contraseña -&gt; El sistema calcula SHA-256, verifica activo=1, registra LOGIN_EXITOSO y retorna matriz de permisos RBAC.</td>
+          <td>Si la clave no coincide o la cuenta está inactiva, retorna HTTP 401/403 y audita LOGIN_FALLIDO / LOGIN_BLOQUEADO.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-05</td>
+          <td class="bold">Gestionar CRUD de Usuarios y Roles RBAC</td>
+          <td class="center">ADMIN</td>
+          <td>Sesión autenticada con permiso GESTION_USUARIOS.</td>
+          <td>El administrador crea, edita perfil/rol, restablece clave SHA-256 o ejecuta baja de cuenta -&gt; El sistema valida unicidad y registra auditoría.</td>
+          <td>Si intenta suspender/degradar al único ADMIN activo se bloquea; si el usuario tiene historial aplica baja lógica (activo=0).</td>
+        </tr><tr>
+          <td class="mono bold center">CU-06</td>
+          <td class="bold">Registrar y Actualizar Abonado y Vehículo</td>
+          <td class="center">ADMIN, OPERARIO</td>
+          <td>Permiso GESTION_ABONADOS activo.</td>
+          <td>El actor registra un nuevo titular/automotor o edita marca, modelo, color o teléfono de un abonado existente -&gt; Persiste cambios en propietario y vehiculo.</td>
+          <td>Si el vehículo está actualmente ADENTRO, impide inactivarlo o cambiarle categoría hasta registrar su salida.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-07</td>
+          <td class="bold">Administrar CRUD Estructural de Celdas</td>
+          <td class="center">ADMIN</td>
+          <td>Permiso CRUD_CELDAS activo.</td>
+          <td>El administrador consulta las 80 celdas o crea/edita/elimina una plaza especificando código, categoría (CARRO/MOTO), piso y zona -&gt; Registra en historial_celda.</td>
+          <td>Impide códigos duplicados, cambios de tipo en celdas ocupadas o borrado físico de celdas con historial de accesos.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-08</td>
+          <td class="bold">Cambiar Estado Operativo / Mantenimiento</td>
+          <td class="center">ADMIN, OPERARIO</td>
+          <td>Permiso MANTENIMIENTO_CELDAS activo.</td>
+          <td>El actor selecciona una celda libre y cambia su estado a MANTENIMIENTO, INACTIVA o DISPONIBLE adjuntando motivo técnico -&gt; Actualiza mapa y sorteo.</td>
+          <td>Si la celda está OCUPADA, bloquea la transición exigiendo ejecutar primero CU-09 (Reubicar Vehículo).</td>
+        </tr><tr>
+          <td class="mono bold center">CU-09</td>
+          <td class="bold">Reubicar Vehículo entre Celdas</td>
+          <td class="center">ADMIN, OPERARIO</td>
+          <td>Vehículo en estado ADENTRO y celda destino DISPONIBLE compatible.</td>
+          <td>El actor elige vehículo estacionado, celda destino compatible y opción de mantenimiento en origen -&gt; Transacción BEGIN IMMEDIATE actualiza ambas celdas y registro_acceso.</td>
+          <td>Si la celda destino pertenece a otra categoría (ej. CARRO -&gt; MOTO) o no está libre, aborta con ROLLBACK.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-10</td>
+          <td class="bold">Consultar Bitácora Inmutable de Auditoría</td>
+          <td class="center">ADMIN, OPERARIO, AUDITOR</td>
+          <td>Permiso CONSULTA_AUDITORIA activo.</td>
+          <td>El actor filtra eventos por módulo (SEGURIDAD, USUARIOS, CELDAS, ACCESO, ABONADOS) e inspecciona fecha, responsable, rol, terminal y detalle.</td>
+          <td>Sin opción de edición ni borrado sobre registros históricos para garantizar no repudio.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECCIÓN 3: HISTORIAS DE USUARIO -->
+  <section class="page-break">
+    <h1>3. Historias de Usuario y Criterios de Aceptación Gherkin (Ítem C)</h1>
+    <p>
+      Continuando la numeración establecida en la primera entrega (<code>HU-01</code> Entrada Vehicular, <code>HU-02</code> Salida y Liberación, y <code>HU-03</code> Registro de Novedades), se formulan de manera íntegra y sin saltos las siete historias de usuario de la Iteración 2 (<code>HU-04</code> a <code>HU-10</code>), incorporando criterios de aceptación ejecutables bajo especificación <em>Behavior-Driven Development</em> (<code>Dado / Cuando / Entonces</code>).
+    </p>
+    <div class="hu-card">
+          <div class="hu-header">
+            <div>
+              <span class="hu-badge">HU-04</span>
+              <span class="hu-title">Autenticación Criptográfica SHA-256 y Aplicación Dinámica de Roles RBAC</span>
+            </div>
+            <div class="hu-meta">Prioridad: <strong>Alta (Crítica)</strong> | Estimación: <strong>5 pts</strong> | Trazabilidad: <code>RF-08, RF-09 / CU-04</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative">
+              <strong>Como</strong> usuario interno del parqueadero (Administrador, Operario de Cabina o Auditor), <strong>quiero</strong> iniciar sesión con mis credenciales personales protegidas mediante hash SHA-256 para que el sistema cargue automáticamente los permisos exactos de mi rol, <strong>para</strong> garantizar la trazabilidad individual de cada operación 24/7 e impedir accesos no autorizados a funciones administrativas.
+            </p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul>
+                <li>Escenario 1 (Autenticación exitosa y carga RBAC): Dado que el usuario 'adriana_op' se encuentra ACTIVO con rol 'OPERARIO', Cuando envía sus credenciales válidas en el modal de inicio de sesión, Entonces el sistema retorna HTTP 200, registra LOGIN_EXITOSO en auditoría, habilita los controles de cabina/mantenimiento y restringe los botones exclusivos de ADMIN.</li><li>Escenario 2 (Bloqueo por credenciales inválidas o rol insuficiente): Dado que un actor con rol 'AUDITOR' ha iniciado sesión en modo supervisión, Cuando intenta invocar cualquier endpoint de escritura (ej. POST /api/usuarios o POST /api/ingreso), Entonces el backend rechaza la petición con HTTP 403 Forbidden y registra ACCESO_DENEGADO_RBAC.</li>
+              </ul>
+            </div>
+          </div>
+        </div><div class="hu-card">
+          <div class="hu-header">
+            <div>
+              <span class="hu-badge">HU-05</span>
+              <span class="hu-title">Gestión CRUD de Usuarios Internos, Contraseñas y Protección del Último Admin</span>
+            </div>
+            <div class="hu-meta">Prioridad: <strong>Alta (Crítica)</strong> | Estimación: <strong>8 pts</strong> | Trazabilidad: <code>RF-10, RF-11 / CU-05</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative">
+              <strong>Como</strong> Administrador General del sistema (rol ADMIN), <strong>quiero</strong> crear nuevas cuentas para operarios y auditores, editar sus roles o cargos, restablecer contraseñas y suspender cuentas inactivas, <strong>para</strong> mantener actualizado el equipo de trabajo por turnos sin comprometer la integridad histórica ni dejar acéfala la administración del sistema.
+            </p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul>
+                <li>Escenario 1 (Alta y edición de usuario): Dado que estoy autenticado como ADMIN, Cuando registro un nuevo usuario con username único, correo válido y clave &gt;= 6 caracteres, Entonces el sistema almacena únicamente su hash SHA-256 y retorna HTTP 201 Created.</li><li>Escenario 2 (Protección de último ADMIN y baja lógica): Dado que existe un único usuario ADMIN activo o se solicita eliminar un operario con registros históricos en bitácora, Cuando ejecuto la acción, Entonces el sistema impide desactivar al último ADMIN y aplica baja lógica (activo=0) al operario preservando sus llaves foráneas.</li>
+              </ul>
+            </div>
+          </div>
+        </div><div class="hu-card">
+          <div class="hu-header">
+            <div>
+              <span class="hu-badge">HU-06</span>
+              <span class="hu-title">Registro y Actualización CRUD de Clientes Abonados y sus Vehículos Asociados</span>
+            </div>
+            <div class="hu-meta">Prioridad: <strong>Alta</strong> | Estimación: <strong>5 pts</strong> | Trazabilidad: <code>RF-12 / CU-06</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative">
+              <strong>Como</strong> Operario de Cabina o Administrador, <strong>quiero</strong> registrar nuevos titulares abonados y actualizar los datos de contacto o características del vehículo (marca, línea/modelo, color) cuando un cliente cambie o actualice su automotor, <strong>para</strong> mantener el padrón mensual perfectamente sincronizado con los vehículos reales que ingresan por las barreras (reservando la pasarela de recaudo para la Iteración 3).
+            </p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul>
+                <li>Escenario 1 (Actualización de ficha de vehículo/titular): Dado que el abonado del vehículo 'ABC-123' reporta actualización de teléfono o color del automotor, Cuando edito y guardo su ficha en el módulo de Abonados, Entonces los nuevos datos se reflejan de inmediato en la verificación de placa de cabina y se audita ACTUALIZAR_ABONADO.</li><li>Escenario 2 (Protección de vehículo estacionado): Dado que un vehículo figura actualmente ADENTRO en una celda, Cuando se intenta inactivar o cambiar su categoría (CARRO a MOTO), Entonces el sistema rechaza el cambio exigiendo registrar primero su salida.</li>
+              </ul>
+            </div>
+          </div>
+        </div><div class="hu-card">
+          <div class="hu-header">
+            <div>
+              <span class="hu-badge">HU-07</span>
+              <span class="hu-title">Administración CRUD Estructural y Consulta Filtrada de las 80 Celdas</span>
+            </div>
+            <div class="hu-meta">Prioridad: <strong>Alta (Crítica)</strong> | Estimación: <strong>8 pts</strong> | Trazabilidad: <code>RF-13, RF-14 / CU-07</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative">
+              <strong>Como</strong> Administrador General del parqueadero, <strong>quiero</strong> consultar, filtrar, crear, modificar parámetros físicos (zona, piso, categoría) y depurar celdas sin movimientos históricos sobre el inventario base de 80 plazas (70 carros y 10 motos), <strong>para</strong> reflejar fielmente la topología física de los Pisos 1 y 2 de Autos Colombia y preparar futuras ampliaciones operativas.
+            </p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul>
+                <li>Escenario 1 (Consulta filtrada y edición CRUD): Dado el inventario base de 80 celdas (C-01..C-70 y M-01..M-10), Cuando filtro por 'MANTENIMIENTO' o edito la zona/piso de una celda desocupada, Entonces la tabla actualiza los resultados en tiempo real y guarda trazabilidad en historial_celda.</li><li>Escenario 2 (Integridad referencial al eliminar): Dado que una celda posee registros históricos en registro_acceso o está OCUPADA, Cuando solicito eliminarla físicamente, Entonces el sistema bloquea el borrado e instruye usar el estado INACTIVA.</li>
+              </ul>
+            </div>
+          </div>
+        </div><div class="hu-card">
+          <div class="hu-header">
+            <div>
+              <span class="hu-badge">HU-08</span>
+              <span class="hu-title">Bloqueo Técnico por Mantenimiento de Celda y Exclusión en Sorteo de Entrada</span>
+            </div>
+            <div class="hu-meta">Prioridad: <strong>Alta (Crítica)</strong> | Estimación: <strong>8 pts</strong> | Trazabilidad: <code>RF-15, RF-17 / CU-08, CU-01</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative">
+              <strong>Como</strong> Operario de Turno o Administrador, <strong>quiero</strong> marcar cualquier celda desocupada en estado MANTENIMIENTO o INACTIVA registrando la causa técnica (pintura, filtración, sensor averiado) y rehabilitarla a DISPONIBLE al concluir la obra, <strong>para</strong> evitar que el algoritmo aleatorio de entrada asigne vehículos a plazas físicamente inhabilitadas.
+            </p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul>
+                <li>Escenario 1 (Exclusión automática en sorteo Iteración 1 + 2): Dado que la celda 'C-05' fue cambiada a estado MANTENIMIENTO, Cuando ingresa un vehículo con mensualidad vigente, Entonces el motor de sorteo consulta exclusivamente celdas con estado = 'DISPONIBLE' garantizando cero asignaciones hacia 'C-05'.</li><li>Escenario 2 (Prohibición de bloqueo sobre celda ocupada): Dado que la celda 'C-02' se encuentra OCUPADA por 'TOY-456', Cuando intento cambiar su estado directamente a MANTENIMIENTO, Entonces el sistema rechaza la orden e indica reubicar primero el vehículo.</li>
+              </ul>
+            </div>
+          </div>
+        </div><div class="hu-card">
+          <div class="hu-header">
+            <div>
+              <span class="hu-badge">HU-09</span>
+              <span class="hu-title">Reubicación Transaccional Atómica de Vehículo Estacionado entre Celdas</span>
+            </div>
+            <div class="hu-meta">Prioridad: <strong>Alta</strong> | Estimación: <strong>8 pts</strong> | Trazabilidad: <code>RF-16, RNF-07 / CU-09</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative">
+              <strong>Como</strong> Operario de Cabina o Administrador, <strong>quiero</strong> trasladar en un solo paso transaccional un vehículo estacionado hacia otra celda libre compatible y dejar bloqueada en MANTENIMIENTO la celda origen si sufrió una contingencia, <strong>para</strong> resolver emergencias físicas (goteras, fallas eléctricas) sin generar descuadres en el conteo de cupos libres ni falsas salidas.
+            </p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul>
+                <li>Escenario 1 (Reubicación atómica exitosa): Dado que 'TOY-456' (CARRO) ocupa la celda origen y 'C-01' está DISPONIBLE, Cuando ejecuto la reubicación activando 'Bloquear celda origen en MANTENIMIENTO', Entonces dentro de una única transacción BEGIN IMMEDIATE 'C-01' pasa a OCUPADA, la celda origen pasa a MANTENIMIENTO y el registro activo apunta a 'C-01'.</li><li>Escenario 2 (Rechazo por incompatibilidad de categoría): Dado que 'TOY-456' es de categoría CARRO, Cuando se intenta reubicar hacia la celda de moto 'M-01', Entonces la transacción ejecuta ROLLBACK rechazando la operación.</li>
+              </ul>
+            </div>
+          </div>
+        </div><div class="hu-card">
+          <div class="hu-header">
+            <div>
+              <span class="hu-badge">HU-10</span>
+              <span class="hu-title">Supervisión en Vivo de Bitácora Inmutable de Auditoría 24/7 e Historial Técnico</span>
+            </div>
+            <div class="hu-meta">Prioridad: <strong>Media</strong> | Estimación: <strong>3 pts</strong> | Trazabilidad: <code>RF-17, RF-18 / CU-10</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative">
+              <strong>Como</strong> Auditor de Calidad o Administrador, <strong>quiero</strong> inspeccionar y filtrar por módulo todos los eventos de seguridad, cambios de rol, mantenimientos de celdas y accesos vehiculares, <strong>para</strong> verificar el cumplimiento de los protocolos operativos en cada turno 24/7 con respaldo probatorio inalterable.
+            </p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul>
+                <li>Escenario 1 (Filtrado de auditoría por módulo): Dado que existen eventos registrados en múltiples subsistemas, Cuando selecciono el filtro 'SEGURIDAD' o 'CELDAS' en la vista Auditoría 24/7, Entonces el sistema lista cronológicamente fecha, usuario responsable, rol RBAC, acción, detalle y terminal.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+  </section>
+
+  <!-- SECCIÓN 4: MOCKUPS -->
+  <section class="page-break">
+    <h1>4. Mockups e Interfaces Gráficas — Sistema Cobalt Bay OS (Ítem D)</h1>
+    <p>
+      Las interfaces gráficas fueron diseñadas bajo el sistema de diseño <strong>Cobalt Bay OS</strong> (inspirado en tableros de misión crítica 24/7 con codificación semántica de colores: esmeralda para disponibilidad, carmesí para ocupación activa, ámbar para bloqueo por mantenimiento y púrpura para privilegios RBAC administrativos) e implementadas directamente en la SPA funcional responsiva del proyecto.
+    </p>
+    <div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/mockups_figma/Mockup_1_Login_Autenticacion_SHA256_RBAC.png" alt="Figura 2. Interfaz de Autenticación Criptográfica SHA-256 y Selector Rápido de Cuentas Semilla RBAC (HU-04)." />
+          <div class="figure-caption"><strong>Figura 2. Interfaz de Autenticación Criptográfica SHA-256 y Selector Rápido de Cuentas Semilla RBAC (HU-04).</strong> Presenta el modal de validación de credenciales sobre el punto de control 24/7, permitiendo autenticar cuentas reales con dispersión SHA-256 y alternar perfiles (ADMIN, OPERARIO, AUDITOR) para verificación de privilegios.</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/mockups_figma/Mockup_2_Gestion_CRUD_Usuarios_y_Roles_RBAC.png" alt="Figura 3. Módulo de Gestión CRUD de Usuarios, Matriz Visual de Roles RBAC y Acciones de Seguridad (HU-05)." />
+          <div class="figure-caption"><strong>Figura 3. Módulo de Gestión CRUD de Usuarios, Matriz Visual de Roles RBAC y Acciones de Seguridad (HU-05).</strong> Exhibe las tarjetas descriptivas de los tres niveles de acceso RBAC, buscador multicriterio y tabla administrativa con controles para editar perfil/rol, restablecer clave SHA-256, suspender o ejecutar baja segura.</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/mockups_figma/Mockup_3_Gestion_CRUD_y_Mantenimiento_80_Celdas.png" alt="Figura 4. Administración CRUD de las 80 Celdas, Indicadores de Aforo e Historial Técnico en Vivo (HU-07, HU-08)." />
+          <div class="figure-caption"><strong>Figura 4. Administración CRUD de las 80 Celdas, Indicadores de Aforo e Historial Técnico en Vivo (HU-07, HU-08).</strong> Integra las tarjetas KPI del inventario reglamentario (80 celdas: 70 Carros / 10 Motos), tabla CRUD filtrable por zona/piso/estado y la Bitácora Técnica inferior de transiciones de mantenimiento.</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/mockups_figma/Mockup_4_Mapa_80_Celdas_y_Reubicacion_Transaccional.png" alt="Figura 5. Plano Interactivo de las 80 Celdas y Modal de Reubicación Transaccional Atómica (HU-09)." />
+          <div class="figure-caption"><strong>Figura 5. Plano Interactivo de las 80 Celdas y Modal de Reubicación Transaccional Atómica (HU-09).</strong> Muestra el estado cromático en tiempo real (Disponible, Ocupada, Mantenimiento, Inactiva) y la orden atómica para trasladar un vehículo hacia otra plaza compatible bloqueando simultáneamente la celda averiada.</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/mockups_figma/Mockup_5_Padron_CRUD_Abonados_y_Vehiculos.png" alt="Figura 6. Módulo CRUD del Padrón de Clientes Abonados y Actualización de Vehículos Asociados (HU-06)." />
+          <div class="figure-caption"><strong>Figura 6. Módulo CRUD del Padrón de Clientes Abonados y Actualización de Vehículos Asociados (HU-06).</strong> Permite registrar nuevos suscriptores y actualizar datos de contacto o características del vehículo (marca, modelo, color) respetando la tarifa plana mensual ($250.000 Carro / $100.000 Moto).</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/mockups_figma/Mockup_6_Bitacora_Inmutable_Auditoria_24_7.png" alt="Figura 7. Bitácora Central Inmutable de Auditoría 24/7 Filtrable por Subsistema (HU-10)." />
+          <div class="figure-caption"><strong>Figura 7. Bitácora Central Inmutable de Auditoría 24/7 Filtrable por Subsistema (HU-10).</strong> Consolida de forma cronológica e inalterable cada inicio de sesión, bloqueo RBAC, mantenimiento de celda, reubicación y movimiento de barrera con usuario ejecutor y terminal.</div>
+        </div>
+  </section>
+
+  <!-- SECCIÓN 5: DIAGRAMAS DE SECUENCIA -->
+  <section class="page-break">
+    <h1>5. Diagramas de Secuencia Asociados a las Iteraciones 1 y 2 (Ítem E)</h1>
+    <p>
+      Para evidenciar de extremo a extremo la colaboración temporal entre la interfaz reactiva (<code>CobaltBaySPA</code>), el servidor concurrente (<code>AutosColombiaHandler</code>), los servicios de negocio protegidos por RBAC (<code>models.py</code>) y el motor transaccional <code>SQLite WAL</code>, se presentan los cuatro diagramas de secuencia que articulan las Iteraciones 1 y 2:
+    </p>
+    <div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/2a_diagrama_secuencia_usuarios_rbac.png" alt="Figura 8. Diagrama de Secuencia 2A (Iteración 2) — Autenticación SHA-256, Verificación RBAC y Creación CRUD de Usuarios." class="uml-seq-img" />
+          <div class="figure-caption"><strong>Figura 8. Diagrama de Secuencia 2A (Iteración 2) — Autenticación SHA-256, Verificación RBAC y Creación CRUD de Usuarios.</strong> Modela la validación criptográfica de credenciales (HTTP 200 / 401) y el filtro de autorización verificar_permiso('GESTION_USUARIOS') que concede HTTP 201 al ADMIN o rechaza con HTTP 403 y traza de auditoría a roles no autorizados.</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/2b_diagrama_secuencia_celdas_reubicacion.png" alt="Figura 9. Diagrama de Secuencia 2B (Iteración 2) — Orden de Mantenimiento de Celda y Reubicación Transaccional Atómica." class="uml-seq-img" />
+          <div class="figure-caption"><strong>Figura 9. Diagrama de Secuencia 2B (Iteración 2) — Orden de Mantenimiento de Celda y Reubicación Transaccional Atómica.</strong> Representa la validación previa de no ocupación antes de bloquear una plaza y la transacción BEGIN IMMEDIATE que traslada un vehículo entre celdas actualizando registro_acceso e historial_celda sin condiciones de carrera.</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/2c_diagrama_secuencia_entrada_integrada.png" alt="Figura 10. Diagrama de Secuencia 2C (Integración Iteraciones 1 y 2) — Entrada Vehicular 24/7 Excluyendo Celdas en Mantenimiento." class="uml-seq-img" />
+          <div class="figure-caption"><strong>Figura 10. Diagrama de Secuencia 2C (Integración Iteraciones 1 y 2) — Entrada Vehicular 24/7 Excluyendo Celdas en Mantenimiento.</strong> Integra la verificación RBAC de cabina con la validación estricta de mensualidad vigente (sin días de gracia) y el sorteo aleatorio sobre celdas con estado = 'DISPONIBLE', excluyendo plazas en MANTENIMIENTO o INACTIVAS.</div>
+        </div><div class="figure-card">
+          <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/2d_diagrama_secuencia_salida_integrada.png" alt="Figura 11. Diagrama de Secuencia 2D (Integración Iteraciones 1 y 2) — Registro de Novedad Física, Salida y Liberación de Celda." class="uml-seq-img" />
+          <div class="figure-caption"><strong>Figura 11. Diagrama de Secuencia 2D (Integración Iteraciones 1 y 2) — Registro de Novedad Física, Salida y Liberación de Celda.</strong> Ilustra el reporte de novedades de seguridad en ronda (HU-03) y el cierre transaccional del ciclo de estacionamiento calculando tiempo exacto de permanencia y restituyendo la celda a estado DISPONIBLE.</div>
+        </div>
+  </section>
+
+  <!-- SECCIÓN 6: DIAGRAMA DE COMPONENTES, CLASES Y MER -->
+  <section class="page-break">
+    <h1>6. Diagrama de Componentes Unificado y Arquitectura de Datos (Ítem F)</h1>
+    <p>
+      Atendiendo los principios de diseño modular expuestos en la cátedra, el <strong>Diagrama de Componentes Unificado</strong> explicita formalmente las interfaces provistas y requeridas con prefijo <code>I</code> (<code>IRestAPI_JSON</code>, <code>IAutenticacionRBAC</code>, <code>IGestionUsuarios</code>, <code>IGestionCeldas</code>, <code>IGestionAbonados</code>, <code>IControlAcceso</code>, <code>IAuditoriaInmutable</code> e <code>IPersistenciaWAL</code>), desacoplando la capa cliente SPA de la lógica de dominio y de la persistencia concurrente.
+    </p>
+
+    <div class="figure-card">
+      <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/3_diagrama_componentes_unificado.png" alt="Diagrama de Componentes Unificado" />
+      <div class="figure-caption">
+        <strong>Figura 12. Diagrama de Componentes Unificado de las Iteraciones 1 y 2 con Interfaces Explícitas (StarUML).</strong> Evidencia la cohesión funcional y el paso obligatorio por <code>IAutenticacionRBAC</code> e <code>IAuditoriaInmutable</code>.
+      </div>
+    </div>
+
+    <div class="figure-card">
+      <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/4_diagrama_clases_iteracion_2.png" alt="Diagrama de Clases Iteración 2" />
+      <div class="figure-caption">
+        <strong>Figura 13. Diagrama de Clases del Dominio Unificado (Iteraciones 1 y 2).</strong> Detalla atributos tipados, visibilidad privada del hash criptográfico y métodos transaccionales.
+      </div>
+    </div>
+
+    <div class="figure-card">
+      <img src="file:///C:/Users/Camilo Palacios/Documents/IU_Digital_Ingenieria_Software_Entrega_Actividad_2_Iteracion_2_Parqueadero/01_Evidencia_Aprendizaje_2_Iteracion_2_Parqueadero/diagramas_uml/5_modelo_entidad_relacion_mer_iteracion_2.png" alt="Modelo Entidad Relación 3FN" />
+      <div class="figure-caption">
+        <strong>Figura 14. Modelo Entidad-Relación Físico en Tercera Forma Normal (3FN — 8 Tablas en SQLite WAL).</strong> Une las tablas base de la Iteración 1 con <code>USUARIO</code>, <code>HISTORIAL_CELDA</code> y <code>AUDITORIA_ACCION</code>.
+      </div>
+    </div>
+  </section>
+
+  <!-- SECCIÓN 7: PLAN DE PRUEBAS RESUMIDO -->
+  <section class="page-break">
+    <h1>7. Formato de Plan de Pruebas Resumido Diligenciado (Ítem G)</h1>
+    <p>
+      El aseguramiento de calidad se ejecutó mediante una matriz estructurada de <strong>20 casos de prueba (<code>CP-01</code> a <code>CP-20</code>)</strong> que cubren la totalidad de casos de uso e historias de usuario de las Iteraciones 1 y 2. Adicionalmente al libro de Excel adjunto (<code>Plan_de_Pruebas_Resumido_Iteracion_2.xlsx</code>), todas las pruebas fueron automatizadas en el script ejecutable <code>tests_iteracion2.py</code> obteniendo un <strong>100% de aprobación (20/20 OK en 1.41 segundos)</strong>.
+    </p>
+
+    <div class="callout">
+      <strong>Resumen Ejecutivo de Ejecución QA:</strong> Casos Planificados: <strong>20</strong> &nbsp;|&nbsp; Casos Ejecutados: <strong>20</strong> &nbsp;|&nbsp; Aprobados: <strong>20 (100%)</strong> &nbsp;|&nbsp; Fallidos: <strong>0 (0%)</strong> &nbsp;|&nbsp; Comando de verificación reproducible: <code>python -X utf8 tests_iteracion2.py</code>.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th style="width:6%;">ID</th>
+          <th style="width:8%;">CU</th>
+          <th style="width:11%;">HU / RF</th>
+          <th style="width:17%;">Objetivo de Prueba</th>
+          <th style="width:18%;">Entrada / Estímulo</th>
+          <th style="width:18%;">Resultado Esperado</th>
+          <th style="width:14%;">Resultado Obtenido</th>
+          <th style="width:8%;">Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="mono bold center">CP-01</td>
+          <td class="mono center">CU-04</td>
+          <td class="mono center">HU-04 / RF-08, RF-09</td>
+          <td class="bold">Autenticación SHA-256 exitosa para los 3 roles (ADMIN, OPERARIO, AUDITOR)</td>
+          <td>POST /api/auth/login con ('admin','admin123'), ('adriana_op','operario123') y ('auditor','auditor123').</td>
+          <td>HTTP 200 OK; retorna perfil sin password_hash, actualiza ultimo_login y entrega lista exacta de permisos RBAC.</td>
+          <td>HTTP 200 OK; ADMIN recibe 6 permisos, OPERARIO 4 permisos y AUDITOR 1 permiso (CONSULTA_AUDITORIA).</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-02</td>
+          <td class="mono center">CU-04</td>
+          <td class="mono center">HU-04 / RF-08, RNF-05</td>
+          <td class="bold">Rechazo de inicio de sesión ante contraseña inválida o usuario inexistente</td>
+          <td>POST /api/auth/login con ('admin','wrong_password') y ('fantasma_99','clave123').</td>
+          <td>HTTP 401 Unauthorized; bloquea sesión y registra evento LOGIN_FALLIDO / LOGIN_USUARIO_INEXISTENTE en auditoría.</td>
+          <td>HTTP 401 retornado y traza de seguridad almacenada sin exponer hashes.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-03</td>
+          <td class="mono center">CU-05</td>
+          <td class="mono center">HU-05 / RF-10</td>
+          <td class="bold">Creación CRUD de nuevo usuario interno y validación de unicidad (username/email)</td>
+          <td>POST /api/usuarios creando 'carlos_turno' (OPERARIO) y segundo intento duplicando username.</td>
+          <td>Primer llamado retorna HTTP 201 Created con clave dispersada en SHA-256; duplicado retorna HTTP 400.</td>
+          <td>Usuario creado con ID=5 y duplicado rechazado con mensaje explícito de unicidad.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-04</td>
+          <td class="mono center">CU-05</td>
+          <td class="mono center">HU-05 / RF-10, RF-11</td>
+          <td class="bold">Actualización de rol/cargo y restablecimiento criptográfico de contraseña</td>
+          <td>POST /api/usuarios/actualizar (rol='AUDITOR') + POST /api/usuarios/clave ('nuevaSegura99').</td>
+          <td>Actualiza rol a AUDITOR, reemplaza password_hash SHA-256 y permite login inmediato con la nueva clave.</td>
+          <td>Login exitoso con nueva clave y matriz RBAC actualizada a AUDITOR.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-05</td>
+          <td class="mono center">CU-05</td>
+          <td class="mono center">HU-05 / RF-11, RNF-06</td>
+          <td class="bold">Protección contra desactivación o degradación del único Administrador activo</td>
+          <td>Intentar cambiar rol de id=1 a OPERARIO o pasar activo=0.</td>
+          <td>Operación rechazada por regla de continuidad administrativa evitando bloqueo total del sistema.</td>
+          <td>Rechazado exitosamente: 'No se puede desactivar ni cambiar el rol del único Administrador activo'.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-06</td>
+          <td class="mono center">CU-05</td>
+          <td class="mono center">HU-05 / RF-11, RF-18</td>
+          <td class="bold">Baja lógica de usuario con historial y bloqueo de acceso a cuentas suspendidas</td>
+          <td>POST /api/usuarios/eliminar (id=5) seguido de intento de login.</td>
+          <td>Aplica BAJA_LOGICA (activo=0) para no romper llaves foráneas de auditoría y bloquea futuros inicios de sesión.</td>
+          <td>Modo BAJA_LOGICA aplicado e intento de login rechazado con traza LOGIN_BLOQUEADO.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-07</td>
+          <td class="mono center">CU-04 / CU-05 / CU-07</td>
+          <td class="mono center">HU-04 / RF-09, RNF-05</td>
+          <td class="bold">Bloqueo HTTP 403 Forbidden ante escalamiento de privilegios (OPERARIO y AUDITOR)</td>
+          <td>OPERARIO invoca POST /api/usuarios y POST /api/celdas; AUDITOR invoca POST /api/ingreso.</td>
+          <td>Todas las peticiones retornan HTTP 403 con codigo_error='PERMISO_DENEGADO' y registran ACCESO_DENEGADO_RBAC.</td>
+          <td>HTTP 403 verificado en los 3 vectores de ataque sin mutación en base de datos.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-08</td>
+          <td class="mono center">CU-06</td>
+          <td class="mono center">HU-06 / RF-12</td>
+          <td class="bold">Alta de cliente abonado y actualización posterior de datos de vehículo y contacto</td>
+          <td>POST /api/abonado ('NEW-777', Mazda CX-30) y POST /api/abonado/actualizar (nuevo color y teléfono).</td>
+          <td>Registra propietario, vehículo y vigencia de 30 días ($250.000); actualiza atributos sin alterar historial.</td>
+          <td>Ficha de NEW-777 refleja color 'Gris Polimetálico' y teléfono actualizado en tiempo real.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-09</td>
+          <td class="mono center">CU-07</td>
+          <td class="mono center">HU-07 / RF-13</td>
+          <td class="bold">Verificación del inventario reglamentario de 80 celdas y filtros multicriterio</td>
+          <td>GET /api/celdas sin filtro, con tipo=CARRO y con tipo=MOTO.</td>
+          <td>Retorna exactamente 80 celdas totales: 70 de CARRO (C-01..C-70) y 10 de MOTO (M-01..M-10) distribuidas en 2 pisos.</td>
+          <td>80 celdas verificadas (70 carros, 10 motos, 60 en Piso 1 y 20 en Piso 2).</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-10</td>
+          <td class="mono center">CU-07</td>
+          <td class="mono center">HU-07 / RF-14</td>
+          <td class="bold">Ciclo CRUD completo sobre celda física de expansión (Crear, Editar y Eliminar C-71)</td>
+          <td>Crear celda C-71 (Piso 2), actualizar zona a 'ZONA VIP PISO 2' (INACTIVA) y eliminar C-71.</td>
+          <td>Eleva inventario temporalmente a 81, actualiza metadatos, registra historial_celda y elimina C-71 volviendo a 80.</td>
+          <td>Ciclo CRUD completado con éxito; inventario final exacto en 80 celdas.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-11</td>
+          <td class="mono center">CU-08</td>
+          <td class="mono center">HU-08 / RF-15, RF-17</td>
+          <td class="bold">Cambio de estado operativo de celda libre a MANTENIMIENTO y posterior rehabilitación</td>
+          <td>POST /api/celdas/estado (codigo='C-10', nuevo_estado='MANTENIMIENTO', motivo='Reparación sensor').</td>
+          <td>Actualiza celda a MANTENIMIENTO, guarda motivo técnico e inserta transición en tabla historial_celda.</td>
+          <td>Transición DISPONIBLE -&gt; MANTENIMIENTO -&gt; DISPONIBLE auditada correctamente.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-12</td>
+          <td class="mono center">CU-08</td>
+          <td class="mono center">HU-08 / RF-15, RNF-08</td>
+          <td class="bold">Prohibición de bloquear en MANTENIMIENTO o eliminar una celda actualmente OCUPADA</td>
+          <td>Intentar cambiar_estado_celda(celda_ocupada, 'MANTENIMIENTO') y eliminar_celda(celda_ocupada).</td>
+          <td>Ambas operaciones son rechazadas exigiendo reubicar o dar salida primero al vehículo ocupante.</td>
+          <td>Conflicto operativo detectado y bloqueado; celda conserva estado OCUPADA.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-13</td>
+          <td class="mono center">CU-01 + CU-08</td>
+          <td class="mono center">HU-01 + HU-08 / RF-15</td>
+          <td class="bold">Exclusión automática de celdas en MANTENIMIENTO durante el sorteo aleatorio de entrada</td>
+          <td>Ingresar moto vigente MOT-808 y posteriormente intentar ingresar moto vigente KLR-500.</td>
+          <td>MOT-808 recibe obligatoriamente M-07 (única disponible); KLR-500 recibe rechazo SIN_CUPO.</td>
+          <td>MOT-808 asignada a M-07 y KLR-500 rechazada con código SIN_CUPO sin tocar celdas bloqueadas.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-14</td>
+          <td class="mono center">CU-01</td>
+          <td class="mono center">HU-01 / RF-01, RF-03</td>
+          <td class="bold">Autorización de entrada y sorteo compatible por categoría para Carro y Moto vigentes</td>
+          <td>POST /api/ingreso para TOY-456 (Puerta 1) y KLR-500 (Puerta 2).</td>
+          <td>Asigna celda prefijo C-xx al carro y M-xx a la moto, cambia estado a OCUPADA y abre barrera.</td>
+          <td>Ingresos registrados atómicamente en celdas compatibles de cada categoría.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-15</td>
+          <td class="mono center">CU-01</td>
+          <td class="mono center">HU-01 / RF-02</td>
+          <td class="bold">Rechazo estricto sin días de gracia para mensualidad vencida o placa no registrada</td>
+          <td>POST /api/ingreso con 'XYZ-999' y con 'ZZZ-000'.</td>
+          <td>Rechaza acceso retornando MENSUALIDAD_VENCIDA y NO_REGISTRADO respectivamente sin asignar celda.</td>
+          <td>Barrera permanece cerrada en ambos casos; 0 celdas consumidas.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-16</td>
+          <td class="mono center">CU-01</td>
+          <td class="mono center">HU-01 / RF-04</td>
+          <td class="bold">Bloqueo de doble ingreso simultáneo para vehículo que ya figura ADENTRO</td>
+          <td>POST /api/ingreso nuevamente con placa 'TOY-456' por otra terminal.</td>
+          <td>Rechaza operación con código YA_ADENTRO indicando la celda donde permanece estacionado.</td>
+          <td>Doble ingreso bloqueado exitosamente preservando unicidad de ocupación.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-17</td>
+          <td class="mono center">CU-09</td>
+          <td class="mono center">HU-09 / RF-16, RNF-07</td>
+          <td class="bold">Traslado transaccional de vehículo estacionado hacia nueva celda libre bloqueando origen</td>
+          <td>POST /api/celdas/reubicar con marcar_anterior_mantenimiento=True y motivo='Filtración de agua'.</td>
+          <td>En una sola transacción BEGIN IMMEDIATE ocupa destino, pasa origen a MANTENIMIENTO y actualiza registro_acceso.</td>
+          <td>Reubicación ejecutada en &lt;15 ms con doble registro en historial_celda.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-18</td>
+          <td class="mono center">CU-09</td>
+          <td class="mono center">HU-09 / RF-16</td>
+          <td class="bold">Rechazo de reubicación de vehículo hacia celda de categoría incompatible</td>
+          <td>POST /api/celdas/reubicar intentando mover TOY-456 hacia M-01.</td>
+          <td>Transacción abortada (ROLLBACK) por incompatibilidad tipológica CARRO vs MOTO.</td>
+          <td>Rechazo confirmado; estados de celdas permanecen intactos.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-19</td>
+          <td class="mono center">CU-02 + CU-03</td>
+          <td class="mono center">HU-02 + HU-03 / RF-05, RF-06</td>
+          <td class="bold">Registro de novedad física en ronda y posterior salida liberando celda a DISPONIBLE</td>
+          <td>POST /api/novedad sobre TOY-456 seguido de POST /api/salida para ambos vehículos.</td>
+          <td>Anexa novedad con hora a observaciones, cierra registro en FINALIZADO, calcula permanencia y libera las 80 celdas.</td>
+          <td>Novedad persistida y aforo restaurado a 80 celdas libres / 0 ocupadas.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-20</td>
+          <td class="mono center">CU-10</td>
+          <td class="mono center">HU-10 / RF-18, RNF-09</td>
+          <td class="bold">Consulta de bitácora inmutable de auditoría 24/7 y monitoreo de salud HTTP</td>
+          <td>GET /api/salud, GET /api/resumen y GET /api/auditoria?limite=30.</td>
+          <td>HTTP 200 OK en todos los endpoints; bitácora retorna eventos ordenados cronológicamente con actor y rol.</td>
+          <td>Respuesta JSON íntegra en &lt;20 ms con trazabilidad completa verificada.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- SECCIÓN 8: GITHUB Y VIDEO DEMOSTRATIVO -->
+  <section class="page-break">
+    <h1>8. Repositorio en GitHub y Enlace al Video Demostrativo (Ítems H e I)</h1>
+
+    <h2>8.1. URL del Repositorio Público Actualizado en GitHub (Ítem H — 15 Puntos)</h2>
+    <div class="link-box">
+      <div style="font-size:9.5pt;font-weight:800;color:#1e3a8a;text-transform:uppercase;margin-bottom:4px;">Repositorio Oficial GitHub — Código Fuente Iteraciones 1 y 2 + Documentación + Suite QA:</div>
+      <a href="https://github.com/Camilo-Alberto-Palacio/autos-colombia-parqueadero" target="_blank" style="color:#1d4ed8;font-weight:800;font-size:11.5pt;word-break:break-all;">https://github.com/Camilo-Alberto-Palacio/autos-colombia-parqueadero</a>
+      <div style="margin-top:6px;font-size:9.2pt;color:#334155;">
+        <strong>Ejecución local inmediata (sin librerías externas):</strong> Clonar el repositorio, ejecutar <code>python app.py</code> y abrir <code>http://localhost:8000</code>. Incluye esquema <code>database_schema.sql</code>, migrador idempotente <code>database.py</code>, motor de dominio RBAC <code>models.py</code>, servidor concurrente <code>app.py</code>, interfaz SPA <code>static/</code>, proyecto StarUML <code>.mdj</code> y suite <code>tests_iteracion2.py</code>.
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Usuario Semilla</th>
+          <th>Contraseña en Claro</th>
+          <th>Rol RBAC</th>
+          <th>Titular Asignado</th>
+          <th>Propósito en Pruebas y Sustentación</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="mono bold center">admin</td><td class="mono center">admin123</td><td class="center bold">ADMIN</td><td>Camilo Alberto Palacios Turriago</td><td>Control total: CRUD Usuarios, CRUD estructural de 80 Celdas, Mantenimiento y Acceso.</td></tr>
+        <tr><td class="mono bold center">adriana_op</td><td class="mono center">operario123</td><td class="center bold">OPERARIO</td><td>Adriana Andrea Agudelo Agudelo</td><td>Cabina Norte 24/7: Entrada/Salida, Mantenimiento, Reubicación y Abonados (403 en CRUD Admin).</td></tr>
+        <tr><td class="mono bold center">daniel_op</td><td class="mono center">operario123</td><td class="center bold">OPERARIO</td><td>Juan Daniel Pulgarin García</td><td>Cabina Sur 24/7: Pruebas multi-operario concurrentes sobre SQLite WAL.</td></tr>
+        <tr><td class="mono bold center">auditor</td><td class="mono center">auditor123</td><td class="center bold">AUDITOR</td><td>Auditor de Calidad y Seguridad</td><td>Supervisión estricta de Solo Lectura: bloquea con HTTP 403 cualquier escritura.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>8.2. Enlace Público al Video Demostrativo del Sistema en Ejecución (Ítem I — 10 Puntos)</h2>
+    <div class="video-box">
+      <div style="font-size:9.5pt;font-weight:800;color:#065f46;text-transform:uppercase;margin-bottom:6px;">URL Pública del Video de Sustentación (YouTube / Google Drive — Acceso Sin Inicio de Sesión):</div>
+      <!-- VIDEO_URL_START -->
+      <div style="background:#ffffff;border:1.5px dashed #059669;border-radius:6px;padding:10px 12px;font-size:10pt;color:#0f172a;">
+        <strong>Enlace del Video Demostrativo Público:</strong><br/>
+        <span style="color:#047857;font-weight:700;">[Pegar aquí el enlace público definitivo de YouTube o Google Drive antes de subir a Canvas — o ejecutar <code>python actualizar_enlace_video.py "https://youtu.be/..."</code> para incrustarlo automáticamente en este PDF]</span>
+      </div>
+      <!-- VIDEO_URL_END -->
+      <div style="margin-top:8px;font-size:9pt;color:#1e293b;">
+        <strong>Contenido verificado en la demostración:</strong> (1) Ejecución en consola de las 20 pruebas automatizadas (<code>OK</code>) y arranque del servidor <code>app.py</code>; (2) Inicio de sesión SHA-256 probando la transición dinámica entre <code>ADMIN</code>, <code>OPERARIO</code> y <code>AUDITOR</code>; (3) Creación, edición y protección del último Administrador en Gestión de Usuarios; (4) Actualización de datos de abonado/vehículo; (5) Ciclo CRUD sobre celda <code>C-71</code>, orden de mantenimiento en <code>C-05</code> y demostración de exclusión en el sorteo de entrada; (6) Reubicación transaccional atómica y trazabilidad en la Bitácora de Auditoría 24/7.
+      </div>
+    </div>
+
+    <h1 style="margin-top:20px;">Conclusiones</h1>
+    <p>
+      <strong>1. Gobernanza y Seguridad por Diseño (RBAC + SHA-256):</strong> La incorporación del modelo de Control de Acceso Basado en Roles permitió transformar una herramienta operativa abierta en una plataforma institucional auditada, donde cada acción sobre barreras, celdas o usuarios exige autenticación criptográfica previa, validación explícita de privilegios en el servidor y registro inmutable en bitácora, eliminando riesgos de escalamiento de permisos o pérdida de trazabilidad entre turnos rotativos 24/7.
+    </p>
+    <p>
+      <strong>2. Cohesión Arquitectónica entre las Iteraciones 1 y 2:</strong> La integración del módulo CRUD y de mantenimiento de las 80 celdas con el motor transaccional de entradas demostró la importancia de desacoplar componentes mediante interfaces bien definidas. Al filtrar dinámicamente únicamente plazas con estado <code>DISPONIBLE</code> dentro de bloques atómicos <code>BEGIN IMMEDIATE</code> sobre <code>SQLite WAL</code>, el sistema previene de raíz tanto la asignación de celdas físicamente averiadas como las condiciones de carrera en reubicaciones vehiculares de emergencia.
+    </p>
+    <p>
+      <strong>3. Preparación Estructural hacia la Iteración 3:</strong> El esquema normalizado en Tercera Forma Normal (8 tablas con integridad referencial activa) y la separación modular de servicios dejan la arquitectura completamente preparada para acoplar en la tercera y última iteración el módulo financiero de facturación y gestión de pagos sin requerir refactorizaciones disruptivas sobre los módulos ya certificados.
+    </p>
+
+    <h1 style="margin-top:18px;">Referencias Bibliográficas</h1>
+    <p class="apa-ref">Fowler, M. (2018). Patterns of enterprise application architecture (2nd ed.). Addison-Wesley Professional.</p><p class="apa-ref">International Organization for Standardization. (2011). Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — System and software quality models (ISO/IEC 25010:2011).</p><p class="apa-ref">Object Management Group. (2017). OMG Unified Modeling Language (OMG UML), Version 2.5.1. https://www.omg.org/spec/UML/2.5.1/</p><p class="apa-ref">Owens, M., &amp; Allen, G. (2010). The definitive guide to SQLite (2nd ed.). Apress.</p><p class="apa-ref">Pressman, R. S., &amp; Maxim, B. R. (2021). Ingeniería del software: Un enfoque práctico (9.ª ed.). McGraw-Hill Interamericana.</p><p class="apa-ref">Sandhu, R. S., Coyne, E. J., Feinstein, H. L., &amp; Youman, C. E. (1996). Role-based access control models. Computer, 29(2), 38–47. https://doi.org/10.1109/2.485845</p><p class="apa-ref">Sommerville, I. (2011). Ingeniería de software (9.ª ed.). Pearson Educación.</p>
+  </section>
+
+</body>
+</html>

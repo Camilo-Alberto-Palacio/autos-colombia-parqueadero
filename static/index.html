@@ -3,20 +3,18 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Autos Colombia 24/7 - Sistema Integral (Iteración 1 y 2)</title>
-  
-  <!-- Tailwind CSS & Fuentes Oficiales del Sistema Cobalt Bay OS -->
+  <title>Autos Colombia 24/7 — Sistema Integral (Iteraciones 1 y 2)</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet" />
+
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .font-mono-plate { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em; }
-    .font-inter { font-family: 'Inter', sans-serif; }
+    .font-mono-plate { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.06em; }
     .view-container { display: none; }
-    .view-container.active { display: block; animation: fadeIn 0.22s ease-out; }
+    .view-container.active { display: block; animation: fadeIn 0.2s ease-out; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
     .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -26,471 +24,514 @@
   </style>
 </head>
 
-<body class="h-full bg-[#f8faff] text-slate-800 flex flex-col antialiased select-none">
+<body class="h-full bg-[#f4f7fc] text-slate-800 flex flex-col antialiased">
+
+  <!-- CONTENEDOR DE NOTIFICACIONES FLOTANTES (TOASTS) -->
+  <div id="toast-container" class="fixed top-16 right-5 z-[100] space-y-2 max-w-md w-full pointer-events-none"></div>
 
   <!-- ==================================================================== -->
-  <!-- BARRA SUPERIOR DE ESTADO 24/7, GESTIÓN DE SESIÓN Y VISTAS             -->
+  <!-- BARRA SUPERIOR DE ESTADO 24/7, AUTENTICACIÓN RBAC Y VISTAS            -->
   <!-- ==================================================================== -->
-  <header class="bg-slate-900 text-white px-5 py-2.5 flex items-center justify-between border-b border-slate-800 shadow-sm z-50 flex-shrink-0">
-    <div class="flex items-center gap-3">
-      <div class="flex items-center gap-2 bg-blue-600/30 border border-blue-500/40 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-semibold">
+  <header class="bg-slate-900 text-white px-4 py-2.5 flex items-center justify-between border-b border-slate-800 shadow-sm z-50 flex-shrink-0 gap-3">
+    <div class="flex items-center gap-2.5 flex-wrap">
+      <div class="flex items-center gap-2 bg-blue-600/25 border border-blue-500/40 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-extrabold">
         <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
-        AUTOS COLOMBIA 24/7 • ITERACIÓN 1 & 2
+        <span>AUTOS COLOMBIA 24/7 • ITERACIÓN 1 &amp; 2</span>
       </div>
 
-      <!-- SELECTOR DE TERMINAL Y USUARIO ACTIVO (RBAC) -->
-      <div class="hidden lg:flex items-center gap-2 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg text-xs">
+      <div class="hidden xl:flex items-center gap-2 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg text-xs">
         <span class="text-slate-400 font-semibold">Terminal:</span>
         <select id="select-puerta-operario" class="bg-slate-900 text-emerald-400 font-bold rounded px-2 py-0.5 border border-slate-700 focus:outline-none text-xs">
-          <option value="Puerta 1 - Norte (Operario 1)">Puerta 1 - Norte (Operario 1)</option>
-          <option value="Puerta 2 - Sur (Operario 2)">Puerta 2 - Sur (Operario 2)</option>
+          <option value="Puerta 1 - Norte">Puerta 1 - Norte</option>
+          <option value="Puerta 2 - Sur">Puerta 2 - Sur</option>
         </select>
-        <span class="text-slate-600">|</span>
-        <span class="text-slate-400 font-semibold">Usuario Activo:</span>
-        <select id="select-usuario-sesion" onchange="cambiarUsuarioSesion()" class="bg-slate-900 text-blue-300 font-bold rounded px-2 py-0.5 border border-slate-700 focus:outline-none text-xs">
-          <option value="1">Camilo Palacios (ADMIN)</option>
-          <option value="2" selected>Adriana Agudelo (OPERARIO)</option>
-          <option value="3">Juan Daniel Pulgarin (OPERARIO)</option>
-          <option value="4">Auditor de Calidad (AUDITOR)</option>
-        </select>
-        <span id="badge-rol-activo" class="bg-blue-600 text-white px-1.5 py-0.2 rounded text-[10px] font-black uppercase">OPERARIO</span>
+      </div>
+
+      <!-- PÍLDORA DE SESIÓN AUTENTICADA RBAC -->
+      <div class="flex items-center gap-2 bg-slate-800/90 border border-slate-700 px-2.5 py-1 rounded-lg text-xs">
+        <span class="text-slate-400 font-semibold">Sesión:</span>
+        <span id="header-user-name" class="text-white font-bold">Camilo Palacios</span>
+        <span id="badge-rol-activo" class="bg-purple-600 text-white px-1.5 py-0.5 rounded text-[10px] font-black uppercase">ADMIN</span>
+        <button onclick="abrirModalLogin()" class="ml-1 bg-blue-600 hover:bg-blue-500 text-white font-bold px-2 py-0.5 rounded text-[11px] transition-colors">
+          Cambiar Sesión
+        </button>
       </div>
     </div>
 
     <!-- PESTAÑAS DE NAVEGACIÓN PRINCIPALES -->
-    <div class="flex items-center gap-1.5 overflow-x-auto text-xs py-0.5">
-      <button class="nav-tab px-3 py-1 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm" data-target="view-control" onclick="cambiarVista('view-control')">
+    <div class="flex items-center gap-1 overflow-x-auto text-xs py-0.5">
+      <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-bold transition-all bg-blue-600 text-white shadow-sm" data-target="view-control" onclick="cambiarVista('view-control')">
         1. Entrada / Salida
       </button>
-      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-mapa" onclick="cambiarVista('view-mapa')">
+      <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-mapa" onclick="cambiarVista('view-mapa')">
         2. Mapa 80 Celdas
       </button>
-      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-celdas-crud" onclick="cambiarVista('view-celdas-crud')">
-        3. Gestión de Celdas
+      <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-celdas-crud" onclick="cambiarVista('view-celdas-crud')">
+        3. CRUD Celdas
       </button>
-      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-usuarios" onclick="cambiarVista('view-usuarios')">
-        4. Gestión de Usuarios
+      <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-usuarios" onclick="cambiarVista('view-usuarios')">
+        4. Usuarios y Roles
       </button>
-      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-abonados" onclick="cambiarVista('view-abonados')">
-        5. Padrón Abonados
+      <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-abonados" onclick="cambiarVista('view-abonados')">
+        5. Abonados
       </button>
-      <button class="nav-tab px-3 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-auditoria" onclick="cambiarVista('view-auditoria')">
+      <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-auditoria" onclick="cambiarVista('view-auditoria')">
         6. Auditoría 24/7
       </button>
     </div>
   </header>
 
+  <!-- BANNER DE ESTADO RBAC (VISIBLE CUANDO ROL ES LIMITADO O INFORMATIVO) -->
+  <div id="rbac-status-bar" class="bg-purple-950/90 text-purple-100 px-5 py-1.5 text-[11px] flex items-center justify-between border-b border-purple-800/50 flex-shrink-0">
+    <div id="rbac-status-text" class="font-medium">
+      Rol activo: <strong>ADMIN</strong> — Control total habilitado (Acceso 24/7, CRUD Usuarios y Roles, CRUD y Mantenimiento de 80 Celdas, Padrón de Abonados y Auditoría).
+    </div>
+    <span class="text-[10px] font-bold uppercase tracking-wider opacity-80">Autenticación SHA-256 • SQLite WAL</span>
+  </div>
+
   <!-- ==================================================================== -->
   <!-- CONTENEDOR PRINCIPAL: SIDEBAR + WORKSPACE DINÁMICO                   -->
   <!-- ==================================================================== -->
   <div class="flex-1 flex overflow-hidden">
-    
+
     <!-- SIDEBAR DE NAVEGACIÓN Y MÉTRICAS -->
-    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between shadow-[2px_0_12px_-4px_rgba(0,0,0,0.03)] z-40 flex-shrink-0">
-      <div class="p-5 flex flex-col gap-5">
-        <!-- LOGO AUTOS COLOMBIA -->
+    <aside class="w-64 bg-white border-r border-slate-200 flex flex-col justify-between z-40 flex-shrink-0">
+      <div class="p-4 flex flex-col gap-4">
         <div class="cursor-pointer" onclick="cambiarVista('view-control')">
           <div class="flex items-center gap-2.5">
-            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-black text-xl shadow-md shadow-blue-500/20">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-blue-500 flex items-center justify-center text-white font-black text-xl shadow-md">
               P
             </div>
             <div>
               <div class="flex items-center gap-1.5">
-                <span class="font-extrabold text-slate-900 text-base tracking-tight leading-tight">Autos Colombia</span>
+                <span class="font-extrabold text-slate-900 text-base tracking-tight">Autos Colombia</span>
                 <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-1.5 py-0.5 rounded-md">24/7</span>
               </div>
-              <span class="text-[11px] font-semibold text-blue-700 tracking-wide uppercase">Solo Mensualidades</span>
+              <span class="text-[10px] font-bold text-blue-700 tracking-wide uppercase">Cobalt Bay OS • Grupo 25</span>
             </div>
           </div>
         </div>
 
         <!-- TARJETA RESUMEN DE CAPACIDAD Y MANTENIMIENTO EN VIVO -->
         <div class="bg-blue-50/70 border border-blue-100 rounded-xl p-3">
-          <div class="flex items-center justify-between mb-1.5">
-            <span class="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Aforo de Sede</span>
+          <div class="flex items-center justify-between mb-1">
+            <span class="text-[10px] uppercase font-bold text-blue-700 tracking-wider">Aforo en Tiempo Real</span>
             <span class="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full" id="side-badge-libres">
               • 80 Libres
             </span>
           </div>
-          <div class="text-sm font-extrabold text-slate-900 flex justify-between">
-            <span>80 Celdas Fijas</span>
-            <span class="text-xs font-semibold text-slate-500" id="side-ocupadas-total">0 Ocupadas</span>
+          <div class="text-sm font-extrabold text-slate-900 flex justify-between items-baseline">
+            <span id="side-capacidad-total">80 Celdas</span>
+            <span class="text-xs font-bold text-rose-600" id="side-ocupadas-total">0 Ocupadas</span>
           </div>
           <div class="w-full bg-slate-200 rounded-full h-2 mt-2 overflow-hidden">
             <div id="side-progress-bar" class="bg-blue-600 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
           </div>
           <div class="flex justify-between items-center mt-2 text-[11px] text-slate-600">
-            <span>En Mantenimiento:</span>
+            <span>Bloqueadas / Mant.:</span>
             <span id="side-mantenimiento-total" class="font-bold text-amber-600">0 Celdas</span>
           </div>
         </div>
 
-        <!-- NAVEGACIÓN LATERAL COMPLETA -->
-        <nav class="flex flex-col gap-1 text-sm font-bold">
-          <div class="text-[11px] font-black text-slate-400 uppercase tracking-wider mb-1 px-3">
-            Módulos del Sistema
+        <!-- NAVEGACIÓN LATERAL -->
+        <nav class="flex flex-col gap-1 text-xs font-bold">
+          <div class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-2">
+            Módulos Iteraciones 1 y 2
           </div>
-          <button class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all bg-blue-700 text-white shadow-sm" id="side-link-control" onclick="cambiarVista('view-control')">
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>Control Entrada / Salida</span>
+          <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all bg-blue-700 text-white shadow-sm" id="side-link-control" onclick="cambiarVista('view-control')">
+            <span>1. Control Entrada / Salida</span>
           </button>
-          <button class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-mapa" onclick="cambiarVista('view-mapa')">
-            <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>Mapa Celdas (80 Puestos)</span>
+          <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-mapa" onclick="cambiarVista('view-mapa')">
+            <span>2. Mapa Visual (80 Celdas)</span>
           </button>
-          <button class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-celdas-crud" onclick="cambiarVista('view-celdas-crud')">
-            <svg class="w-4 h-4 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>Gestión de Celdas</span>
+          <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-celdas-crud" onclick="cambiarVista('view-celdas-crud')">
+            <span>3. Gestión CRUD de Celdas</span>
           </button>
-          <button class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-usuarios" onclick="cambiarVista('view-usuarios')">
-            <svg class="w-4 h-4 flex-shrink-0 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>Gestión de Usuarios</span>
+          <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-usuarios" onclick="cambiarVista('view-usuarios')">
+            <span>4. Gestión Usuarios y RBAC</span>
           </button>
-          <button class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-abonados" onclick="cambiarVista('view-abonados')">
-            <svg class="w-4 h-4 flex-shrink-0 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>Padrón de Abonados</span>
+          <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-abonados" onclick="cambiarVista('view-abonados')">
+            <span>5. Clientes Abonados (CRUD)</span>
           </button>
-          <button class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100 hover:text-slate-900" id="side-link-auditoria" onclick="cambiarVista('view-auditoria')">
-            <svg class="w-4 h-4 flex-shrink-0 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>Auditoría y Bitácora</span>
+          <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-auditoria" onclick="cambiarVista('view-auditoria')">
+            <span>6. Bitácora Auditoría 24/7</span>
           </button>
         </nav>
       </div>
 
-      <!-- FOOTER OPERADOR Y RELOJ 24/7 -->
-      <div class="p-4 border-t border-slate-100 bg-slate-50/80">
-        <div class="flex items-center justify-between mb-1.5">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 badge-pulse"></span>
-            <span class="text-[11px] font-black text-slate-700 tracking-wider">SINCRONIZACIÓN 24/7</span>
-          </div>
+      <div class="p-4 border-t border-slate-100 bg-slate-50/90 space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-[10px] font-black text-slate-700 tracking-wider">SINCRONIZACIÓN 24/7</span>
           <span class="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded">WAL Activo</span>
         </div>
         <div class="text-xs font-bold text-slate-800" id="reloj-vivo">--:--:--</div>
-        <div class="text-[11px] text-slate-500" id="footer-user-tag">Operador: Adriana Agudelo</div>
+        <div class="text-[11px] text-slate-500 truncate" id="footer-user-tag">Admin: Camilo Palacios</div>
       </div>
     </aside>
 
     <!-- ÁREA DE CONTENIDO PRINCIPAL -->
-    <main class="flex-1 overflow-y-auto custom-scroll bg-[#f4f7fc] p-6">
-      
+    <main class="flex-1 overflow-y-auto custom-scroll p-6">
+
       <!-- ==================================================================== -->
-      <!-- VISTA 1: CONTROL DE ENTRADA Y SALIDA                                 -->
+      <!-- VISTA 1: CONTROL DE ENTRADA, SALIDA Y NOVEDADES                      -->
       <!-- ==================================================================== -->
-      <section class="view-container active space-y-6 max-w-7xl mx-auto" id="view-control">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+      <section class="view-container active space-y-5 max-w-7xl mx-auto" id="view-control">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Punto de Control de Acceso 24 Horas</h1>
-            <p class="text-xs text-slate-500 font-medium">Validación estricta de mensualidad vigente y asignación aleatoria de celdas libres.</p>
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Punto de Control de Acceso Vehicular 24 Horas</h1>
+            <p class="text-xs text-slate-500 font-medium">Validación estricta de mensualidad vigente (sin días de gracia) y sorteo dinámico excluyendo celdas en mantenimiento.</p>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2.5">
             <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm text-xs font-bold">
               <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
               <span>Carros:</span>
               <span class="text-blue-700 font-extrabold" id="top-carros-libres">70 Libres</span>
-              <span class="text-slate-400">/ 70</span>
+              <span class="text-slate-400" id="top-carros-total">/ 70</span>
             </div>
             <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-sm text-xs font-bold">
               <span class="w-2.5 h-2.5 rounded-full bg-purple-500"></span>
               <span>Motos:</span>
               <span class="text-purple-700 font-extrabold" id="top-motos-libres">10 Libres</span>
-              <span class="text-slate-400">/ 10</span>
+              <span class="text-slate-400" id="top-motos-total">/ 10</span>
             </div>
           </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          
           <!-- COLUMNA IZQUIERDA: VALIDACIÓN Y ENTRADA -->
-          <div class="lg:col-span-7 space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 space-y-5">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <span class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-blue-600"></span>
-                  1. Registrar Entrada de Vehículo
-                </span>
-                <span class="text-[10px] bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded">
-                  SOLO MENSUALIDAD
-                </span>
-              </div>
-
-              <!-- DIGITACIÓN DE PLACA -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Placa del Vehículo:</label>
-                <div class="flex gap-2">
-                  <div class="relative flex-1">
-                    <input 
-                      type="text" 
-                      id="input-placa" 
-                      maxlength="7" 
-                      value="ABC-123" 
-                      placeholder="ABC-123 o MOT-808" 
-                      class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-2.5 text-base font-bold font-mono-plate tracking-wider text-slate-900 focus:bg-white focus:border-blue-600 focus:outline-none transition-all uppercase"
-                      oninput="formatearInputPlaca(this)"
-                      onkeypress="if(event.key === 'Enter') consultarPlaca()"
-                    />
-                  </div>
-                  <button onclick="consultarPlaca()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                    <span>Verificar</span>
-                  </button>
-                </div>
-                <!-- BOTONES DE PRUEBA RÁPIDA -->
-                <div class="flex flex-wrap items-center gap-1.5 mt-2">
-                  <span class="text-[10px] text-slate-400 font-semibold">Placas de Prueba:</span>
-                  <button onclick="probarPlaca('ABC-123')" class="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded border border-blue-200 hover:bg-blue-100 font-mono-plate">ABC-123 (Carro Al Día)</button>
-                  <button onclick="probarPlaca('MOT-808')" class="text-[10px] bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded border border-purple-200 hover:bg-purple-100 font-mono-plate">MOT-808 (Moto Al Día)</button>
-                  <button onclick="probarPlaca('XYZ-999')" class="text-[10px] bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded border border-rose-200 hover:bg-rose-100 font-mono-plate">XYZ-999 (Carro Vencido)</button>
-                </div>
-              </div>
-
-              <!-- FICHA TÉCNICA DEL VEHÍCULO -->
-              <div id="contenedor-ficha-vehiculo" class="space-y-4">
-                <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 text-center text-xs text-slate-500">
-                  Digite una placa para consultar sus datos y mensualidad.
-                </div>
-              </div>
-
-              <!-- CAMPO DE NOVEDADES FÍSICAS -->
-              <div class="border-t border-slate-100 pt-3">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center justify-between">
-                  <span>Registro de Novedades / Estado Físico (Opcional):</span>
-                  <span class="text-[10px] text-slate-400 font-normal">Rayones, abolladuras, etc.</span>
-                </label>
-                <input 
-                  type="text" 
-                  id="input-observaciones-ingreso" 
-                  placeholder="Ej: Rayón en puerta derecha, sin espejo izquierdo..." 
-                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none"
-                />
-              </div>
-
-              <!-- BOTÓN DE ACCIÓN PRINCIPAL DE ENTRADA -->
-              <button 
-                id="btn-autorizar-ingreso" 
-                onclick="ejecutarIngreso()" 
-                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 px-4 rounded-xl text-sm transition-all shadow-md flex items-center justify-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-                <span>ABRIR BARRERA Y ASIGNAR CELDA</span>
-              </button>
+          <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span class="text-xs font-black uppercase tracking-wider text-slate-700">1. Validación de Placa e Ingreso</span>
+              <span class="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 font-bold px-2 py-0.5 rounded">TARIFA PLANA MENSUAL</span>
             </div>
+
+            <div>
+              <label class="block text-xs font-bold text-slate-700 mb-1">Placa del Automotor:</label>
+              <div class="flex gap-2">
+                <input
+                  type="text"
+                  id="input-placa"
+                  maxlength="7"
+                  value="ABC-123"
+                  placeholder="ABC-123 o MOT-808"
+                  class="flex-1 bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-2.5 text-base font-bold font-mono-plate text-slate-900 focus:bg-white focus:border-blue-600 focus:outline-none uppercase"
+                  oninput="formatearInputPlaca(this)"
+                  onkeypress="if(event.key === 'Enter') consultarPlaca()"
+                />
+                <button onclick="consultarPlaca()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition-all shadow-sm">
+                  Verificar Placa
+                </button>
+              </div>
+              <div class="flex flex-wrap items-center gap-1.5 mt-2">
+                <span class="text-[10px] text-slate-400 font-semibold">Prueba rápida:</span>
+                <button onclick="probarPlaca('ABC-123')" class="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded border border-blue-200 hover:bg-blue-100 font-mono-plate">ABC-123 (Carro Vigente)</button>
+                <button onclick="probarPlaca('TOY-456')" class="text-[10px] bg-blue-50 text-blue-700 font-bold px-2 py-0.5 rounded border border-blue-200 hover:bg-blue-100 font-mono-plate">TOY-456 (Carro Vigente)</button>
+                <button onclick="probarPlaca('MOT-808')" class="text-[10px] bg-purple-50 text-purple-700 font-bold px-2 py-0.5 rounded border border-purple-200 hover:bg-purple-100 font-mono-plate">MOT-808 (Moto Vigente)</button>
+                <button onclick="probarPlaca('XYZ-999')" class="text-[10px] bg-rose-50 text-rose-700 font-bold px-2 py-0.5 rounded border border-rose-200 hover:bg-rose-100 font-mono-plate">XYZ-999 (En Mora)</button>
+              </div>
+            </div>
+
+            <div id="contenedor-ficha-vehiculo"></div>
+
+            <div class="border-t border-slate-100 pt-3">
+              <label class="block text-xs font-bold text-slate-700 mb-1">Novedades / Estado Físico al Ingreso (Opcional):</label>
+              <input
+                type="text"
+                id="input-observaciones-ingreso"
+                placeholder="Ej: Rayón leve en bomper delantero, antena retirada..."
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:bg-white focus:border-blue-500 focus:outline-none"
+              />
+            </div>
+
+            <button
+              id="btn-autorizar-ingreso"
+              onclick="ejecutarIngreso()"
+              class="rbac-operacion w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3 px-4 rounded-xl text-sm transition-all shadow-md">
+              ABRIR BARRERA Y ASIGNAR CELDA ALEATORIA
+            </button>
           </div>
 
           <!-- COLUMNA DERECHA: VEHÍCULOS ADENTRO Y SALIDA -->
-          <div class="lg:col-span-5 space-y-6">
-            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-6 space-y-4">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <span class="text-xs font-black uppercase tracking-wider text-slate-700 flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  Vehículos Estacionados Adentro
-                </span>
-                <span class="text-xs font-black bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full" id="contador-adentro-badge">
-                  0
-                </span>
-              </div>
-              <p class="text-[11px] text-slate-500 leading-tight">
-                Seleccione un vehículo para registrar su salida o realizar reubicación de celda.
-              </p>
-              <div id="lista-vehiculos-adentro" class="space-y-2.5 max-h-[460px] overflow-y-auto custom-scroll pr-1">
-                <div class="text-center py-8 text-xs text-slate-400">
-                  No hay vehículos estacionados en este momento.
-                </div>
-              </div>
+          <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+              <span class="text-xs font-black uppercase tracking-wider text-slate-700">2. Vehículos Estacionados Adentro</span>
+              <span class="text-xs font-black bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full" id="contador-adentro-badge">0</span>
             </div>
+            <p class="text-[11px] text-slate-500">Gestione salidas, registre novedades físicas o reubique vehículos ante contingencias.</p>
+            <div id="lista-vehiculos-adentro" class="space-y-2.5 max-h-[440px] overflow-y-auto custom-scroll pr-1"></div>
           </div>
         </div>
       </section>
 
       <!-- ==================================================================== -->
-      <!-- VISTA 2: MAPA DE 80 CELDAS                                           -->
+      <!-- VISTA 2: MAPA INTERACTIVO DE 80 CELDAS                               -->
       <!-- ==================================================================== -->
       <section class="view-container space-y-5 max-w-7xl mx-auto" id="view-mapa">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Mapa Visual de las 80 Celdas</h1>
-            <p class="text-xs text-slate-500 font-medium">Distribución espacial: 10 celdas de Motos (M-01 a M-10) y 70 celdas de Carros (C-01 a C-70).</p>
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Mapa Interactivo de Distribución de Celdas</h1>
+            <p class="text-xs text-slate-500 font-medium">Supervisión gráfica en vivo de las celdas de Motos (M-01 a M-10) y Carros (C-01 a C-70).</p>
           </div>
-          <!-- FILTROS DE MAPA -->
-          <div class="flex items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 text-xs font-bold">
-            <button onclick="filtrarMapa('TODOS')" class="filtro-btn px-2.5 py-1 rounded-lg bg-blue-600 text-white" data-filtro="TODOS">Todas (80)</button>
-            <button onclick="filtrarMapa('CARRO')" class="filtro-btn px-2.5 py-1 rounded-lg text-slate-600 hover:bg-slate-100" data-filtro="CARRO">Carros (70)</button>
-            <button onclick="filtrarMapa('MOTO')" class="filtro-btn px-2.5 py-1 rounded-lg text-slate-600 hover:bg-slate-100" data-filtro="MOTO">Motos (10)</button>
+          <div class="flex flex-wrap items-center gap-1.5 bg-white p-1 rounded-xl border border-slate-200 text-xs font-bold">
+            <button onclick="filtrarMapa('TODOS')" class="filtro-btn px-2.5 py-1 rounded-lg bg-blue-600 text-white" data-filtro="TODOS">Todas</button>
+            <button onclick="filtrarMapa('CARRO')" class="filtro-btn px-2.5 py-1 rounded-lg text-slate-600 hover:bg-slate-100" data-filtro="CARRO">Carros</button>
+            <button onclick="filtrarMapa('MOTO')" class="filtro-btn px-2.5 py-1 rounded-lg text-slate-600 hover:bg-slate-100" data-filtro="MOTO">Motos</button>
+            <button onclick="filtrarMapa('MANTENIMIENTO')" class="filtro-btn px-2.5 py-1 rounded-lg text-amber-700 hover:bg-amber-50" data-filtro="MANTENIMIENTO">Mantenimiento</button>
           </div>
         </div>
 
         <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-          <div class="xl:col-span-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-              <span>PLANO DE CELDAS (HAGA CLIC PARA DETALLES / GESTIONAR)</span>
+          <div class="xl:col-span-8 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs font-bold text-slate-700">
+              <span>PLANO FÍSICO DE CELDAS (CLIC PARA INSPECCIONAR)</span>
               <div class="flex items-center gap-3 text-[11px]">
                 <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-emerald-500"></span> Disponible</span>
                 <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-rose-500"></span> Ocupada</span>
                 <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-amber-500"></span> Mantenimiento</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded bg-slate-400"></span> Inactiva</span>
               </div>
             </div>
             <div id="grid-celdas" class="grid grid-cols-5 sm:grid-cols-8 md:grid-cols-10 gap-2"></div>
           </div>
 
-          <div class="xl:col-span-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <h3 class="text-xs font-black uppercase tracking-wider text-slate-700">Inspección de Celda</h3>
+          <div class="xl:col-span-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+            <h3 class="text-xs font-black uppercase tracking-wider text-slate-700">Ficha Técnica de Celda</h3>
             <div id="detalle-celda-seleccionada" class="text-xs text-slate-500 text-center py-10 bg-slate-50 rounded-xl border border-slate-100">
-              Seleccione una celda en el plano para visualizar su información.
+              Seleccione cualquier celda del plano para consultar su estado, ocupante o gestionar mantenimiento.
             </div>
           </div>
         </div>
       </section>
 
       <!-- ==================================================================== -->
-      <!-- VISTA 3: GESTIÓN Y ADMINISTRACIÓN DE CELDAS (ITERACIÓN 2)           -->
+      <!-- VISTA 3: GESTIÓN CRUD Y MANTENIMIENTO DE CELDAS (ITERACIÓN 2)        -->
       <!-- ==================================================================== -->
       <section class="view-container space-y-5 max-w-7xl mx-auto" id="view-celdas-crud">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Administración y Mantenimiento de Celdas</h1>
-            <p class="text-xs text-slate-500 font-medium">Control de estados (Disponible, Ocupada, Mantenimiento, Inactiva) y reubicación vehicular.</p>
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Administración CRUD, Mantenimiento y Reubicación de Celdas</h1>
+            <p class="text-xs text-slate-500 font-medium">Gestión integral de parámetros físicos (Zona, Piso, Categoría), bloqueo técnico por avería y traslado atómico vehicular.</p>
           </div>
-          <div class="flex items-center gap-2">
-            <button onclick="abrirModalReubicar()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-              <span>Reubicar Vehículo</span>
+          <div class="flex flex-wrap items-center gap-2">
+            <button onclick="abrirModalCrearCelda()" class="rbac-admin-only bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-sm">
+              + Nueva Celda (CRUD)
+            </button>
+            <button onclick="abrirModalReubicar()" class="rbac-operacion bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-sm">
+              Reubicar Vehículo
             </button>
           </div>
         </div>
 
-        <!-- TARJETAS DE MÉTRICAS DE CELDAS -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-            <div class="text-[10px] font-bold uppercase text-slate-400">Total Celdas</div>
-            <div class="text-2xl font-black text-slate-900">80</div>
-            <div class="text-[11px] text-slate-500">70 Carros / 10 Motos</div>
+            <div class="text-[10px] font-bold uppercase text-slate-400">Inventario Total</div>
+            <div class="text-2xl font-black text-slate-900" id="stat-crud-total">80</div>
+            <div class="text-[11px] text-slate-500" id="stat-crud-sub">70 Carros / 10 Motos</div>
           </div>
-          <div class="bg-white p-4 rounded-xl border border-emerald-100 shadow-sm bg-emerald-50/30">
-            <div class="text-[10px] font-bold uppercase text-emerald-600">Disponibles</div>
+          <div class="bg-emerald-50/50 p-4 rounded-xl border border-emerald-200 shadow-sm">
+            <div class="text-[10px] font-bold uppercase text-emerald-700">Disponibles</div>
             <div class="text-2xl font-black text-emerald-700" id="stat-crud-disponibles">--</div>
-            <div class="text-[11px] text-emerald-600">Aptas para asignación</div>
+            <div class="text-[11px] text-emerald-600">Habilitadas en sorteo</div>
           </div>
-          <div class="bg-white p-4 rounded-xl border border-rose-100 shadow-sm bg-rose-50/30">
-            <div class="text-[10px] font-bold uppercase text-rose-600">Ocupadas</div>
+          <div class="bg-rose-50/50 p-4 rounded-xl border border-rose-200 shadow-sm">
+            <div class="text-[10px] font-bold uppercase text-rose-700">Ocupadas</div>
             <div class="text-2xl font-black text-rose-700" id="stat-crud-ocupadas">--</div>
-            <div class="text-[11px] text-rose-600">Vehículos adentro</div>
+            <div class="text-[11px] text-rose-600">Con automotor adentro</div>
           </div>
-          <div class="bg-white p-4 rounded-xl border border-amber-100 shadow-sm bg-amber-50/30">
-            <div class="text-[10px] font-bold uppercase text-amber-600">Mantenimiento / Inactivas</div>
+          <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-200 shadow-sm">
+            <div class="text-[10px] font-bold uppercase text-amber-700">Mantenimiento / Inactivas</div>
             <div class="text-2xl font-black text-amber-700" id="stat-crud-mantenimiento">--</div>
-            <div class="text-[11px] text-amber-600">Fuera de servicio</div>
+            <div class="text-[11px] text-amber-600">Excluidas del sorteo</div>
           </div>
         </div>
 
-        <!-- TABLA DE GESTIÓN DE CELDAS -->
+        <!-- TABLA CRUD DE CELDAS -->
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/60">
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-slate-700">Filtro Estado:</span>
-              <select id="filtro-crud-estado" onchange="cargarTablaCeldasCrud()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-700">
+          <div class="p-4 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 bg-slate-50/70">
+            <div class="flex flex-wrap items-center gap-2">
+              <input
+                type="text"
+                id="filtro-crud-busqueda"
+                oninput="cargarTablaCeldasCrud()"
+                placeholder="Buscar código (C-15), zona o placa..."
+                class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-medium w-56 focus:outline-none focus:border-blue-500"
+              />
+              <select id="filtro-crud-estado" onchange="cargarTablaCeldasCrud()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-700">
                 <option value="">Todos los Estados</option>
-                <option value="DISPONIBLE">Disponibles</option>
-                <option value="OCUPADA">Ocupadas</option>
-                <option value="MANTENIMIENTO">En Mantenimiento</option>
-                <option value="INACTIVA">Inactivas</option>
+                <option value="DISPONIBLE">DISPONIBLE</option>
+                <option value="OCUPADA">OCUPADA</option>
+                <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+                <option value="INACTIVA">INACTIVA</option>
               </select>
-            </div>
-            <div class="flex items-center gap-2">
-              <span class="text-xs font-bold text-slate-700">Filtro Tipo:</span>
-              <select id="filtro-crud-tipo" onchange="cargarTablaCeldasCrud()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-700">
+              <select id="filtro-crud-tipo" onchange="cargarTablaCeldasCrud()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-700">
                 <option value="">Todos los Tipos</option>
-                <option value="CARRO">Carros</option>
-                <option value="MOTO">Motos</option>
+                <option value="CARRO">CARRO</option>
+                <option value="MOTO">MOTO</option>
               </select>
             </div>
+            <span class="text-[11px] font-bold text-slate-500" id="contador-celdas-filtradas">80 registros</span>
           </div>
 
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto max-h-[380px] custom-scroll">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100/80 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0">
                 <tr>
-                  <th class="py-3 px-4">Código</th>
-                  <th class="py-3 px-4">Tipo</th>
-                  <th class="py-3 px-4">Zona / Piso</th>
-                  <th class="py-3 px-4">Estado</th>
-                  <th class="py-3 px-4">Ocupante Actual</th>
-                  <th class="py-3 px-4">Motivo / Bloqueo</th>
-                  <th class="py-3 px-4 text-center">Acciones</th>
+                  <th class="py-2.5 px-4">Código</th>
+                  <th class="py-2.5 px-4">Categoría</th>
+                  <th class="py-2.5 px-4">Zona / Piso</th>
+                  <th class="py-2.5 px-4">Estado</th>
+                  <th class="py-2.5 px-4">Vehículo Ocupante</th>
+                  <th class="py-2.5 px-4">Motivo / Observación Técnica</th>
+                  <th class="py-2.5 px-4 text-center">Acciones CRUD / Operación</th>
                 </tr>
               </thead>
-              <tbody id="tbody-celdas-crud" class="divide-y divide-slate-100">
-                <!-- Se pobla dinámicamente -->
-              </tbody>
+              <tbody id="tbody-celdas-crud" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- HISTORIAL RECIENTE DE CAMBIOS EN CELDAS -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-700">Bitácora Técnica de Historial de Celdas</span>
+            <button onclick="cargarHistorialCeldas()" class="text-[11px] font-bold text-blue-600 hover:underline">Actualizar Historial</button>
+          </div>
+          <div class="overflow-x-auto max-h-48 custom-scroll">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
+                <tr>
+                  <th class="py-2 px-4">Fecha / Hora</th>
+                  <th class="py-2 px-4">Celda</th>
+                  <th class="py-2 px-4">Transición</th>
+                  <th class="py-2 px-4">Motivo Registrado</th>
+                  <th class="py-2 px-4">Responsable</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-historial-celdas" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
         </div>
       </section>
 
       <!-- ==================================================================== -->
-      <!-- VISTA 4: GESTIÓN DE USUARIOS Y ROLES (ITERACIÓN 2)                   -->
+      <!-- VISTA 4: GESTIÓN DE USUARIOS, ROLES Y PERMISOS (RBAC)                -->
       <!-- ==================================================================== -->
       <section class="view-container space-y-5 max-w-7xl mx-auto" id="view-usuarios">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Gestión de Usuarios, Roles y Permisos (RBAC)</h1>
-            <p class="text-xs text-slate-500 font-medium">Administración de credenciales, roles de acceso (Administrador, Operario, Auditor) y control de cuentas.</p>
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Gestión CRUD de Usuarios, Roles y Permisos (RBAC)</h1>
+            <p class="text-xs text-slate-500 font-medium">Administración de cuentas institucionales, dispersión criptográfica SHA-256 y control estricto de privilegios por rol.</p>
           </div>
-          <button onclick="abrirModalNuevoUsuario()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow-sm">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>+ Nuevo Usuario</span>
+          <button onclick="abrirModalUsuario()" class="rbac-admin-only bg-purple-600 hover:bg-purple-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-sm">
+            + Nuevo Usuario del Sistema
           </button>
         </div>
 
-        <!-- TABLA DE USUARIOS DEL SISTEMA -->
+        <!-- MATRIZ VISUAL DE ROLES Y PERMISOS RBAC -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="bg-white p-4 rounded-xl border border-purple-200 shadow-sm space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded text-[10px] font-black bg-purple-100 text-purple-800">ROL: ADMIN</span>
+              <span class="text-[10px] font-bold text-purple-700">Nivel Total</span>
+            </div>
+            <p class="text-xs font-bold text-slate-800">Administrador General</p>
+            <p class="text-[11px] text-slate-500">CRUD completo de Usuarios y Roles, CRUD estructural de Celdas, Mantenimiento, Reubicación, Abonados y Auditoría.</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-blue-200 shadow-sm space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded text-[10px] font-black bg-blue-100 text-blue-800">ROL: OPERARIO</span>
+              <span class="text-[10px] font-bold text-blue-700">Nivel Cabina 24/7</span>
+            </div>
+            <p class="text-xs font-bold text-slate-800">Operador de Turno</p>
+            <p class="text-[11px] text-slate-500">Control de Entrada/Salida, Novedades, Bloqueo/Mantenimiento operativo de celdas, Reubicación vehicular y Padrón de Abonados.</p>
+          </div>
+          <div class="bg-white p-4 rounded-xl border border-emerald-200 shadow-sm space-y-1.5">
+            <div class="flex items-center justify-between">
+              <span class="px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 text-emerald-800">ROL: AUDITOR</span>
+              <span class="text-[10px] font-bold text-emerald-700">Solo Lectura</span>
+            </div>
+            <p class="text-xs font-bold text-slate-800">Auditor de Calidad y Seguridad</p>
+            <p class="text-[11px] text-slate-500">Supervisión de Mapa 80 Celdas, Bitácora Inmutable 24/7 e Historial Técnico sin permisos de escritura (protección HTTP 403).</p>
+          </div>
+        </div>
+
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                id="filtro-user-q"
+                oninput="cargarTablaUsuarios()"
+                placeholder="Buscar usuario, nombre o correo..."
+                class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs w-60 focus:outline-none focus:border-purple-500"
+              />
+              <select id="filtro-user-rol" onchange="cargarTablaUsuarios()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-700">
+                <option value="">Todos los Roles</option>
+                <option value="ADMIN">ADMIN</option>
+                <option value="OPERARIO">OPERARIO</option>
+                <option value="AUDITOR">AUDITOR</option>
+              </select>
+            </div>
+            <span class="text-[11px] font-bold text-slate-500" id="contador-usuarios">4 cuentas registradas</span>
+          </div>
+
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100/80 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
                 <tr>
-                  <th class="py-3 px-4">ID</th>
-                  <th class="py-3 px-4">Usuario</th>
-                  <th class="py-3 px-4">Nombre Completo</th>
-                  <th class="py-3 px-4">Correo Electrónico</th>
-                  <th class="py-3 px-4">Rol Asignado</th>
-                  <th class="py-3 px-4">Cargo</th>
-                  <th class="py-3 px-4">Estado</th>
-                  <th class="py-3 px-4">Último Acceso</th>
-                  <th class="py-3 px-4 text-center">Acciones</th>
+                  <th class="py-3 px-2.5">ID</th>
+                  <th class="py-3 px-2.5">Username</th>
+                  <th class="py-3 px-3">Nombre Completo</th>
+                  <th class="py-3 px-3">Correo Institucional</th>
+                  <th class="py-3 px-2.5">Rol RBAC</th>
+                  <th class="py-3 px-2.5">Cargo</th>
+                  <th class="py-3 px-2.5">Estado</th>
+                  <th class="py-3 px-2.5">Último Acceso</th>
+                  <th class="py-3 px-3 text-center">Acciones CRUD</th>
                 </tr>
               </thead>
-              <tbody id="tbody-usuarios" class="divide-y divide-slate-100">
-                <!-- Se pobla dinámicamente -->
-              </tbody>
+              <tbody id="tbody-usuarios" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
         </div>
       </section>
 
       <!-- ==================================================================== -->
-      <!-- VISTA 5: PADRÓN DE ABONADOS                                          -->
+      <!-- VISTA 5: PADRÓN CRUD DE CLIENTES ABONADOS Y VEHÍCULOS                -->
       <!-- ==================================================================== -->
       <section class="view-container space-y-5 max-w-7xl mx-auto" id="view-abonados">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Padrón de Abonados y Mensualidades</h1>
-            <p class="text-xs text-slate-500 font-medium">Contratos activos ($250.000 Carro, $100.000 Moto) y estado de vigencia.</p>
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Gestión CRUD de Clientes Abonados y Vehículos</h1>
+            <p class="text-xs text-slate-500 font-medium">Registro y actualización de titulares y automotores asociados ($250.000 Carro / $100.000 Moto). <em>Recaudo de pagos reservado para Iteración 3.</em></p>
           </div>
-          <button onclick="abrirModalNuevoAbonado()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
-            + Registrar Vehículo / Abonado
+          <button onclick="abrirModalNuevoAbonado()" class="rbac-operacion bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-sm">
+            + Registrar Cliente / Vehículo
           </button>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between gap-3">
+            <input
+              type="text"
+              id="filtro-abonados-q"
+              oninput="filtrarAbonadosLocal()"
+              placeholder="Buscar por placa, cédula o nombre del titular..."
+              class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs w-72 focus:outline-none focus:border-blue-500"
+            />
+            <span class="text-[11px] font-bold text-slate-500" id="contador-abonados">0 abonados</span>
+          </div>
           <div class="overflow-x-auto">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100/80 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
                 <tr>
                   <th class="py-3 px-4">Placa</th>
-                  <th class="py-3 px-4">Tipo & Modelo</th>
-                  <th class="py-3 px-4">Propietario / Celular</th>
-                  <th class="py-3 px-4">Mensualidad</th>
-                  <th class="py-3 px-4">Vigencia</th>
+                  <th class="py-3 px-4">Automotor</th>
+                  <th class="py-3 px-4">Titular Abonado / Contacto</th>
+                  <th class="py-3 px-4">Tarifa</th>
+                  <th class="py-3 px-4">Vigencia Contrato</th>
                   <th class="py-3 px-4">Estado</th>
-                  <th class="py-3 px-4 text-center">Acción</th>
+                  <th class="py-3 px-4 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody id="tbody-abonados" class="divide-y divide-slate-100"></tbody>
@@ -500,30 +541,40 @@
       </section>
 
       <!-- ==================================================================== -->
-      <!-- VISTA 6: AUDITORÍA Y TRAZABILIDAD (24/7)                             -->
+      <!-- VISTA 6: BITÁCORA CENTRAL DE AUDITORÍA 24/7                          -->
       <!-- ==================================================================== -->
       <section class="view-container space-y-5 max-w-7xl mx-auto" id="view-auditoria">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Bitácora Central de Auditoría y Trazabilidad 24/7</h1>
-            <p class="text-xs text-slate-500 font-medium">Registro cronológico inmutable de entradas, salidas, cambios de celdas y accesos al sistema.</p>
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Bitácora Central Inmutable de Auditoría 24/7</h1>
+            <p class="text-xs text-slate-500 font-medium">Trazabilidad cronológica de sesiones RBAC, administración de usuarios, mantenimiento/reubicación de celdas y accesos.</p>
           </div>
-          <button onclick="cargarAuditoria()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1 shadow-sm">
-            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
-            <span>Actualizar Bitácora</span>
-          </button>
+          <div class="flex items-center gap-2">
+            <select id="filtro-auditoria-modulo" onchange="cargarAuditoria()" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700">
+              <option value="">Todos los Módulos</option>
+              <option value="SEGURIDAD">SEGURIDAD</option>
+              <option value="USUARIOS">USUARIOS</option>
+              <option value="CELDAS">CELDAS</option>
+              <option value="ACCESO">ACCESO</option>
+              <option value="ABONADOS">ABONADOS</option>
+            </select>
+            <button onclick="cargarAuditoria()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
+              Refrescar
+            </button>
+          </div>
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="overflow-x-auto">
+          <div class="overflow-x-auto max-h-[520px] custom-scroll">
             <table class="w-full text-left text-xs">
-              <thead class="bg-slate-100/80 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0">
                 <tr>
+                  <th class="py-3 px-4">ID</th>
                   <th class="py-3 px-4">Fecha / Hora</th>
-                  <th class="py-3 px-4">Usuario Responsable</th>
+                  <th class="py-3 px-4">Usuario / Rol</th>
                   <th class="py-3 px-4">Módulo</th>
                   <th class="py-3 px-4">Acción</th>
-                  <th class="py-3 px-4">Detalle Operativo</th>
+                  <th class="py-3 px-4">Detalle Auditado</th>
                   <th class="py-3 px-4">Terminal</th>
                 </tr>
               </thead>
@@ -537,83 +588,77 @@
   </div>
 
   <!-- ==================================================================== -->
-  <!-- MODALES OPERATIVOS (USUARIOS, CELDAS, REUBICACIÓN, ABONADO)          -->
+  <!-- MODALES DEL SISTEMA (LOGIN RBAC, USUARIOS, CELDAS, REUBICACIÓN, ETC.) -->
   <!-- ==================================================================== -->
 
-  <!-- MODAL: CAMBIAR ESTADO DE CELDA / MANTENIMIENTO -->
-  <div id="modal-estado-celda" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+  <!-- 1. MODAL DE LOGIN Y AUTENTICACIÓN CRIPTOGRÁFICA SHA-256 -->
+  <div id="modal-login" class="fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-extrabold text-slate-900 text-sm">Cambiar Estado de Celda</h3>
-        <button onclick="cerrarModal('modal-estado-celda')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Celda Seleccionada:</label>
-        <input type="text" id="modal-celda-codigo" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 font-mono-plate font-bold text-sm text-slate-800" />
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Nuevo Estado:</label>
-        <select id="modal-celda-nuevo-estado" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800">
-          <option value="DISPONIBLE">DISPONIBLE (Habilitar para ingreso)</option>
-          <option value="MANTENIMIENTO">MANTENIMIENTO (Avería / Pintura / Sensores)</option>
-          <option value="INACTIVA">INACTIVA (Fuera de servicio temporal)</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Motivo / Observación Técnica:</label>
-        <textarea id="modal-celda-motivo" rows="2" placeholder="Describa el motivo del mantenimiento..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800"></textarea>
-      </div>
-      <div class="flex justify-end gap-2 pt-2 border-t">
-        <button onclick="cerrarModal('modal-estado-celda')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
-        <button onclick="guardarEstadoCelda()" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white">Guardar Cambio</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: REUBICAR VEHÍCULO ENTRE CELDAS -->
-  <div id="modal-reubicar-vehiculo" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-extrabold text-slate-900 text-sm">Reubicar Vehículo Estacionado</h3>
-        <button onclick="cerrarModal('modal-reubicar-vehiculo')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Vehículo Estacionado (Placa):</label>
-        <select id="modal-reubicar-placa" onchange="actualizarCeldasLibresParaReubicacion()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800"></select>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Nueva Celda Disponible:</label>
-        <select id="modal-reubicar-nueva-celda" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800"></select>
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-slate-700 mb-1">Motivo de Reubicación:</label>
-        <input type="text" id="modal-reubicar-motivo" placeholder="Ej: Gotera en celda original, maniobra de salida..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800" />
-      </div>
-      <div class="flex items-center gap-2 pt-1">
-        <input type="checkbox" id="modal-reubicar-marcar-maint" class="rounded text-blue-600 focus:ring-0" />
-        <label for="modal-reubicar-marcar-maint" class="text-xs text-slate-700 font-semibold">Marcar celda anterior en Mantenimiento por avería</label>
-      </div>
-      <div class="flex justify-end gap-2 pt-2 border-t">
-        <button onclick="cerrarModal('modal-reubicar-vehiculo')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
-        <button onclick="ejecutarReubicacion()" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white">Reubicar Ahora</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: CREAR NUEVO USUARIO -->
-  <div id="modal-nuevo-usuario" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
-      <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-extrabold text-slate-900 text-sm">Registrar Nuevo Usuario del Sistema</h3>
-        <button onclick="cerrarModal('modal-nuevo-usuario')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Usuario (Username):</label>
-          <input type="text" id="modal-user-username" placeholder="carlos_op" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800" />
+          <h3 class="font-extrabold text-slate-900 text-base">Autenticación de Usuario (RBAC)</h3>
+          <p class="text-[11px] text-slate-500">Validación de credenciales con hash SHA-256 y control de roles.</p>
+        </div>
+        <button onclick="cerrarModal('modal-login')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+
+      <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-1.5">
+        <div class="text-[10px] font-black uppercase text-slate-500">Cuentas Semilla para Prueba Rápida (1 Clic):</div>
+        <div class="grid grid-cols-2 gap-1.5">
+          <button onclick="autocompletarLogin('admin', 'admin123')" class="text-left bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg px-2.5 py-1.5 text-[11px]">
+            <div class="font-extrabold text-purple-900">admin (ADMIN)</div>
+            <div class="text-[10px] text-purple-700">Camilo Palacios</div>
+          </button>
+          <button onclick="autocompletarLogin('adriana_op', 'operario123')" class="text-left bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg px-2.5 py-1.5 text-[11px]">
+            <div class="font-extrabold text-blue-900">adriana_op (OPERARIO)</div>
+            <div class="text-[10px] text-blue-700">Adriana Agudelo</div>
+          </button>
+          <button onclick="autocompletarLogin('daniel_op', 'operario123')" class="text-left bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg px-2.5 py-1.5 text-[11px]">
+            <div class="font-extrabold text-blue-900">daniel_op (OPERARIO)</div>
+            <div class="text-[10px] text-blue-700">Juan Daniel Pulgarin</div>
+          </button>
+          <button onclick="autocompletarLogin('auditor', 'auditor123')" class="text-left bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg px-2.5 py-1.5 text-[11px]">
+            <div class="font-extrabold text-emerald-900">auditor (AUDITOR)</div>
+            <div class="text-[10px] text-emerald-700">Solo Lectura / QA</div>
+          </button>
+        </div>
+      </div>
+
+      <div id="login-error-box" class="hidden bg-rose-50 border border-rose-300 text-rose-800 px-3 py-2 rounded-xl text-xs font-bold"></div>
+
+      <div class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Nombre de Usuario:</label>
+          <input type="text" id="login-username" value="admin" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate font-bold text-slate-900" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Contraseña:</label>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Contraseña:</label>
+          <input type="password" id="login-password" value="admin123" onkeypress="if(event.key==='Enter') ejecutarLogin()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900" />
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-login')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="ejecutarLogin()" class="px-5 py-2 rounded-xl text-xs font-extrabold bg-blue-600 hover:bg-blue-700 text-white shadow-sm">Iniciar Sesión Segura</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. MODAL CREAR / EDITAR USUARIO DEL SISTEMA -->
+  <div id="modal-usuario" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="modal-usuario-titulo" class="font-extrabold text-slate-900 text-sm">Registrar Nuevo Usuario del Sistema</h3>
+        <button onclick="cerrarModal('modal-usuario')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <input type="hidden" id="modal-user-id" value="" />
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Username:</label>
+          <input type="text" id="modal-user-username" placeholder="carlos_op" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate text-slate-800" />
+        </div>
+        <div id="contenedor-user-password">
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Contraseña Inicial:</label>
           <input type="password" id="modal-user-password" placeholder="Mínimo 6 caracteres" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800" />
         </div>
       </div>
@@ -627,10 +672,10 @@
       </div>
       <div class="grid grid-cols-2 gap-3">
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Rol de Acceso:</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Rol RBAC:</label>
           <select id="modal-user-rol" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800">
             <option value="OPERARIO">OPERARIO</option>
-            <option value="ADMIN">ADMINISTRADOR</option>
+            <option value="ADMIN">ADMIN</option>
             <option value="AUDITOR">AUDITOR</option>
           </select>
         </div>
@@ -640,26 +685,157 @@
         </div>
       </div>
       <div class="flex justify-end gap-2 pt-2 border-t">
-        <button onclick="cerrarModal('modal-nuevo-usuario')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
-        <button onclick="guardarNuevoUsuario()" class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white">Crear Usuario</button>
+        <button onclick="cerrarModal('modal-usuario')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="guardarUsuario()" class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white">Guardar Usuario</button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: REGISTRAR NUEVO ABONADO -->
+  <!-- 3. MODAL RESTABLECER CONTRASEÑA -->
+  <div id="modal-clave" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-sm">Restablecer Contraseña (SHA-256)</h3>
+        <button onclick="cerrarModal('modal-clave')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <input type="hidden" id="modal-clave-userid" />
+      <p class="text-xs text-slate-600">Usuario seleccionado: <strong id="modal-clave-username" class="font-mono-plate"></strong></p>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nueva Contraseña Segura:</label>
+        <input type="password" id="modal-clave-input" placeholder="Mínimo 6 caracteres" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-clave')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="ejecutarCambioClave()" class="px-4 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white">Actualizar Clave</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. MODAL CREAR / EDITAR CELDA FÍSICA (CRUD CELDAS) -->
+  <div id="modal-celda-crud" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="modal-celda-crud-titulo" class="font-extrabold text-slate-900 text-sm">Crear Nueva Celda Física</h3>
+        <button onclick="cerrarModal('modal-celda-crud')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <input type="hidden" id="modal-celda-modo" value="CREAR" />
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Código de Celda:</label>
+          <input type="text" id="modal-crud-celda-codigo" placeholder="C-71 o M-11" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate font-bold uppercase" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Categoría Permitida:</label>
+          <select id="modal-crud-celda-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold">
+            <option value="CARRO">CARRO</option>
+            <option value="MOTO">MOTO</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Zona / Sector:</label>
+          <input type="text" id="modal-crud-celda-zona" placeholder="ZONA A" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs uppercase" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Piso / Nivel:</label>
+          <input type="number" id="modal-crud-celda-piso" min="1" max="10" value="1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold" />
+        </div>
+      </div>
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Estado Operativo:</label>
+        <select id="modal-crud-celda-estado" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold">
+          <option value="DISPONIBLE">DISPONIBLE</option>
+          <option value="MANTENIMIENTO">MANTENIMIENTO</option>
+          <option value="INACTIVA">INACTIVA</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Observación / Motivo Bloqueo (Opcional):</label>
+        <input type="text" id="modal-crud-celda-motivo" placeholder="Ej: Demarcación epóxica en proceso" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-celda-crud')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="guardarCeldaCrud()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white">Guardar Celda</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. MODAL CAMBIAR ESTADO DE CELDA / MANTENIMIENTO -->
+  <div id="modal-estado-celda" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-sm">Orden Técnica de Estado / Mantenimiento de Celda</h3>
+        <button onclick="cerrarModal('modal-estado-celda')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Celda Seleccionada:</label>
+        <input type="text" id="modal-celda-codigo" readonly class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 font-mono-plate font-bold text-sm text-slate-800" />
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nuevo Estado Operativo:</label>
+        <select id="modal-celda-nuevo-estado" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800">
+          <option value="DISPONIBLE">DISPONIBLE (Habilitar en sorteo)</option>
+          <option value="MANTENIMIENTO">MANTENIMIENTO (Avería / Pintura / Sensor)</option>
+          <option value="INACTIVA">INACTIVA (Fuera de servicio temporal)</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Motivo Técnico:</label>
+        <textarea id="modal-celda-motivo" rows="2" placeholder="Describa la causa técnica del cambio de estado..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800"></textarea>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-estado-celda')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="guardarEstadoCelda()" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white">Aplicar Cambio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. MODAL REUBICAR VEHÍCULO ENTRE CELDAS -->
+  <div id="modal-reubicar-vehiculo" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-sm">Reubicación Transaccional de Vehículo</h3>
+        <button onclick="cerrarModal('modal-reubicar-vehiculo')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Vehículo Estacionado (Placa):</label>
+        <select id="modal-reubicar-placa" onchange="actualizarCeldasLibresParaReubicacion()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800"></select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Nueva Celda Compatible Disponible:</label>
+        <select id="modal-reubicar-nueva-celda" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800"></select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Motivo del Traslado:</label>
+        <input type="text" id="modal-reubicar-motivo" placeholder="Ej: Filtración en techo sobre celda origen" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800" />
+      </div>
+      <div class="flex items-center gap-2 pt-1">
+        <input type="checkbox" id="modal-reubicar-marcar-maint" checked class="rounded text-indigo-600" />
+        <label for="modal-reubicar-marcar-maint" class="text-xs text-slate-700 font-semibold">Bloquear automáticamente celda origen en MANTENIMIENTO</label>
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-reubicar-vehiculo')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="ejecutarReubicacion()" class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white">Ejecutar Reubicación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. MODAL REGISTRAR / EDITAR CLIENTE ABONADO Y VEHÍCULO -->
   <div id="modal-nuevo-abonado" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
       <div class="flex items-center justify-between border-b pb-3">
-        <h3 class="font-extrabold text-slate-900 text-sm">Registrar Nuevo Abonado / Vehículo</h3>
+        <h3 id="modal-abonado-titulo" class="font-extrabold text-slate-900 text-sm">Registrar Cliente Abonado y Vehículo</h3>
         <button onclick="cerrarModal('modal-nuevo-abonado')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
       </div>
+      <input type="hidden" id="modal-ab-modo" value="CREAR" />
       <div class="grid grid-cols-2 gap-3">
         <div>
           <label class="block text-[11px] font-bold text-slate-700 mb-1">Placa:</label>
           <input type="text" id="modal-ab-placa" placeholder="XYZ-123" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate font-bold uppercase" />
         </div>
         <div>
-          <label class="block text-[11px] font-bold text-slate-700 mb-1">Tipo:</label>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Categoría:</label>
           <select id="modal-ab-tipo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold">
             <option value="CARRO">CARRO ($250.000)</option>
             <option value="MOTO">MOTO ($100.000)</option>
@@ -667,28 +843,49 @@
         </div>
       </div>
       <div class="grid grid-cols-3 gap-2">
-        <input type="text" id="modal-ab-marca" placeholder="Marca (Renault)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
-        <input type="text" id="modal-ab-modelo" placeholder="Modelo (Duster)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
-        <input type="text" id="modal-ab-color" placeholder="Color (Blanco)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+        <input type="text" id="modal-ab-marca" placeholder="Marca (Mazda)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+        <input type="text" id="modal-ab-modelo" placeholder="Modelo (CX-30)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+        <input type="text" id="modal-ab-color" placeholder="Color (Gris)" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
       </div>
       <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre Propietario:</label>
-        <input type="text" id="modal-ab-conductor" placeholder="Nombre completo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Nombre Completo del Titular:</label>
+        <input type="text" id="modal-ab-conductor" placeholder="Nombre y Apellidos" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
       </div>
       <div class="grid grid-cols-2 gap-3">
-        <input type="text" id="modal-ab-documento" placeholder="Cédula / Documento" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
-        <input type="text" id="modal-ab-telefono" placeholder="Celular" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+        <input type="text" id="modal-ab-documento" placeholder="Documento / CC" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+        <input type="text" id="modal-ab-telefono" placeholder="Teléfono móvil" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
       </div>
-      <div>
-        <label class="block text-[11px] font-bold text-slate-700 mb-1">Estado de Pago Inicial:</label>
+      <div id="contenedor-ab-estado-pago">
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Estado Inicial de Mensualidad:</label>
         <select id="modal-ab-estado-pago" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800">
-          <option value="ACTIVA">ACTIVA (Al Día - Vigente 30 días)</option>
-          <option value="VENCIDA">VENCIDA (En Mora - Para pruebas de denegación)</option>
+          <option value="ACTIVA">ACTIVA (Al Día - Vigencia 30 días)</option>
+          <option value="VENCIDA">VENCIDA (En Mora - Para pruebas)</option>
         </select>
       </div>
       <div class="flex justify-end gap-2 pt-2 border-t">
         <button onclick="cerrarModal('modal-nuevo-abonado')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
-        <button onclick="guardarNuevoAbonado()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white">Guardar Abonado</button>
+        <button onclick="guardarAbonado()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white">Guardar Datos</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. MODAL REGISTRAR SALIDA / NOVEDAD RÁPIDA -->
+  <div id="modal-salida" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 id="modal-salida-titulo" class="font-extrabold text-slate-900 text-sm">Confirmar Salida y Liberación de Celda</h3>
+        <button onclick="cerrarModal('modal-salida')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <input type="hidden" id="modal-salida-placa" />
+      <input type="hidden" id="modal-salida-accion" value="SALIDA" />
+      <p id="modal-salida-sub" class="text-xs text-slate-600"></p>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Observación / Novedad Física:</label>
+        <input type="text" id="modal-salida-obs" value="Sin novedades físicas a la salida" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-salida')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button id="btn-confirmar-salida-modal" onclick="confirmarAccionSalidaNovedad()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white">Confirmar</button>
       </div>
     </div>
   </div>

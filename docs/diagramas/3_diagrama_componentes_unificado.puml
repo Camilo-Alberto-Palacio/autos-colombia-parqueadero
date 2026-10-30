@@ -1,0 +1,113 @@
+@startuml
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+skinparam nodesep 42
+skinparam ranksep 46
+title Diagrama de Componentes Unificado (Iteraciones 1 y 2) — Interfaces Explícitas (Estilo StarUML)
+
+package "Capa de Presentación Cliente (Navegador Web Cabina / Administración)" {
+  [SPA Cobalt Bay OS\n(index.html + TailwindCSS)] as CompHTML
+  [Controlador Reactivo RBAC\n(static/app.js)] as CompJS
+  CompHTML -right-> CompJS : Eventos DOM
+}
+
+package "Capa de Transporte y API REST Concurrente (app.py)" {
+  interface "IRestAPI_JSON" as IRest
+  [ThreadedHTTPServer\n(Multi-Operario 24/7)] as CompServer
+  [AutosColombiaHandler\n(Enrutador REST)] as CompRouter
+  IRest -down- CompServer
+  CompServer *-down- CompRouter
+}
+
+package "Capa de Lógica de Dominio y Seguridad (models.py)" {
+  interface "IGestionUsuarios" as IUsuarios
+  interface "IGestionCeldas" as ICeldas
+  interface "IGestionAbonados" as IAbonados
+  interface "IControlAcceso" as IAcceso
+  interface "IAutenticacionRBAC" as IAuth
+  interface "IAuditoriaInmutable" as IAudit
+
+  [Servicio CRUD Usuarios\n(Alta, Rol, Clave, Baja)] as SvcUsers
+  [Servicio CRUD y Mant. Celdas\n(80 Plazas + Reubicación)] as SvcCeldas
+  [Servicio CRUD Abonados\n(Propietarios y Vehículos)] as SvcAbonados
+  [Servicio Control Acceso 24/7\n(Sorteo Dinámico)] as SvcAcceso
+  [Servicio Seguridad y RBAC\n(SHA-256 + Matriz Roles)] as SvcAuth
+  [Servicio Bitácora 24/7\n(Auditoría e Historial)] as SvcAudit
+
+  IUsuarios -down- SvcUsers
+  ICeldas -down- SvcCeldas
+  IAbonados -down- SvcAbonados
+  IAcceso -down- SvcAcceso
+  IAuth -down- SvcAuth
+  IAudit -down- SvcAudit
+}
+
+package "Capa de Persistencia Transaccional (database.py + SQLite 3)" {
+  interface "IPersistenciaWAL" as IDB
+  [Gestor Transaccional Concurrente\n(threading.Lock + BEGIN IMMEDIATE)] as CompDBMgr
+  database "autos_colombia.db\n(8 Tablas 3FN en Modo WAL)" as SQLiteDB
+  IDB -down- CompDBMgr
+  CompDBMgr -down-> SQLiteDB : SQL DDL / DML
+}
+
+CompJS ..> IRest : HTTP Fetch JSON
+
+CompRouter ..> IUsuarios
+CompRouter ..> ICeldas
+CompRouter ..> IAbonados
+CompRouter ..> IAcceso
+CompRouter ..> IAuth
+CompRouter ..> IAudit
+
+SvcUsers ..> IAuth : verificar_permiso()
+SvcCeldas ..> IAuth : verificar_permiso()
+SvcAbonados ..> IAuth : verificar_permiso()
+SvcAcceso ..> IAuth : verificar_permiso()
+
+SvcUsers ..> IAudit
+SvcCeldas ..> IAudit
+SvcAbonados ..> IAudit
+SvcAcceso ..> IAudit
+
+SvcAuth ..> IDB
+SvcUsers ..> IDB
+SvcCeldas ..> IDB
+SvcAbonados ..> IDB
+SvcAcceso ..> IDB
+SvcAudit ..> IDB
+@enduml

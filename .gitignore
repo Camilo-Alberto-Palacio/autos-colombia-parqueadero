@@ -8,6 +8,12 @@ env/
 venv/
 .venv/
 
+# SQLite WAL / Transactional Journals
+*.db-wal
+*.db-shm
+*.db-journal
+*.tmp
+
 # IDEs
 .vscode/
 .idea/

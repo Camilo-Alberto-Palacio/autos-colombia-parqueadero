@@ -1,0 +1,161 @@
+@startuml
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+title Diagrama de Clases del Dominio — Autos Colombia 24/7 (Iteraciones 1 y 2)
+
+class Usuario {
+  + id : int <<PK>>
+  + username : str <<unique>>
+  - password_hash : str [SHA-256]
+  + nombre_completo : str
+  + email : str <<unique>>
+  + rol : Enum(ADMIN, OPERARIO, AUDITOR)
+  + cargo : str
+  + activo : bool
+  + fecha_creacion : datetime
+  + ultimo_login : datetime
+  --
+  + autenticar_usuario(username, password) : dict
+  + crear_usuario(datos, admin_id) : dict
+  + actualizar_usuario(user_id, datos, admin_id) : dict
+  + cambiar_password(user_id, nueva_clave, admin_id) : dict
+  + eliminar_usuario(user_id, admin_id) : dict
+}
+
+class VerificadorRBAC <<service>> {
+  + PERMISOS_POR_ROL : dict
+  --
+  + verificar_permiso(actor_id, permiso, modulo) : dict
+  + obtener_matriz_rbac() : dict
+}
+
+class Propietario {
+  + id : int <<PK>>
+  + documento : str <<unique>>
+  + nombre_completo : str
+  + telefono : str
+  + email : str
+  + direccion : str
+  + fecha_registro : datetime
+}
+
+class Vehiculo {
+  + placa : str <<PK>>
+  + tipo_vehiculo : Enum(CARRO, MOTO)
+  + marca : str
+  + modelo : str
+  + color : str
+  + propietario_id : int <<FK>>
+  + activo : bool
+  --
+  + consultar_vehiculo(placa) : dict
+  + registrar_nuevo_abonado(datos, usuario_id) : dict
+  + actualizar_abonado_vehiculo(placa, datos, usuario_id) : dict
+}
+
+class Mensualidad {
+  + id : int <<PK>>
+  + vehiculo_placa : str <<FK>>
+  + fecha_pago : date
+  + fecha_vencimiento : date
+  + valor_pagado : decimal
+  + estado : Enum(ACTIVA, VENCIDA, CANCELADA)
+  --
+  + esta_al_dia() : bool
+}
+
+class Celda {
+  + codigo : str <<PK>> [C-01..C-70, M-01..M-10]
+  + tipo_permitido : Enum(CARRO, MOTO)
+  + estado : Enum(DISPONIBLE, OCUPADA, MANTENIMIENTO, INACTIVA)
+  + piso : int
+  + zona : str
+  + motivo_bloqueo : str
+  --
+  + crear_celda(datos, usuario_id) : dict
+  + actualizar_celda(codigo, datos, usuario_id) : dict
+  + eliminar_celda(codigo, usuario_id) : dict
+  + cambiar_estado_celda(codigo, estado, motivo, usuario_id) : dict
+  + reubicar_vehiculo_celda(placa, nueva_celda, ...) : dict
+}
+
+class RegistroAcceso {
+  + id : int <<PK>>
+  + vehiculo_placa : str <<FK>>
+  + celda_codigo : str <<FK>>
+  + fecha_ingreso : datetime
+  + fecha_salida : datetime
+  + estado : Enum(ADENTRO, FINALIZADO)
+  + observaciones : str
+  + usuario_id : int <<FK>>
+  --
+  + registrar_ingreso(placa, obs, puerta, usuario_id) : dict
+  + registrar_novedad_vehiculo(placa, novedad, usuario_id) : dict
+  + registrar_salida(placa, obs, puerta, usuario_id) : dict
+}
+
+class HistorialCelda {
+  + id : int <<PK>>
+  + celda_codigo : str <<FK>>
+  + estado_anterior : str
+  + estado_nuevo : str
+  + motivo : str
+  + usuario_id : int <<FK>>
+  + fecha_cambio : datetime
+}
+
+class AuditoriaAccion {
+  + id : int <<PK>>
+  + usuario_id : int <<FK>>
+  + modulo : str
+  + accion : str
+  + detalle : str
+  + ip_terminal : str
+  + fecha : datetime
+}
+
+Usuario "1" ..> VerificadorRBAC : valida rol en >
+Propietario "1" -- "1..*" Vehiculo : posee >
+Vehiculo "1" *-- "1..*" Mensualidad : suscribe >
+Vehiculo "1" -- "0..*" RegistroAcceso : protagoniza >
+Celda "1" -- "0..*" RegistroAcceso : aloja en >
+Celda "1" *-- "0..*" HistorialCelda : registra cambios >
+Usuario "1" -- "0..*" RegistroAcceso : opera en cabina >
+Usuario "1" -- "0..*" HistorialCelda : ejecuta orden >
+Usuario "1" -- "0..*" AuditoriaAccion : genera traza >
+@enduml

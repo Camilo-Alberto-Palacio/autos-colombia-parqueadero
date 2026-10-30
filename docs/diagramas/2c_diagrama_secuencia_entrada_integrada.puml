@@ -1,0 +1,102 @@
+@startuml
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceBoxBorderColor #94A3B8
+skinparam SequenceGroupBackgroundColor #F8FAFC
+skinparam SequenceGroupHeaderFontColor #0F172A
+
+autonumber "<b>[00]"
+title Diagrama de Secuencia 2C — Integración Iteraciones 1 y 2: Entrada Vehicular 24/7 con Exclusión por Mantenimiento
+
+actor "Operario de Cabina" as Operario
+boundary "VistaControlAcceso\n(Cobalt Bay OS)" as UI
+control "AutosColombiaHandler\n(app.py)" as API
+control "ControlAccesoService\n(models.py)" as Domain
+database "SQLite WAL\n(autos_colombia.db)" as DB
+
+Operario -> UI : Digita placa (ej. ABC-123) y pulsa Verificar Placa
+activate UI
+UI -> API : GET /api/vehiculo?placa=ABC-123
+activate API
+API -> Domain : consultar_vehiculo('ABC-123')
+activate Domain
+Domain -> DB : SELECT vehiculo, propietario, ultima_mensualidad, registro_adentro
+activate DB
+DB --> Domain : Datos consolidados del abonado
+deactivate DB
+Domain --> API : Ficha técnica + vigencia estricta (al_dia) + esta_adentro
+deactivate Domain
+API --> UI : HTTP 200 OK
+deactivate API
+UI --> Operario : Muestra estado de mensualidad (sin días de gracia)
+
+Operario -> UI : Registra observación física y pulsa Abrir Barrera
+UI -> API : POST /api/ingreso (placa, observaciones, puerta, usuario_id)
+activate API
+API -> Domain : registrar_ingreso(placa, observaciones, puerta, usuario_id)
+activate Domain
+Domain -> Domain : verificar_permiso(usuario_id, 'OPERACION_ACCESO') [Iteración 2]
+Domain -> Domain : Validar activo==1, esta_adentro==False y mensualidad.al_dia==True [Iteración 1]
+
+Domain -> DB : BEGIN IMMEDIATE TRANSACTION
+activate DB
+note right of Domain
+  Integración Iteración 1 + Iteración 2:
+  El sorteo filtra estado = 'DISPONIBLE',
+  excluyendo automáticamente celdas
+  OCUPADAS, en MANTENIMIENTO o INACTIVAS.
+end note
+Domain -> DB : SELECT codigo, piso, zona FROM celda WHERE tipo_permitido=? AND estado='DISPONIBLE'
+DB --> Domain : Lista de celdas habilitadas compatibles
+
+alt Existen celdas DISPONIBLES para la categoría (CARRO / MOTO)
+  Domain -> Domain : celda_elegida = random.choice(celdas_libres)
+  Domain -> DB : UPDATE celda SET estado='OCUPADA' WHERE codigo = celda_elegida
+  Domain -> DB : INSERT INTO registro_acceso (placa, celda_elegida, 'ADENTRO', usuario_id)
+  Domain -> DB : COMMIT TRANSACTION
+  deactivate DB
+  Domain -> DB : INSERT INTO auditoria_accion ('INGRESO_VEHICULO')
+  Domain --> API : {success: true, celda_asignada, zona, piso}
+  API --> UI : HTTP 200 OK
+  UI --> Operario : Abre barrera y notifica celda asignada
+else Sin celdas disponibles (Ocupadas o en Mantenimiento)
+  Domain -> DB : ROLLBACK
+  Domain --> API : {success: false, codigo_error: 'SIN_CUPO'}
+  API --> UI : HTTP 400 Bad Request
+  UI --> Operario : Informa aforo completo para la categoría
+end
+deactivate Domain
+deactivate API
+deactivate UI
+@enduml
