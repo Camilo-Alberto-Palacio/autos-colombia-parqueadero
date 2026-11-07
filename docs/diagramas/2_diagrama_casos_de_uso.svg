@@ -1,1 +1,222 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" data-diagram-type="DESCRIPTION" style="width:1752px;height:640px;background:#FFFFFF;" width="1752px" height="640px" viewBox="0 0 1752 640" zoomAndPan="magnify" preserveAspectRatio="none" contentStyleType="text/css"><?plantuml 1.2026.8?><defs/><g font-family="sans-serif" lengthAdjust="spacing"><!--cluster Sistema de Control de Acceso Autos Colombia (Iteración 1)--><g class="cluster" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1." id="ent0004" data-source-line="8"><rect x="199.93" y="7" width="1538.76" height="524" fill="none" style="stroke:#181818;stroke-width:1;" rx="2.5" ry="2.5"/><text x="736.413" y="21.995" fill="#000" font-size="14" textLength="465.794" font-weight="700">Sistema de Control de Acceso Autos Colombia (Iteración 1)</text></g><!--entity CU01--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU01" id="ent0005" data-source-line="9"><ellipse cx="402.09" cy="71.998" rx="135.84" ry="29.568" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="275.652" y="76.646" fill="#000" font-size="14" textLength="252.875">CU-01: Consultar Vehículo por Placa</text></g><!--entity CU02--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU02" id="ent0006" data-source-line="10"><ellipse cx="992.144" cy="192.001" rx="149.054" ry="32.211" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="851.888" y="196.649" fill="#000" font-size="14" textLength="280.513">CU-02: Validar Vigencia de Mensualidad</text></g><!--entity CU03--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU03" id="ent0007" data-source-line="11"><ellipse cx="992.141" cy="382" rx="158.901" ry="34.18" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="841.658" y="386.649" fill="#000" font-size="14" textLength="300.966">CU-03: Verificar Aforo por Tipo de Vehículo</text></g><!--entity CU04--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU04" id="ent0008" data-source-line="12"><ellipse cx="402.094" cy="382.001" rx="186.154" ry="39.631" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="223.529" y="386.649" fill="#000" font-size="14" textLength="357.13">CU-04: Registrar Entrada y Asignar Celda Aleatoria</text></g><!--entity CU05--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU05" id="ent0009" data-source-line="13"><ellipse cx="992.139" cy="285.996" rx="122.379" ry="26.876" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="879.927" y="290.644" fill="#000" font-size="14" textLength="224.424">CU-05: Abrir Barrera de Entrada</text></g><!--entity CU06--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU06" id="ent0010" data-source-line="14"><ellipse cx="1553.867" cy="320.995" rx="168.827" ry="36.165" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="1393.123" y="325.644" fill="#000" font-size="14" textLength="321.487">CU-06: Denegar Acceso por Mora / Sobrecupo</text></g><!--entity CU07--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU07" id="ent0011" data-source-line="15"><ellipse cx="402.086" cy="485.995" rx="134.276" ry="29.255" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="277.292" y="490.644" fill="#000" font-size="14" textLength="249.587">CU-07: Registrar Salida de Vehículo</text></g><!--entity CU08--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU08" id="ent0012" data-source-line="16"><ellipse cx="992.137" cy="478.997" rx="124.837" ry="27.367" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="877.314" y="483.646" fill="#000" font-size="14" textLength="229.646">CU-08: Liberar Celda de Parqueo</text></g><!--entity CU09--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU09" id="ent0013" data-source-line="17"><ellipse cx="402.085" cy="171.999" rx="165.545" ry="35.509" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="244.729" y="176.647" fill="#000" font-size="14" textLength="314.713">CU-09: Visualizar Mapa de 80 Celdas en Vivo</text></g><!--entity CU10--><g class="entity" data-qualified-name="Sistema de Control de Acceso Autos Colombia .Iteraci.n 1..CU10" id="ent0014" data-source-line="18"><ellipse cx="402.087" cy="274.999" rx="149.297" ry="32.259" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><text x="261.578" y="279.648" fill="#000" font-size="14" textLength="281.019">CU-10: Auditar Historial de Movimientos</text></g><!--entity Operador--><g class="entity" data-qualified-name="Operador" id="ent0001" data-source-line="4"><ellipse cx="79.463" cy="245.35" rx="8" ry="8" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M79.463,253.35 L79.463,280.35 M66.463,261.35 L92.463,261.35 M79.463,280.35 L66.463,295.35 M79.463,280.35 L92.463,295.35" style="stroke:#181818;stroke-width:0.5;" fill="none"/><text x="8.94" y="309.845" fill="#000" font-size="14" textLength="141.046">Operador de Cabina</text></g><!--entity LPR--><g class="entity" data-qualified-name="LPR" id="ent0002" data-source-line="5"><ellipse cx="79.466" cy="42.35" rx="8" ry="8" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M79.466,50.35 L79.466,77.35 M66.466,58.35 L92.466,58.35 M79.466,77.35 L66.466,92.35 M79.466,77.35 L92.466,92.35" style="stroke:#181818;stroke-width:0.5;" fill="none"/><text x="6" y="106.845" fill="#000" font-size="14" textLength="146.932">Cámara / Sensor LPR</text></g><!--entity Reloj--><g class="entity" data-qualified-name="Reloj" id="ent0003" data-source-line="6"><ellipse cx="992.137" cy="559.35" rx="8" ry="8" fill="#F1F1F1" style="stroke:#181818;stroke-width:0.5;"/><path d="M992.137,567.35 L992.137,594.35 M979.137,575.35 L1005.137,575.35 M992.137,594.35 L979.137,609.35 M992.137,594.35 L1005.137,609.35" style="stroke:#181818;stroke-width:0.5;" fill="none"/><text x="913.51" y="623.845" fill="#000" font-size="14" textLength="157.254">Reloj del Sistema 24/7</text></g><!--link Operador to CU01--><g class="link" data-entity-1="ent0001" data-entity-2="ent0005" id="lnk15" data-source-line="21" data-link-type="dependency"><path d="M97.87,236.36 C116.12,200.35 148.24,147.98 191.93,119 C217.36,102.13 243.092,92.393 272.942,85.383" style="stroke:#181818;stroke-width:1;" fill="none" id="Operador-to-CU01"/><polygon points="277.81,84.24,268.134,82.404,272.942,85.383,269.963,90.192,277.81,84.24" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link LPR to CU01--><g class="link" data-entity-1="ent0002" data-entity-2="ent0005" id="lnk16" data-source-line="22" data-link-type="dependency"><path d="M153.22,72 C186.57,72 222.21,72 260.86,72" style="stroke:#181818;stroke-width:1;" fill="none" id="LPR-to-CU01"/><polygon points="265.86,72,256.86,68,260.86,72,256.86,76,265.86,72" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link Operador to CU04--><g class="link" data-entity-1="ent0001" data-entity-2="ent0008" id="lnk17" data-source-line="23" data-link-type="dependency"><path d="M150.25,308.3 C163.91,314.25 178.25,320.1 191.93,325 C219.57,334.9 244.962,342.723 273.612,350.673" style="stroke:#181818;stroke-width:1;" fill="none" id="Operador-to-CU04"/><polygon points="278.43,352.01,270.827,345.749,273.612,350.673,268.688,353.458,278.43,352.01" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link Operador to CU07--><g class="link" data-entity-1="ent0001" data-entity-2="ent0011" id="lnk18" data-source-line="24" data-link-type="dependency"><path d="M96.36,313.47 C114.03,351.35 146.25,407.92 191.93,439 C217.39,456.33 243.38,466.227 273.48,473.227" style="stroke:#181818;stroke-width:1;" fill="none" id="Operador-to-CU07"/><polygon points="278.35,474.36,270.49,468.425,273.48,473.227,268.678,476.217,278.35,474.36" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link Operador to CU09--><g class="link" data-entity-1="ent0001" data-entity-2="ent0013" id="lnk19" data-source-line="25" data-link-type="dependency"><path d="M150.48,241.38 C164.06,235.49 178.31,229.74 191.93,225 C221.74,214.63 249.734,206.572 280.384,198.782" style="stroke:#181818;stroke-width:1;" fill="none" id="Operador-to-CU09"/><polygon points="285.23,197.55,275.522,195.89,280.384,198.782,277.493,203.644,285.23,197.55" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link Operador to CU10--><g class="link" data-entity-1="ent0001" data-entity-2="ent0014" id="lnk20" data-source-line="26" data-link-type="dependency"><path d="M150.43,275 C180.46,275 211.78,275 247.33,275" style="stroke:#181818;stroke-width:1;" fill="none" id="Operador-to-CU10"/><polygon points="252.33,275,243.33,271,247.33,275,243.33,279,252.33,275" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/></g><!--link CU01 to CU02--><g class="link" data-entity-1="ent0005" data-entity-2="ent0006" id="lnk21" data-source-line="28" data-link-type="dependency"><path d="M502.51,92.29 C607.88,113.79 768.881,146.65 877.631,168.84" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU01-to-CU02"/><polygon points="882.53,169.84,874.511,164.121,877.631,168.84,872.912,171.96,882.53,169.84" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="679.24" y="113.787" fill="#000" font-size="13" textLength="63.007">«include»</text></g><!--link CU04 to CU02--><g class="link" data-entity-1="ent0008" data-entity-2="ent0006" id="lnk22" data-source-line="29" data-link-type="dependency"><path d="M530.11,352.85 C550.38,345.44 570.49,336.27 588.24,325 C604.97,314.38 601.32,302.32 618.24,292 C692.35,246.82 781.991,222.657 857.341,208.917" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU04-to-CU02"/><polygon points="862.26,208.02,852.688,205.699,857.341,208.917,854.124,213.57,862.26,208.02" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="679.24" y="216.577" fill="#000" font-size="13" textLength="63.007">«include»</text></g><!--link CU04 to CU03--><g class="link" data-entity-1="ent0008" data-entity-2="ent0007" id="lnk23" data-source-line="30" data-link-type="dependency"><path d="M588.34,382 C666.95,382 752.64,382 828.04,382" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU04-to-CU03"/><polygon points="833.04,382,824.04,378,828.04,382,824.04,386,833.04,382" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="679.24" y="378.067" fill="#000" font-size="13" textLength="63.007">«include»</text></g><!--link CU04 to CU05--><g class="link" data-entity-1="ent0008" data-entity-2="ent0009" id="lnk24" data-source-line="31" data-link-type="dependency"><path d="M551.1,357.84 C658.1,340.37 794.745,318.066 888.055,302.826" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU04-to-CU05"/><polygon points="892.99,302.02,883.463,299.523,888.055,302.826,884.752,307.418,892.99,302.02" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="679.24" y="313.117" fill="#000" font-size="13" textLength="63.007">«include»</text></g><!--link CU02 to CU06--><g class="link" data-entity-1="ent0006" data-entity-2="ent0010" id="lnk25" data-source-line="32" data-link-type="dependency"><path d="M1095.48,215.59 C1192.17,237.87 1332.128,270.127 1432.818,293.337" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU02-to-CU06"/><polygon points="1437.69,294.46,1429.818,288.541,1432.818,293.337,1428.022,296.336,1437.69,294.46" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="1182.04" y="233.477" fill="#000" font-size="13" textLength="172.853">«extend» (si esta vencida)</text></g><!--link CU03 to CU06--><g class="link" data-entity-1="ent0007" data-entity-2="ent0010" id="lnk26" data-source-line="33" data-link-type="dependency"><path d="M1134.74,366.57 C1216.52,357.66 1314.359,346.992 1397.569,337.922" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU03-to-CU06"/><polygon points="1402.54,337.38,1393.16,334.379,1397.569,337.922,1394.026,342.332,1402.54,337.38" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="1188.54" y="340.307" fill="#000" font-size="13" textLength="159.32">«extend» (si aforo lleno)</text></g><!--link CU07 to CU08--><g class="link" data-entity-1="ent0011" data-entity-2="ent0012" id="lnk27" data-source-line="35" data-link-type="dependency"><path d="M536.52,484.41 C635.81,483.23 765.34,481.689 862.27,480.539" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU07-to-CU08"/><polygon points="867.27,480.48,858.223,476.587,862.27,480.539,858.318,484.586,867.27,480.48" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="679.24" y="477.337" fill="#000" font-size="13" textLength="63.007">«include»</text></g><!--link CU04 to Reloj--><g class="link" data-entity-1="ent0008" data-entity-2="ent0003" id="lnk28" data-source-line="36" data-link-type="dependency"><path d="M539.83,409.02 C557.44,416.66 574.2,426.45 588.24,439 C613.17,461.29 592.39,486.79 618.24,508 C662.6,544.41 812.748,568.025 908.388,579.885" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU04-to-Reloj"/><polygon points="913.35,580.5,904.911,575.423,908.388,579.885,903.926,583.362,913.35,580.5" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="627.24" y="504.067" fill="#000" font-size="13" textLength="167.635">«include» (estampa hora)</text></g><!--link CU07 to Reloj--><g class="link" data-entity-1="ent0011" data-entity-2="ent0003" id="lnk29" data-source-line="37" data-link-type="dependency"><path d="M444.49,514.17 C486.24,540.73 553.58,578.68 618.24,594 C717.94,617.62 831.906,610.727 908.196,601.557" style="stroke:#181818;stroke-width:1;stroke-dasharray:7,7;" fill="none" id="CU07-to-Reloj"/><polygon points="913.16,600.96,903.747,598.063,908.196,601.557,904.702,606.005,913.16,600.96" fill="#181818" style="stroke:#181818;stroke-width:1;stroke-linejoin:miter;stroke-miterlimit:10;"/><text x="619.24" y="590.067" fill="#000" font-size="13" textLength="183.86">«include» (calcula duracion)</text></g><?plantuml-src ZLJ1Rjim3BtxAuYScaFR94sQr2W2PDc03MYme5bxPsJ6qQf8dYG7wuP-p3vWftr2VcoKNBjRtGxpnJOVt-CZHLlHneCtO6M-zP19Iy9BenDt9tM15dTGeBZ3d5R-NX4467MkA4bGU6EXyx4WYna_PGHpN4kD7K07TRXEcnz-x5WEJc55sd7aQdaT4_bUvroJCfzPHy5AEayxXC7mT1op8fGaJNder2cXhD7U6XKUPqAGCp0hlN4SLsQtbWX77pox4VBmIqE_su7l2V1LEXBeM6f-Szphfq76bSgZXLlQ7dwAKXaesDTIeQYQcj_q-ctg88LRL38BH9cJ5ZAwMd2VPOndDNdG9fyncQpSIC7qsSROgkOdMPWWqZYf9SxQ4iEKnvFpE2nBlEDHO8Pm3pCdSysHEIb-dob27h9i6XcsXKOfpDPMMdY3rlB0We57lPerQhFEKtXBclBWlvf-Q61XgiCsQpwpicZydxS5nd_wNyM9lTZwk4sTf70brsIRDfctHFkbf8OrQRCkUEOodiqt9YwmYBn9hz9mG9hnVQDmqLBeztXIPIR3hhndus6kSVqMPYztaZHltoExtqiUagJvI8wFfzKMyTe_lJo7Xwt8k1MvU1xXIabGWvEJc32052ulfHQgp6Ww3TZmVx2pVs2ZDZQeiVE8qLTFEfjEuSX98ESHzk6BoB2RHEtNap4klrAaJJTsCgwJ9wyvgduOVu5m58hk-4Ytl87T9vqNSmKgtZ0-_ZBy7epk_WO0?></g></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="951px" preserveAspectRatio="none" style="width:2022px;height:951px;" version="1.1" viewBox="0 0 2022 951" width="2022px" zoomAndPan="magnify"><defs/><g><!--MD5=[c2e703007e33c08ccf965f3a821dcd08]
+cluster Sistema--><rect fill="#FFFFFF" height="343" rx="5" ry="5" style="stroke:#000000;stroke-width:1.5;" width="1862" x="154" y="228.52"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="440" x="865" y="245.0532">Sistema de Control de Acceso Autos Colombia (StarUML - 7 RF)</text><ellipse cx="1405.914" cy="414.3028" fill="#FFFFFF" rx="151.914" ry="32.7828" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="218" x="1293.914" y="409.796">CU-01: Validar VehÃ­culo por Placa</text><text fill="#000000" font-family="Segoe UI" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="48" x="1378.914" y="428.4171">[RF-01]</text><ellipse cx="1835.2929" cy="414.2786" fill="#FFFFFF" rx="164.2929" ry="35.2586" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="250" x="1707.2929" y="409.7717">CU-02: Visualizar Atributos de Seguridad</text><text fill="#000000" font-family="Segoe UI" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="48" x="1808.2929" y="428.3928">[RF-02]</text><ellipse cx="1405.7649" cy="305.673" fill="#FFFFFF" rx="193.7649" ry="41.153" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="321" x="1244.9689" y="300.2652">CU-03: Asignar Celda Aleatoria y Verificar Capacidad</text><text fill="#000000" font-family="Segoe UI" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="48" x="1381.4689" y="318.8863">[RF-03]</text><ellipse cx="354.6179" cy="301.6436" fill="#FFFFFF" rx="171.1179" ry="36.6236" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="267" x="218.1179" y="297.1368">CU-04: Denegar Ingreso y Bloquear Barrera</text><text fill="#000000" font-family="Segoe UI" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="48" x="327.6179" y="315.7578">[RF-04]</text><ellipse cx="980.3543" cy="365.4909" fill="#FFFFFF" rx="160.3543" ry="34.4709" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="240" x="857.3543" y="360.984">CU-05: Registrar Entrada de VehÃ­culo</text><text fill="#000000" font-family="Segoe UI" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="48" x="953.3543" y="379.6051">[RF-05]</text><ellipse cx="354.3495" cy="412.2899" fill="#FFFFFF" rx="184.3495" ry="39.2699" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="299" x="201.8495" y="407.7831">CU-06: Registrar Novedad FÃ­sica del VehÃ­culo</text><text fill="#000000" font-family="Segoe UI" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="48" x="327.3495" y="426.4042">[RF-06]</text><ellipse cx="354.296" cy="521.6792" fill="#FFFFFF" rx="158.796" ry="34.1592" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="236" x="233.296" y="517.1724">CU-07: Registrar Salida y Liberar Celda</text><text fill="#000000" font-family="Segoe UI" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="48" x="327.296" y="535.7935">[RF-07]</text><ellipse cx="1405.8668" cy="518.5934" fill="#FFFFFF" rx="123.3668" ry="27.0734" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="210" x="1300.8668" y="522.3902">Estampar Fecha y Hora de Ingreso</text><ellipse cx="980.3571" cy="523.4914" fill="#FFFFFF" rx="117.8571" ry="25.9714" style="stroke:#1E293B;stroke-width:1.2;"/><text fill="#000000" font-family="Segoe UI" font-size="14" lengthAdjust="spacing" textLength="198" x="881.3571" y="527.2883">Calcular Tiempo de Permanencia</text><!--MD5=[50e515f74ed06f6fde77aaa087dee3bb]
+entity Operario--><ellipse cx="56.5" cy="127.52" fill="#E0F2FE" rx="8" ry="8" style="stroke:#0369A1;stroke-width:1.5;"/><path d="M56.5,135.52 L56.5,162.52 M43.5,143.52 L69.5,143.52 M56.5,162.52 L43.5,177.52 M56.5,162.52 L69.5,177.52 " fill="none" style="stroke:#0369A1;stroke-width:1.5;"/><text fill="#000000" font-family="Segoe UI" font-size="11" lengthAdjust="spacing" textLength="101" x="6" y="191.8901">Operario de Cabina</text><text fill="#000000" font-family="Segoe UI" font-size="11" lengthAdjust="spacing" textLength="78" x="6" y="206.521">(Actor Primario)</text><!--MD5=[c35c0b14d9187ae8b6fde0d30cef0fd6]
+entity LPR--><ellipse cx="980.5" cy="597.52" fill="#E0F2FE" rx="8" ry="8" style="stroke:#0369A1;stroke-width:1.5;"/><path d="M980.5,605.52 L980.5,632.52 M967.5,613.52 L993.5,613.52 M980.5,632.52 L967.5,647.52 M980.5,632.52 L993.5,647.52 " fill="none" style="stroke:#0369A1;stroke-width:1.5;"/><text fill="#000000" font-family="Segoe UI" font-size="11" lengthAdjust="spacing" textLength="108" x="926.5" y="661.8901">CÃ¡mara / Sensor LPR</text><text fill="#000000" font-family="Segoe UI" font-size="11" lengthAdjust="spacing" textLength="94" x="926.5" y="676.521">(Actor Secundario)</text><!--MD5=[f5fd9f85fb1b2bc262ca217e1c086fe7]
+entity Reloj--><ellipse cx="354.5" cy="726.52" fill="#E0F2FE" rx="8" ry="8" style="stroke:#0369A1;stroke-width:1.5;"/><path d="M354.5,734.52 L354.5,761.52 M341.5,742.52 L367.5,742.52 M354.5,761.52 L341.5,776.52 M354.5,761.52 L367.5,776.52 " fill="none" style="stroke:#0369A1;stroke-width:1.5;"/><text fill="#000000" font-family="Segoe UI" font-size="11" lengthAdjust="spacing" textLength="115" x="297" y="790.8901">Reloj del Servidor 24/7</text><text fill="#000000" font-family="Segoe UI" font-size="11" lengthAdjust="spacing" textLength="94" x="297" y="805.521">(Actor Secundario)</text><path d="M846,719.52 L846,805.9751 A5,5 0 0 0 851,810.9751 L1110,810.9751 A5,5 0 0 0 1115,805.9751 L1115,724.52 L1105,714.52 L851,714.52 A5,5 0 0 0 846,719.52 " fill="#FEF9C3" style="stroke:#CA8A04;stroke-width:1.0;"/><path d="M1105,714.52 L1105,722.02 A2.5,2.5 0 0 0 1107.5,724.52 L1115,724.52 L1105,714.52 " fill="#FEF9C3" style="stroke:#CA8A04;stroke-width:1.0;"/><text fill="#000000" font-family="Segoe UI" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="190" x="852" y="733.5483">Regla OMG UML 2.5 Cumplida:</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="248" x="852" y="750.8393">Los Actores interactÃºan mediante lÃ­neas</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="226" x="852" y="768.1304">de asociaciÃ³n simple (comunicaciÃ³n).</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="240" x="852" y="785.4214">Las relaciones Â«includeÂ» y Â«extendÂ»</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="204" x="852" y="802.7124">son exclusivas entre Casos de Uso.</text><path d="M212.5,138.02 L212.5,207.1841 A5,5 0 0 0 217.5,212.1841 L491.5,212.1841 A5,5 0 0 0 496.5,207.1841 L496.5,143.02 L486.5,133.02 L217.5,133.02 A5,5 0 0 0 212.5,138.02 " fill="#FEF9C3" style="stroke:#CA8A04;stroke-width:1.0;"/><path d="M486.5,133.02 L486.5,140.52 A2.5,2.5 0 0 0 489,143.02 L496.5,143.02 L486.5,133.02 " fill="#FEF9C3" style="stroke:#CA8A04;stroke-width:1.0;"/><text fill="#000000" font-family="Segoe UI" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="190" x="218.5" y="152.0483">Regla OMG UML 2.5 Cumplida:</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="211" x="218.5" y="169.3393">La direcciÃ³n de Â«extendÂ» apunta</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="263" x="218.5" y="186.6304">SIEMPRE desde el caso que extiende (CU-04)</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="202" x="218.5" y="203.9214">hacia el caso de uso base (CU-05).</text><path d="M1267.5,155.52 L1267.5,207.393 A5,5 0 0 0 1272.5,212.393 L1539.5,212.393 A5,5 0 0 0 1544.5,207.393 L1544.5,160.52 L1534.5,150.52 L1272.5,150.52 A5,5 0 0 0 1267.5,155.52 " fill="#FEF9C3" style="stroke:#CA8A04;stroke-width:1.0;"/><path d="M1534.5,150.52 L1534.5,158.02 A2.5,2.5 0 0 0 1537,160.52 L1544.5,160.52 L1534.5,150.52 " fill="#FEF9C3" style="stroke:#CA8A04;stroke-width:1.0;"/><text fill="#000000" font-family="Segoe UI" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="105" x="1273.5" y="169.5483">Coherencia 1 a 1:</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="242" x="1273.5" y="186.8393">7 Requerimientos Funcionales declarados</text><text fill="#000000" font-family="Segoe UI" font-size="13" lengthAdjust="spacing" textLength="256" x="1273.5" y="204.1304">coinciden exactamente con 7 Casos de Uso.</text><!--MD5=[8ef44b7a02ced6b23d50d66570319810]
+link CU05 to CU01--><path d="M1114.72,384.46 C1133.6,386.95 1152.78,389.38 1171,391.52 C1199.93,394.93 1230.92,398.22 1260.57,401.2 " fill="none" id="CU05-to-CU01" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1265.7,401.72,1257.1455,396.8394,1260.7251,401.2197,1256.3449,404.7993,1265.7,401.72" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="9" x="1172" y="388.0151">Â</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="1195.5645" y="414.678">includeÂ</text><!--MD5=[358032062bcbd5d7b409b94daeeaf6c3]
+link CU05 to CU03--><path d="M1114.92,346.62 C1154.41,341.03 1198.13,334.83 1239.39,328.99 " fill="none" id="CU05-to-CU03" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1244.41,328.28,1234.9391,325.5777,1239.4591,328.9791,1236.0577,333.4991,1244.41,328.28" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="9" x="1172" y="334.0151">Â</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="1153.6449" y="348.5089">includeÂ</text><!--MD5=[39e65a73e611a9347ea6aa1093a935f9]
+link CU05 to Sub_Timestamp--><path d="M1048.14,396.94 C1093.68,417.71 1155.73,444.67 1212,464.52 C1246.4,476.66 1284.99,487.92 1318.58,496.97 " fill="none" id="CU05-to-Sub_Timestamp" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1323.5,498.29,1315.8494,492.0878,1318.6719,496.9901,1313.7696,499.8127,1323.5,498.29" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="9" x="1172" y="447.0151">Â</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="1223.8429" y="482.7761">includeÂ</text><!--MD5=[ef95cbe3b6dca6c3a575c942caa788e1]
+link CU01 to CU02--><path d="M1558.02,414.52 C1592.83,414.52 1630.08,414.52 1665.6,414.52 " fill="none" id="CU01-to-CU02" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1670.83,414.52,1661.83,410.52,1665.83,414.52,1661.83,418.52,1670.83,414.52" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="9" x="1631" y="411.0151">Â</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="1612.837" y="428.3702">includeÂ</text><!--MD5=[626b8839d81eb5c4480fcbff9ccef17b]
+link CU07 to Sub_Permanencia--><path d="M513.77,522.03 C620.36,522.37 758.87,522.82 857.05,523.13 " fill="none" id="CU07-to-Sub_Permanencia" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="862.28,523.15,853.2915,519.1243,857.28,523.1357,853.2686,527.1243,862.28,523.15" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="9" x="675" y="519.0151">Â</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="804.4555" y="537.0736">includeÂ</text><!--MD5=[3faf5cc73a6c1e0dbd5c026df39e1727]
+link CU04 to CU05--><path d="M508.95,317.26 C606.79,327.3 732.98,340.24 830.04,350.19 " fill="none" id="CU04-to-CU05" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="835.22,350.73,826.6779,345.8276,830.2464,350.217,825.8571,353.7854,835.22,350.73" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="71" x="644" y="288.0151">Â«extendÂ»</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="157" x="601" y="304.3667">[si placa inexistente, mora,</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="136" x="613.5" y="320.7182">aforo lleno o duplicidad]</text><!--MD5=[ad2c9bbc3050b55065d8d11fd1785830]
+link CU06 to CU05--><path d="M538.57,415.91 C616.3,415.49 707.78,412.55 790,403.52 C814.7,400.81 840.97,396.49 865.84,391.71 " fill="none" id="CU06-to-CU05" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="870.79,390.75,861.1963,388.5226,865.8801,391.6948,862.7079,396.3785,870.79,390.75" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="71" x="644" y="384.0151">Â«extendÂ»</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="219" x="570" y="400.3667">[opcional si presenta novedad fÃ­sica]</text><!--MD5=[3797a54a93ec8f0467f2d19f1b8d4917]
+link Operario to CU01--><path d="M89.74,117.71 C104.66,100.44 123.97,82.76 146,73.52 C307.09,6 366.31,47.31 539,73.52 C654.49,91.06 680.04,112.08 790,151.52 C967.13,215.06 1040.22,187.79 1182,311.52 C1202.1,329.07 1190.81,347.31 1212,363.52 C1231.48,378.42 1254.93,388.98 1278.67,396.46 " fill="none" id="Operario-CU01" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[7766150415b05603eed827778d67f7d7]
+link Operario to CU05--><path d="M107.19,131.04 C119.41,124.64 132.79,118.88 146,115.52 C315.3,72.57 370.12,70.94 539,115.52 C699.9,158 863.64,274.3 938.09,332.06 " fill="none" id="Operario-CU05" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[38a0b49ede35664e006b61982f7dbca7]
+link Operario to CU06--><path d="M66.82,209.07 C78.13,252.85 101.5,317.77 146,355.52 C163.24,370.14 183.91,381.04 205.45,389.15 " fill="none" id="Operario-CU06" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[56bcd25030fe17dbf7245a9412276007]
+link Operario to CU07--><path d="M57.29,209.03 C59.55,275.84 73.96,400.03 146,469.52 C164.04,486.93 187,498.77 211.02,506.77 " fill="none" id="Operario-CU07" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[85a3cae1849908bedc62db5d650b4210]
+link LPR to CU01--><path d="M1034.54,621.17 C1067.58,611.58 1109.6,595.76 1141,571.52 C1183.58,538.66 1168.23,504.79 1212,473.52 C1235.31,456.88 1263.41,444.84 1290.87,436.18 " fill="none" id="LPR-CU01" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[95d3f48381032ce609b3abcda4130561]
+link Reloj to Sub_Timestamp--><path d="M412.11,785.57 C546.06,836.33 890.03,944.44 1141,828.52 C1270.96,768.5 1360.5,609.47 1392.26,545.62 " fill="none" id="Reloj-Sub_Timestamp" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[2e6a53665a08a7d2b5bf138925978d7b]
+link Reloj to Sub_Permanencia--><path d="M412.32,736.76 C499.12,697.92 670.44,623.3 820,570.52 C847.49,560.82 878.12,551.46 905.13,543.68 " fill="none" id="Reloj-Sub_Permanencia" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[cae1cd67950cca35fcfe3d644dc3a31d]
+link Reloj to GMN29--><path d="M412.25,762.52 C509.67,762.52 711.2,762.52 845.91,762.52 " fill="none" id="Reloj-GMN29" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><!--MD5=[2e442aa4070126d5a2e02569134b9345]
+link CU04 to GMN32--><path d="M354.5,264.99 C354.5,247.41 354.5,229.83 354.5,212.26 " fill="none" id="CU04-GMN32" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><!--MD5=[002da4d7cc558ae730eb887d24ab4682]
+link GMN35 to CU01--><path d="M1267.41,201 C1231.23,213.39 1196.74,233.48 1176.5,266.02 C1157.72,296.22 1157.72,315.83 1176.5,346.02 C1195.33,376.3 1227.3,393.98 1261.48,404.1 " fill="none" id="GMN35-CU01" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><!--MD5=[68e1c609e3b7df84f5ddc7b1673a7f14]
+@startuml Diagrama_Casos_de_Uso_7RF_StarUML
+skinparam style strictuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam ArrowColor #1e3a8a
+skinparam ArrowThickness 1.5
+
+skinparam actor {
+    BackgroundColor #e0f2fe
+    BorderColor #0369a1
+    FontName "Segoe UI"
+    FontSize 11
+}
+
+skinparam usecase {
+    BackgroundColor #ffffff
+    BorderColor #1e293b
+    FontName "Segoe UI"
+    FontSize 10.5
+    BorderThickness 1.2
+}
+
+skinparam note {
+    BackgroundColor #fef9c3
+    BorderColor #ca8a04
+    FontName "Segoe UI"
+    FontSize 9.5
+}
+
+left to right direction
+
+' - - - ACTORES - - -
+actor "Operario de Cabina\n(Actor Primario)" as Operario
+actor "CÃ¡mara / Sensor LPR\n(Actor Secundario)" as LPR
+actor "Reloj del Servidor 24/7\n(Actor Secundario)" as Reloj
+
+' - - - LÃ�MITE DEL SISTEMA: 7 CASOS DE USO ASOCIADOS A LOS 7 REQUERIMIENTOS FUNCIONALES - - -
+rectangle "Sistema de Control de Acceso Autos Colombia (StarUML - 7 RF)" as Sistema {
+
+    ' 1-a-1 Mapeo de Requerimientos Funcionales a Casos de Uso
+    usecase "CU-01: Validar VehÃ­culo por Placa\n<b>[RF-01]</b>" as CU01
+    usecase "CU-02: Visualizar Atributos de Seguridad\n<b>[RF-02]</b>" as CU02
+    usecase "CU-03: Asignar Celda Aleatoria y Verificar Capacidad\n<b>[RF-03]</b>" as CU03
+    usecase "CU-04: Denegar Ingreso y Bloquear Barrera\n<b>[RF-04]</b>" as CU04
+    usecase "CU-05: Registrar Entrada de VehÃ­culo\n<b>[RF-05]</b>" as CU05
+    usecase "CU-06: Registrar Novedad FÃ­sica del VehÃ­culo\n<b>[RF-06]</b>" as CU06
+    usecase "CU-07: Registrar Salida y Liberar Celda\n<b>[RF-07]</b>" as CU07
+
+    ' Subfunciones Internas para Timestamps (evitan incluir al Actor)
+    usecase "Estampar Fecha y Hora de Ingreso" as Sub_Timestamp
+    usecase "Calcular Tiempo de Permanencia" as Sub_Permanencia
+
+    ' - - - RELACIONES DE INCLUSIÃ“N (Â«includeÂ») ENTRE CASOS DE USO - - -
+    CU05 ..> CU01 : Â«includeÂ»
+    CU05 ..> CU03 : Â«includeÂ»
+    CU05 ..> Sub_Timestamp : Â«includeÂ»
+    CU01 ..> CU02 : Â«includeÂ»
+    CU07 ..> Sub_Permanencia : Â«includeÂ»
+
+    ' - - - RELACIONES DE EXTENSIÃ“N (Â«extendÂ») CORREGIDAS (DE EXTENSIÃ“N A BASE) - - -
+    CU04 ..> CU05 : Â«extendÂ»\n[si placa inexistente, mora,\n aforo lleno o duplicidad]
+    CU06 ..> CU05 : Â«extendÂ»\n[opcional si presenta novedad fÃ­sica]
+}
+
+' - - - ASOCIACIONES CON ACTORES (LÃ�NEAS SÃ“LIDAS SIMPLES) - - -
+Operario - - CU01
+Operario - - CU05
+Operario - - CU06
+Operario - - CU07
+
+LPR - - CU01
+
+' AsociaciÃ³n estÃ¡ndar con el actor Reloj (Â¡JAMÃ�S Â«includeÂ» ni Â«extendÂ» hacia actores!)
+Reloj - - Sub_Timestamp
+Reloj - - Sub_Permanencia
+
+note right of Reloj
+  <b>Regla OMG UML 2.5 Cumplida:</b>
+  Los Actores interactÃºan mediante lÃ­neas
+  de asociaciÃ³n simple (comunicaciÃ³n).
+  Las relaciones Â«includeÂ» y Â«extendÂ»
+  son exclusivas entre Casos de Uso.
+end note
+
+note bottom of CU04
+  <b>Regla OMG UML 2.5 Cumplida:</b>
+  La direcciÃ³n de Â«extendÂ» apunta
+  SIEMPRE desde el caso que extiende (CU-04)
+  hacia el caso de uso base (CU-05).
+end note
+
+note top of CU01
+  <b>Coherencia 1 a 1:</b>
+  7 Requerimientos Funcionales declarados
+  coinciden exactamente con 7 Casos de Uso.
+end note
+
+@enduml
+
+@startuml Diagrama_Casos_de_Uso_7RF_StarUML
+skinparam style strictuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam ArrowColor #1e3a8a
+skinparam ArrowThickness 1.5
+
+skinparam actor {
+    BackgroundColor #e0f2fe
+    BorderColor #0369a1
+    FontName "Segoe UI"
+    FontSize 11
+}
+
+skinparam usecase {
+    BackgroundColor #ffffff
+    BorderColor #1e293b
+    FontName "Segoe UI"
+    FontSize 10.5
+    BorderThickness 1.2
+}
+
+skinparam note {
+    BackgroundColor #fef9c3
+    BorderColor #ca8a04
+    FontName "Segoe UI"
+    FontSize 9.5
+}
+
+left to right direction
+
+actor "Operario de Cabina\n(Actor Primario)" as Operario
+actor "CÃ¡mara / Sensor LPR\n(Actor Secundario)" as LPR
+actor "Reloj del Servidor 24/7\n(Actor Secundario)" as Reloj
+
+rectangle "Sistema de Control de Acceso Autos Colombia (StarUML - 7 RF)" as Sistema {
+
+    usecase "CU-01: Validar VehÃ­culo por Placa\n<b>[RF-01]</b>" as CU01
+    usecase "CU-02: Visualizar Atributos de Seguridad\n<b>[RF-02]</b>" as CU02
+    usecase "CU-03: Asignar Celda Aleatoria y Verificar Capacidad\n<b>[RF-03]</b>" as CU03
+    usecase "CU-04: Denegar Ingreso y Bloquear Barrera\n<b>[RF-04]</b>" as CU04
+    usecase "CU-05: Registrar Entrada de VehÃ­culo\n<b>[RF-05]</b>" as CU05
+    usecase "CU-06: Registrar Novedad FÃ­sica del VehÃ­culo\n<b>[RF-06]</b>" as CU06
+    usecase "CU-07: Registrar Salida y Liberar Celda\n<b>[RF-07]</b>" as CU07
+
+    usecase "Estampar Fecha y Hora de Ingreso" as Sub_Timestamp
+    usecase "Calcular Tiempo de Permanencia" as Sub_Permanencia
+
+    CU05 ..> CU01 : Â«includeÂ»
+    CU05 ..> CU03 : Â«includeÂ»
+    CU05 ..> Sub_Timestamp : Â«includeÂ»
+    CU01 ..> CU02 : Â«includeÂ»
+    CU07 ..> Sub_Permanencia : Â«includeÂ»
+
+    CU04 ..> CU05 : Â«extendÂ»\n[si placa inexistente, mora,\n aforo lleno o duplicidad]
+    CU06 ..> CU05 : Â«extendÂ»\n[opcional si presenta novedad fÃ­sica]
+}
+
+Operario - - CU01
+Operario - - CU05
+Operario - - CU06
+Operario - - CU07
+
+LPR - - CU01
+
+Reloj - - Sub_Timestamp
+Reloj - - Sub_Permanencia
+
+note right of Reloj
+  <b>Regla OMG UML 2.5 Cumplida:</b>
+  Los Actores interactÃºan mediante lÃ­neas
+  de asociaciÃ³n simple (comunicaciÃ³n).
+  Las relaciones Â«includeÂ» y Â«extendÂ»
+  son exclusivas entre Casos de Uso.
+end note
+
+note bottom of CU04
+  <b>Regla OMG UML 2.5 Cumplida:</b>
+  La direcciÃ³n de Â«extendÂ» apunta
+  SIEMPRE desde el caso que extiende (CU-04)
+  hacia el caso de uso base (CU-05).
+end note
+
+note top of CU01
+  <b>Coherencia 1 a 1:</b>
+  7 Requerimientos Funcionales declarados
+  coinciden exactamente con 7 Casos de Uso.
+end note
+
+@enduml
+
+PlantUML version 1.2021.00(Sun Jan 10 05:25:05 COT 2021)
+(MIT source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: Cp1252
+Language: es
+Country: CO
+--></g></svg>

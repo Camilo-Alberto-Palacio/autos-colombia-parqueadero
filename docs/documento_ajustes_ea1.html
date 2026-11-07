@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>INFORME TÉCNICO DE AJUSTES Y CORRECCIONES - EVIDENCIA DE APRENDIZAJE 1</title>
+  <style>
+    @page {
+      size: letter;
+      margin: 25.4mm 25.4mm 25.4mm 25.4mm; /* Márgenes APA 2.54 cm */
+    }
+    body {
+      font-family: 'Segoe UI', 'Times New Roman', serif;
+      color: #0f172a;
+      line-height: 1.5;
+      font-size: 10pt;
+      margin: 0;
+      padding: 0;
+    }
+    .page-break {
+      page-break-before: always;
+    }
+    .cover-page {
+      min-height: 84vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      padding: 10px 5px;
+    }
+    .cover-title {
+      font-size: 19pt;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+    .cover-sub {
+      font-size: 12.5pt;
+      color: #1d4ed8;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .badge-correction {
+      display: inline-block;
+      background-color: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      padding: 5px 16px;
+      border-radius: 9999px;
+      font-size: 9pt;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 15px;
+    }
+    .cover-box {
+      border: 1.5px solid #cbd5e1;
+      background-color: #f8fafc;
+      padding: 18px 22px;
+      border-radius: 8px;
+      margin: 15px auto;
+      max-width: 530px;
+      text-align: left;
+    }
+    .cover-box table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .cover-box table td {
+      padding: 4px 8px;
+      font-size: 9.5pt;
+      vertical-align: top;
+    }
+    .clarification-note {
+      background-color: #eff6ff;
+      border: 1px dashed #3b82f6;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 9pt;
+      color: #1e40af;
+      text-align: justify;
+      margin: 10px auto;
+      max-width: 530px;
+    }
+    h1 {
+      color: #0f172a;
+      font-size: 12.5pt;
+      border-bottom: 2px solid #1d4ed8;
+      padding-bottom: 3px;
+      margin-top: 14px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+    }
+    h2 {
+      color: #1e3a8a;
+      font-size: 11pt;
+      margin-top: 10px;
+      margin-bottom: 5px;
+    }
+    p, li {
+      text-align: justify;
+      margin-bottom: 5px;
+    }
+    ul, ol {
+      margin-top: 3px;
+      margin-bottom: 8px;
+      padding-left: 22px;
+    }
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 10px 0;
+      font-size: 8.2pt;
+    }
+    .data-table th, .data-table td {
+      border: 1px solid #cbd5e1;
+      padding: 4px 6px;
+      text-align: left;
+    }
+    .data-table th {
+      background-color: #f1f5f9;
+      color: #1e293b;
+      font-weight: 700;
+    }
+    .data-table tr:nth-child(even) {
+      background-color: #f8fafc;
+    }
+    .gherkin-box {
+      background-color: #f8fafc;
+      border-left: 4px solid #10b981;
+      border-right: 1px solid #e2e8f0;
+      border-top: 1px solid #e2e8f0;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 7px 11px;
+      margin: 7px 0 11px 0;
+      border-radius: 0 5px 5px 0;
+      font-size: 8.8pt;
+      line-height: 1.45;
+    }
+    .gherkin-exception {
+      border-left-color: #ef4444;
+      background-color: #fef2f2;
+    }
+    .diagram-container {
+      margin: 12px auto;
+      text-align: center;
+      page-break-inside: avoid;
+    }
+    .diagram-container img {
+      max-width: 98%;
+      height: auto;
+      max-height: 480px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+      background: #ffffff;
+      padding: 4px;
+    }
+    .diagram-caption {
+      font-size: 8.5pt;
+      color: #64748b;
+      margin-top: 5px;
+      font-style: italic;
+    }
+    code {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      background-color: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-size: 8.5pt;
+      color: #0f172a;
+    }
+    .footer-text {
+      font-size: 8pt;
+      color: #64748b;
+      text-align: center;
+      border-top: 1px solid #e2e8f0;
+      padding-top: 6px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- PORTADA FORMAL APA 7 -->
+  <div class="cover-page">
+    <div>
+      <div class="badge-correction">Documento Exclusivo de Ajustes y Correcciones</div>
+      <div class="cover-title">INFORME TÉCNICO DE AJUSTES Y SUBSANACIONES:<br>EVIDENCIA DE APRENDIZAJE 1</div>
+      <div class="cover-sub">PARQUEADERO "AUTOS COLOMBIA 24/7" - ITERACIÓN 1</div>
+      <p style="text-align: center; color: #475569; font-size: 9.5pt; margin-top: -4px;">
+        Entrega anexa e independiente para carga conjunta con la Evidencia de Aprendizaje 2
+      </p>
+    </div>
+
+    <div class="cover-box">
+      <table>
+        <tr>
+          <td style="width: 32%;"><strong>Integrantes:</strong></td>
+          <td>
+            Adriana Andrea Agudelo Agudelo<br>
+            Camilo Alberto Palacios Turriago<br>
+            Juan Daniel Pulgarin García
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Asignatura:</strong></td>
+          <td>Ingeniería de Software / Desarrollo de Software</td>
+        </tr>
+        <tr>
+          <td><strong>Código Curso:</strong></td>
+          <td>PREICA2602B020053 - Grupo 25</td>
+        </tr>
+        <tr>
+          <td><strong>Docente:</strong></td>
+          <td>Prof. Reinaldo Rojas Lopez</td>
+        </tr>
+        <tr>
+          <td><strong>Institución:</strong></td>
+          <td>Institución Universitaria Digital de Antioquia (IU Digital)</td>
+        </tr>
+        <tr>
+          <td><strong>Facultad:</strong></td>
+          <td>Facultad de Ingeniería</td>
+        </tr>
+        <tr>
+          <td><strong>Normativa:</strong></td>
+          <td>Normas APA 7.ª Edición</td>
+        </tr>
+        <tr>
+          <td><strong>Fecha de Reentrega:</strong></td>
+          <td>Noviembre de 2026 - Medellín, Antioquia</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="clarification-note">
+      <strong>Nota Metodológica de Entrega:</strong> El presente documento contiene <em>única y exclusivamente</em> la subsanación puntual de las observaciones señaladas por el docente en la retroalimentación de la Evidencia de Aprendizaje 1 (calificación inicial 85/100). No se reenvía el informe completo anterior, en estricto acatamiento a la directriz dada por el docente en el encuentro sincrónico, adjuntándose como archivo PDF independiente junto con la Evidencia de Aprendizaje 2.
+    </div>
+
+    <div>
+      <p style="text-align: center; font-size: 8.5pt; color: #64748b; margin: 0;">
+        Repositorio Oficial en GitHub: <code>https://github.com/Camilo-Alberto-Palacio/autos-colombia-parqueadero</code><br>
+        Archivo de Modelado StarUML: <code>Actividad 1/aplicacion de parqueo/docs/Autos_Colombia_StarUML.mdj</code>
+      </p>
+    </div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECCIÓN 1: MATRIZ DE TRAZABILIDAD -->
+  <h1>1. MATRIZ DE TRAZABILIDAD DE OBSERVACIONES DOCENTES</h1>
+  <p>
+    A continuación se sintetiza la correspondencia entre los comentarios de retroalimentación emitidos por el profesor <strong>Reinaldo Rojas Lopez</strong> (31 de octubre de 2026, calificación 85/100), el criterio de la rúbrica impactado y la solución técnica implementada en este documento:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 22%;">Criterio de Rúbrica</th>
+        <th style="width: 38%;">Observación Específica del Docente</th>
+        <th style="width: 40%;">Ajuste Técnico Realizado en este Documento</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Historias de Usuario Asociadas (5/10 pts)</strong></td>
+        <td><em>"Las historias cubren los flujos principales, pero deben completar los criterios de aceptación para placa inexistente, ingreso duplicado y salida de un vehículo sin movimiento activo, indicando el resultado esperado."</em></td>
+        <td>Se incorporaron escenarios BDD (Gherkin: <em>Dado-Cuando-Entonces</em>) con resultados esperados explícitos para: 1) Placa inexistente (código <code>NO_REGISTRADO</code>), 2) Ingreso duplicado (código <code>YA_ADENTRO</code>) y 3) Salida de vehículo no ingresado (código <code>NO_ADENTRO</code>). Ver <strong>Sección 3</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Diagrama de Casos de Uso STARUML</strong></td>
+        <td><em>"Corregir la dirección de «extend» y los «include» dirigidos al actor Reloj."</em></td>
+        <td>1) Se invirtió la orientación de <code>&laquo;extend&raquo;</code> apuntando estrictamente desde el caso de uso de extensión hacia el caso base (OMG UML 2.5). 2) Se eliminaron los includes dirigidos al actor externo <em>Reloj</em>; este se vinculó mediante asociación simple, y las marcas de tiempo se modelaron como subcasos incluidos legítimos. Ver <strong>Sección 4</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Diagrama de Paquetes STARUML</strong></td>
+        <td><em>"Representar paquetes UML con sus dependencias."</em></td>
+        <td>Se construyó el diagrama en notación formal tipo carpeta (<em>tabbed folder</em>) evidenciando las 5 capas arquitectónicas y las flechas de dependencia unidireccional (<code>&laquo;use&raquo;</code> y <code>&laquo;access&raquo;</code>). Ver <strong>Sección 5</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Requerimientos No Funcionales (RNF-03)</strong></td>
+        <td><em>"Se debe ajustar el RNF-03 para describir el control de ocupación implementado en el backend."</em></td>
+        <td>Se redefinió el RNF-03 detallando la sincronización en memoria con <code>threading.Lock</code> (<code>db_lock</code>), transacciones atómicas SQLite (<code>BEGIN IMMEDIATE</code>) bajo modo WAL, y validación estricta de cupos (70 carros / 10 motos). Ver <strong>Sección 2</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Coherencia de Alcance</strong></td>
+        <td><em>"Verificar que la cantidad de requerimientos funcionales declarados coincida exactamente con los casos de uso desarrollados."</em></td>
+        <td>Se formalizó una matriz de consistencia 1-a-1 entre los <strong>7 Requerimientos Funcionales</strong> inicialmente declarados y los <strong>7 Casos de Uso</strong> modelados en StarUML. Ver <strong>Sección 2.1</strong>.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECCIÓN 2: COHERENCIA Y RNF-03 -->
+  <h1>2. COHERENCIA FUNCIONAL Y AJUSTE AL RNF-03</h1>
+
+  <h2>2.1 Coherencia 1-a-1 entre Requerimientos Funcionales y Casos de Uso StarUML</h2>
+  <p>
+    En el documento original de la primera entrega se declararon formalmente <strong>7 Requerimientos Funcionales (RF-01 al RF-07)</strong>. Para cumplir estrictamente con la regla de coherencia exigida por el docente, la siguiente matriz demuestra la correlación biunívoca exacta:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 10%;">Cód. RF</th>
+        <th style="width: 32%;">Requerimiento Funcional Declarado (EA1)</th>
+        <th style="width: 32%;">Caso de Uso Asociado en StarUML</th>
+        <th style="width: 26%;">Tipo y Semántica UML</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>RF-01</strong></td>
+        <td>Validación de vehículo por placa en padrón mensual</td>
+        <td><strong>CU-01: Validar Vehículo por Placa</strong></td>
+        <td>Caso de Uso Base (Invocado por Operario o LPR)</td>
+      </tr>
+      <tr>
+        <td><strong>RF-02</strong></td>
+        <td>Visualización de datos de seguridad (marca, modelo, color)</td>
+        <td><strong>CU-02: Visualizar Atributos de Seguridad</strong></td>
+        <td><code>&laquo;include&raquo;</code> obligatorio desde CU-01</td>
+      </tr>
+      <tr>
+        <td><strong>RF-03</strong></td>
+        <td>Control de capacidad y asignación aleatoria de celda</td>
+        <td><strong>CU-03: Asignar Celda Aleatoria y Verificar Capacidad</strong></td>
+        <td><code>&laquo;include&raquo;</code> obligatorio desde CU-05 (Entrada)</td>
+      </tr>
+      <tr>
+        <td><strong>RF-04</strong></td>
+        <td>Denegación de ingreso (mora, sobrecupo, duplicidad, no registrado)</td>
+        <td><strong>CU-04: Denegar Ingreso y Bloquear Barrera</strong></td>
+        <td><code>&laquo;extend&raquo;</code> condicional hacia CU-05 (Entrada)</td>
+      </tr>
+      <tr>
+        <td><strong>RF-05</strong></td>
+        <td>Registro de entrada vinculando placa y celda asignada</td>
+        <td><strong>CU-05: Registrar Entrada de Vehículo</strong></td>
+        <td>Caso de Uso Principal de Acceso (Operario)</td>
+      </tr>
+      <tr>
+        <td><strong>RF-06</strong></td>
+        <td>Registro de novedades físicas del vehículo (rayones, golpes)</td>
+        <td><strong>CU-06: Registrar Novedad Física del Vehículo</strong></td>
+        <td><code>&laquo;extend&raquo;</code> opcional hacia CU-05 (Entrada)</td>
+      </tr>
+      <tr>
+        <td><strong>RF-07</strong></td>
+        <td>Registro de salida y liberación inmediata de celda</td>
+        <td><strong>CU-07: Registrar Salida y Liberar Celda</strong></td>
+        <td>Caso de Uso Principal de Egreso (Operario)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>2.2 Ajuste Técnico del Requerimiento No Funcional RNF-03</h2>
+  <div style="background-color: #f8fafc; border: 1.5px solid #cbd5e1; padding: 12px; border-radius: 6px;">
+    <strong style="color: #1e3a8a;">RNF-03 (Control Transaccional de Ocupación y Capacidad Máxima en Backend):</strong><br>
+    El backend implementa un mecanismo centralizado, atómico e inquebrantable de control de aforo para las <strong>80 celdas físicas</strong> del parqueadero (70 exclusivas para carros y 10 para motos). Para garantizar la integridad operativa y prevenir condiciones de carrera (<em>race conditions</em>) por ingresos concurrentes en múltiples accesos simultáneos (Puerta 1 Norte y Puerta 2 Sur), el servicio <code>ParqueaderoService</code> ejecuta:
+    <ol style="margin: 6px 0; padding-left: 20px;">
+      <li><strong>Exclusión Mutua en Memoria:</strong> Primitivas de sincronización <code>threading.Lock</code> (instancia <code>db_lock</code> en Python) que serializan a nivel de hilo la evaluación de cupos y asignación de celdas.</li>
+      <li><strong>Transacciones Atómicas Inmediatas:</strong> Ejecución de sentencias <code>BEGIN IMMEDIATE;</code> sobre SQLite bajo arquitectura WAL (<em>Write-Ahead Logging</em>), bloqueando escrituras concurrentes conflictivas a nivel de base de datos.</li>
+      <li><strong>Filtrado y Validación de Celdas Elegibles:</strong> Consulta dinámica de celdas libres filtradas por categoría vehicular (<code>tipo_permitido = 'CARRO'</code> o <code>'MOTO'</code>), excluyendo celdas en estado <code>OCUPADA</code> o <code>MANTENIMIENTO</code>. Si las celdas disponibles para el tipo son cero (<code>0</code>), el backend aborta la transacción con código <code>AFORO_COMPLETO</code> y emite la alerta: <em>"Capacidad máxima alcanzada para [CARRO/MOTO]"</em>, impidiendo la apertura de barrera y cualquier sobrecupo físico.</li>
+    </ol>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECCIÓN 3: HISTORIAS DE USUARIO CON CRITERIOS COMPLETOS -->
+  <h1>3. HISTORIAS DE USUARIO CON CRITERIOS DE ACEPTACIÓN COMPLETOS (BDD GHERKIN)</h1>
+  <p>
+    En atención directa a la rúbrica (donde se penalizó con 5/10 pts), se documentan a continuación las Historias de Usuario principales incorporando de forma rigurosa los escenarios de excepción para <strong>placa inexistente</strong>, <strong>ingreso duplicado</strong> y <strong>salida de vehículo sin registro activo</strong>, indicando en cada caso la condición previa, el evento de activación y el resultado esperado:
+  </p>
+
+  <!-- HU-01 -->
+  <p><strong>HU-01: Registro de Ingreso, Validación de Mensualidad y Asignación Dinámica de Celda</strong><br>
+  <em>Como</em> Operario de Cabina de Acceso, <em>quiero</em> digitar la placa de un vehículo que llega a la portería <em>para</em> validar su mensualidad, verificar visualmente sus características físicas y asignarle aleatoriamente una celda disponible de su tipo.</p>
+
+  <div class="gherkin-box">
+    <strong>Escenario 1 (Flujo Exitoso - Ingreso y Asignación Aleatoria):</strong><br>
+    <strong>Dado</strong> que el vehículo con placa <code>TOY-456</code> (Carro) se encuentra registrado en el padrón de abonados,<br>
+    <strong>Y</strong> su mensualidad está al día con fecha de vencimiento posterior a la fecha actual,<br>
+    <strong>Y</strong> existen celdas disponibles para la categoría <code>CARRO</code> (ocupación &lt; 70),<br>
+    <strong>Cuando</strong> el operario digita la placa <code>TOY-456</code> y presiona el botón <em>"¡Abrir Barrera y Asignar Celda!"</em>,<br>
+    <strong>Entonces</strong> el backend selecciona al azar una celda libre (ej. <code>C-24</code>), cambia su estado a <code>OCUPADA</code>, registra la fecha/hora exacta de entrada, genera el ticket de acceso en estado <code>ADENTRO</code>, abre la barrera física y actualiza el mapa en tiempo real.
+  </div>
+
+  <div class="gherkin-box gherkin-exception">
+    <strong>Escenario 2 (Excepción Evaluada: Placa Inexistente / No Registrada en Padrón):</strong><br>
+    <strong>Dado</strong> que llega a portería un vehículo con una placa no registrada en el sistema (ej. <code>ZZZ-000</code>),<br>
+    <strong>Cuando</strong> el operario digita la placa <code>ZZZ-000</code> y presiona el botón de consulta o ingreso,<br>
+    <strong>Entonces</strong> el sistema deniega el acceso de inmediato, mantiene la barrera cerrada, retorna el código de error estructurado <code>NO_REGISTRADO</code>, proyecta en la consola la alerta visual roja: <em>"El vehículo con placa 'ZZZ-000' NO se encuentra registrado en el padrón de abonados. El parqueadero opera exclusivamente bajo modalidad de mensualidad"</em>, registra el incidente en la auditoría inmutable y no modifica ninguna celda de parqueo.
+  </div>
+
+  <div class="gherkin-box gherkin-exception">
+    <strong>Escenario 3 (Excepción Evaluada: Control Antiduplicidad / Vehículo Ya Adentro):</strong><br>
+    <strong>Dado</strong> que el vehículo con placa <code>TOY-456</code> ya ingresó al parqueadero y se encuentra actualmente en estado <code>ADENTRO</code> ocupando la celda <code>C-24</code>,<br>
+    <strong>Cuando</strong> un operario (en Puerta 1 o Puerta 2) intenta registrar nuevamente el ingreso de la placa <code>TOY-456</code>,<br>
+    <strong>Entonces</strong> el backend detecta mediante validación atómica que el automotor tiene un movimiento activo sin salida, bloquea la transacción con código <code>YA_ADENTRO</code>, emite la advertencia: <em>"Control de duplicidad: El vehículo 'TOY-456' ya figura ADENTRO en la celda C-24. No se autoriza doble ingreso sin registro previo de salida"</em>, mantiene la barrera cerrada y no asigna una nueva celda.
+  </div>
+
+  <!-- HU-02 -->
+  <p><strong>HU-02: Bloqueo de Acceso por Mensualidad Vencida (Cero Periodo de Gracia)</strong><br>
+  <em>Como</em> Operario de Cabina, <em>quiero</em> que el sistema valide la fecha de vencimiento <em>para</em> denegar la entrada a morosos.</p>
+  <div class="gherkin-box gherkin-exception">
+    <strong>Escenario 1 (Excepción - Mensualidad Expirada):</strong><br>
+    <strong>Dado</strong> que el vehículo <code>XYZ-999</code> tiene fecha de corte anterior a hoy (<code>fecha_vencimiento &lt; hoy</code>),<br>
+    <strong>Cuando</strong> el operario intenta autorizar su entrada,<br>
+    <strong>Entonces</strong> el sistema deniega el acceso con código <code>MENSUALIDAD_VENCIDA</code>, bloquea la barrera y proyecta: <em>"Acceso Denegado: La mensualidad del vehículo 'XYZ-999' está VENCIDA. No existe periodo de gracia"</em>.
+  </div>
+
+  <!-- HU-05 -->
+  <p><strong>HU-05: Registro de Salida, Liquidación de Estancia y Liberación Inmediata de Celda</strong><br>
+  <em>Como</em> Operario de Cabina de Salida, <em>quiero</em> registrar el egreso de un automotor <em>para</em> liberar su celda y calcular estancia.</p>
+
+  <div class="gherkin-box">
+    <strong>Escenario 1 (Flujo Exitoso - Salida y Liberación):</strong><br>
+    <strong>Dado</strong> que el vehículo <code>TOY-456</code> se encuentra <code>ADENTRO</code> en la celda <code>C-24</code>,<br>
+    <strong>Cuando</strong> el operario digita la placa y presiona <em>"Dar Salida"</em>,<br>
+    <strong>Entonces</strong> el sistema liquida la estancia (ej. <code>0h 42m 15s</code>), cambia el registro a <code>FINALIZADO</code>, actualiza la celda <code>C-24</code> a <code>DISPONIBLE</code> en tiempo real y abre la barrera de salida.
+  </div>
+
+  <div class="gherkin-box gherkin-exception">
+    <strong>Escenario 2 (Excepción Evaluada: Salida de Vehículo sin Registro Activo / No Adentro):</strong><br>
+    <strong>Dado</strong> que un automotor con placa <code>KTM-505</code> no se encuentra físicamente adentro (su registro está <code>FINALIZADO</code> o nunca ha ingresado),<br>
+    <strong>Cuando</strong> el operario digita dicha placa e intenta ejecutar la salida vehicular,<br>
+    <strong>Entonces</strong> el sistema rechaza la solicitud retornando el código de error <code>NO_ADENTRO</code>, muestra en pantalla el mensaje: <em>"Operación inválida: El vehículo 'KTM-505' no figura actualmente adentro del parqueadero"</em>, mantiene bloqueada la barrera de salida y no altera ninguna celda ni contador de ocupación.
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECCIÓN 4: CASOS DE USO CORREGIDOS STARUML -->
+  <h1>4. DIAGRAMA DE CASOS DE USO CORREGIDO EN STARUML (7 RF &harr; 7 CU)</h1>
+  <p>
+    En cumplimiento de la exigencia estricta de <strong>StarUML</strong> y las correcciones de sintaxis OMG UML 2.5:
+  </p>
+  <ul>
+    <li><strong>Dirección de «extend» invertida:</strong> La flecha apunta estrictamente desde el caso de extensión hacia el caso base: <code>CU-04: Denegar Ingreso</code> &dash;&gt; <code>&laquo;extend&raquo;</code> &dash;&gt; <code>CU-05: Registrar Entrada</code>, y <code>CU-06: Registrar Novedad</code> &dash;&gt; <code>&laquo;extend&raquo;</code> &dash;&gt; <code>CU-05: Registrar Entrada</code>.</li>
+    <li><strong>Eliminación de «include» al Actor Reloj:</strong> El actor secundario <em>Reloj del Servidor 24/7</em> interactúa únicamente mediante líneas de asociación continua simple (asociación de comunicación). Las operaciones de sellado temporal son subcasos incluidos legítimos.</li>
+    <li><strong>Correspondencia Biunívoca Exacta:</strong> Cada uno de los 7 Casos de Uso mapea 1-a-1 con los 7 Requerimientos Funcionales declarados.</li>
+  </ul>
+
+  <div class="diagram-container">
+    <img src="diagramas/Diagrama_Casos_de_Uso_7RF_StarUML.png" alt="Casos de Uso StarUML 7RF">
+    <div class="diagram-caption">Figura 1. Diagrama de Casos de Uso corregido en StarUML con correspondencia exacta a los 7 Requerimientos Funcionales.</div>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECCIÓN 5: PAQUETES CORREGIDOS STARUML -->
+  <h1>5. DIAGRAMA DE PAQUETES CON DEPENDENCIAS DE ARQUITECTURA EN STARUML</h1>
+  <p>
+    Se construyó en <strong>StarUML</strong> la representación formal de paquetes tipo carpeta (<em>tabbed folder</em>), reflejando la arquitectura en capas y las dependencias de llamada unidireccionales (<code>&laquo;use&raquo;</code> y <code>&laquo;access&raquo;</code>) sin acoplamientos circulares:
+  </p>
+
+  <div class="diagram-container">
+    <img src="diagramas/Diagrama_Paquetes_Arquitectura_Corregido.png" alt="Diagrama de Paquetes StarUML">
+    <div class="diagram-caption">Figura 2. Diagrama de Paquetes UML en StarUML mostrando las 5 capas arquitectónicas y sus dependencias explícitas.</div>
+  </div>
+
+  <!-- SECCIÓN 6: PRUEBAS AUTOMATIZADAS -->
+  <h1>6. VERIFICACIÓN MEDIANTE PRUEBAS AUTOMATIZADAS UNITARIAS</h1>
+  <p>
+    Para constatar empíricamente la efectividad de las correcciones, se ejecutó la suite de pruebas automatizadas en Python (<code>tests_iteracion1_corregido.py</code>), arrojando <strong>100% de éxito (7 de 7 casos aprobados)</strong>:
+  </p>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th style="width: 12%;">Caso Prueba</th>
+        <th style="width: 28%;">Requerimiento / Criterio Evaluado</th>
+        <th style="width: 25%;">Datos de Entrada</th>
+        <th style="width: 25%;">Resultado Verificado en Backend</th>
+        <th style="width: 10%;">Dictamen</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>CP-01</strong></td>
+        <td>Ingreso Exitoso y Sorteo de Celda</td>
+        <td>Placa <code>TOY-456</code> al día en pago</td>
+        <td>Asignada celda libre de carro (C-XX); estado ADENTRO</td>
+        <td><strong style="color: #16a34a;">APROBADO</strong></td>
+      </tr>
+      <tr>
+        <td><strong>CP-02</strong></td>
+        <td>Placa Inexistente (Criterio HU-01)</td>
+        <td>Placa no registrada <code>ZZZ-999</code></td>
+        <td>Rechazo con código <code>NO_REGISTRADO</code>; barrera bloqueada</td>
+        <td><strong style="color: #16a34a;">APROBADO</strong></td>
+      </tr>
+      <tr>
+        <td><strong>CP-03</strong></td>
+        <td>Ingreso Duplicado (Criterio HU-01)</td>
+        <td>Vehículo que ya figura ADENTRO</td>
+        <td>Rechazo con código <code>YA_ADENTRO</code>; celda actual informada</td>
+        <td><strong style="color: #16a34a;">APROBADO</strong></td>
+      </tr>
+      <tr>
+        <td><strong>CP-04</strong></td>
+        <td>Mensualidad Vencida (Criterio HU-02)</td>
+        <td>Placa <code>XYZ-999</code> con fecha expirada</td>
+        <td>Rechazo <code>MENSUALIDAD_VENCIDA</code> (0 días de gracia)</td>
+        <td><strong style="color: #16a34a;">APROBADO</strong></td>
+      </tr>
+      <tr>
+        <td><strong>CP-05</strong></td>
+        <td>Salida y Liberación de Celda (HU-05)</td>
+        <td>Placa <code>TOY-456</code> estacionada</td>
+        <td>Celda liberada a DISPONIBLE; tiempo liquidado</td>
+        <td><strong style="color: #16a34a;">APROBADO</strong></td>
+      </tr>
+      <tr>
+        <td><strong>CP-06</strong></td>
+        <td>Salida sin Registro Activo (HU-05)</td>
+        <td>Placa <code>TOY-456</code> que ya salió</td>
+        <td>Rechazo con código <code>NO_ADENTRO</code>; celdas inalteradas</td>
+        <td><strong style="color: #16a34a;">APROBADO</strong></td>
+      </tr>
+      <tr>
+        <td><strong>CP-07</strong></td>
+        <td>Control Ocupación Backend (RNF-03)</td>
+        <td>Consulta de aforo en tiempo real</td>
+        <td>Capacidad de 70 carros y 10 motos respetada</td>
+        <td><strong style="color: #16a34a;">APROBADO</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECCIÓN 7: REFERENCIAS Y METADATOS -->
+  <h1>7. DISPONIBILIDAD DE RECURSOS Y SOPORTE DE PROYECTO</h1>
+  <ul>
+    <li><strong>Archivo de Modelado StarUML (.mdj):</strong> Se incluye en la carpeta <code>docs/Autos_Colombia_StarUML.mdj</code> con todos los modelos, diagramas de paquetes y casos de uso editables directamente en la herramienta.</li>
+    <li><strong>Repositorio GitHub Público:</strong> <a href="https://github.com/Camilo-Alberto-Palacio/autos-colombia-parqueadero">https://github.com/Camilo-Alberto-Palacio/autos-colombia-parqueadero</a></li>
+  </ul>
+
+  <div class="footer-text">
+    Informe de Ajustes y Correcciones Técnicas &bull; Evidencia de Aprendizaje 1 &bull; Docente: Prof. Reinaldo Rojas Lopez &bull; IU Digital de Antioquia
+  </div>
+
+</body>
+</html>

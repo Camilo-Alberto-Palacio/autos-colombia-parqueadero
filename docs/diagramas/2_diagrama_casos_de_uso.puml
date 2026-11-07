@@ -1,0 +1,99 @@
+@startuml Diagrama_Casos_de_Uso_7RF_StarUML
+skinparam style strictuml
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam roundcorner 10
+skinparam ArrowColor #1e3a8a
+skinparam ArrowThickness 1.5
+
+skinparam actor {
+    BackgroundColor #e0f2fe
+    BorderColor #0369a1
+    FontName "Segoe UI"
+    FontSize 11
+}
+
+skinparam usecase {
+    BackgroundColor #ffffff
+    BorderColor #1e293b
+    FontName "Segoe UI"
+    FontSize 10.5
+    BorderThickness 1.2
+}
+
+skinparam note {
+    BackgroundColor #fef9c3
+    BorderColor #ca8a04
+    FontName "Segoe UI"
+    FontSize 9.5
+}
+
+left to right direction
+
+' --- ACTORES ---
+actor "Operario de Cabina\n(Actor Primario)" as Operario
+actor "Cámara / Sensor LPR\n(Actor Secundario)" as LPR
+actor "Reloj del Servidor 24/7\n(Actor Secundario)" as Reloj
+
+' --- LÍMITE DEL SISTEMA: 7 CASOS DE USO ASOCIADOS A LOS 7 REQUERIMIENTOS FUNCIONALES ---
+rectangle "Sistema de Control de Acceso Autos Colombia (StarUML - 7 RF)" as Sistema {
+
+    ' 1-a-1 Mapeo de Requerimientos Funcionales a Casos de Uso
+    usecase "CU-01: Validar Vehículo por Placa\n<b>[RF-01]</b>" as CU01
+    usecase "CU-02: Visualizar Atributos de Seguridad\n<b>[RF-02]</b>" as CU02
+    usecase "CU-03: Asignar Celda Aleatoria y Verificar Capacidad\n<b>[RF-03]</b>" as CU03
+    usecase "CU-04: Denegar Ingreso y Bloquear Barrera\n<b>[RF-04]</b>" as CU04
+    usecase "CU-05: Registrar Entrada de Vehículo\n<b>[RF-05]</b>" as CU05
+    usecase "CU-06: Registrar Novedad Física del Vehículo\n<b>[RF-06]</b>" as CU06
+    usecase "CU-07: Registrar Salida y Liberar Celda\n<b>[RF-07]</b>" as CU07
+
+    ' Subfunciones Internas para Timestamps (evitan incluir al Actor)
+    usecase "Estampar Fecha y Hora de Ingreso" as Sub_Timestamp
+    usecase "Calcular Tiempo de Permanencia" as Sub_Permanencia
+
+    ' --- RELACIONES DE INCLUSIÓN («include») ENTRE CASOS DE USO ---
+    CU05 ..> CU01 : «include»
+    CU05 ..> CU03 : «include»
+    CU05 ..> Sub_Timestamp : «include»
+    CU01 ..> CU02 : «include»
+    CU07 ..> Sub_Permanencia : «include»
+
+    ' --- RELACIONES DE EXTENSIÓN («extend») CORREGIDAS (DE EXTENSIÓN A BASE) ---
+    CU04 ..> CU05 : «extend»\n[si placa inexistente, mora,\n aforo lleno o duplicidad]
+    CU06 ..> CU05 : «extend»\n[opcional si presenta novedad física]
+}
+
+' --- ASOCIACIONES CON ACTORES (LÍNEAS SÓLIDAS SIMPLES) ---
+Operario -- CU01
+Operario -- CU05
+Operario -- CU06
+Operario -- CU07
+
+LPR -- CU01
+
+' Asociación estándar con el actor Reloj (¡JAMÁS «include» ni «extend» hacia actores!)
+Reloj -- Sub_Timestamp
+Reloj -- Sub_Permanencia
+
+note right of Reloj
+  <b>Regla OMG UML 2.5 Cumplida:</b>
+  Los Actores interactúan mediante líneas
+  de asociación simple (comunicación).
+  Las relaciones «include» y «extend»
+  son exclusivas entre Casos de Uso.
+end note
+
+note bottom of CU04
+  <b>Regla OMG UML 2.5 Cumplida:</b>
+  La dirección de «extend» apunta
+  SIEMPRE desde el caso que extiende (CU-04)
+  hacia el caso de uso base (CU-05).
+end note
+
+note top of CU01
+  <b>Coherencia 1 a 1:</b>
+  7 Requerimientos Funcionales declarados
+  coinciden exactamente con 7 Casos de Uso.
+end note
+
+@enduml

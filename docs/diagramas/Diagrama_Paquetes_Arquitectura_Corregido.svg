@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" contentScriptType="application/ecmascript" contentStyleType="text/css" height="1046px" preserveAspectRatio="none" style="width:2434px;height:1046px;" version="1.1" viewBox="0 0 2434 1046" width="2434px" zoomAndPan="magnify"><defs/><g><!--MD5=[f8fc339f8a4e263d475acc76a07d1f03]
+cluster Pkg_Presentacion--><path d="M10,6 L219,6 A6,6 0 0 1 223,10 L230,27.9609 L431,27.9609 A4,4 0 0 1 435,31.9609 L435,329.5 A4,4 0 0 1 431,333.5 L10,333.5 A4,4 0 0 1 6,329.5 L6,10 A4,4 0 0 1 10,6 " fill="#E0F2FE" style="stroke:#1E293B;stroke-width:1.5;"/><line style="stroke:#1E293B;stroke-width:1.5;" x1="6" x2="230" y1="27.9609" y2="27.9609"/><text fill="#000000" font-family="Segoe UI" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="211" x="10" y="20.9492">Capa de PresentaciÃ³n (Frontend SPA)</text><!--MD5=[6c3d812f1528158775125962e351d926]
+cluster Pkg_Controladores--><path d="M479,210.5 L663,210.5 A6,6 0 0 1 667,214.5 L674,232.4609 L685,232.4609 A4,4 0 0 1 689,236.4609 L689,576.5 A4,4 0 0 1 685,580.5 L479,580.5 A4,4 0 0 1 475,576.5 L475,214.5 A4,4 0 0 1 479,210.5 " fill="#F1F5F9" style="stroke:#1E293B;stroke-width:1.5;"/><line style="stroke:#1E293B;stroke-width:1.5;" x1="475" x2="674" y1="232.4609" y2="232.4609"/><text fill="#000000" font-family="Segoe UI" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="186" x="479" y="225.4492">Capa de Controladores y API REST</text><!--MD5=[04d2841bfbe60fc1ce495c578b0cbf6d]
+cluster Pkg_Dominio--><path d="M733,415.5 L943,415.5 A6,6 0 0 1 947,419.5 L954,437.4609 L1843,437.4609 A4,4 0 0 1 1847,441.4609 L1847,805.5 A4,4 0 0 1 1843,809.5 L733,809.5 A4,4 0 0 1 729,805.5 L729,419.5 A4,4 0 0 1 733,415.5 " fill="#FEF3C7" style="stroke:#1E293B;stroke-width:1.5;"/><line style="stroke:#1E293B;stroke-width:1.5;" x1="729" x2="954" y1="437.4609" y2="437.4609"/><text fill="#000000" font-family="Segoe UI" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="212" x="733" y="430.4492">Capa de LÃ³gica de Negocio y Dominio</text><!--MD5=[f65512c692c84bd019f0d3ddd510ed14]
+cluster Pkg_Servicios--><path d="M765,465.5 L880,465.5 A6,6 0 0 1 884,469.5 L891,487.4609 L947,487.4609 A4,4 0 0 1 951,491.4609 L951,773.5 A4,4 0 0 1 947,777.5 L765,777.5 A4,4 0 0 1 761,773.5 L761,469.5 A4,4 0 0 1 765,465.5 " fill="#FFFBEB" style="stroke:#1E293B;stroke-width:1.5;"/><line style="stroke:#1E293B;stroke-width:1.5;" x1="761" x2="891" y1="487.4609" y2="487.4609"/><text fill="#000000" font-family="Segoe UI" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="117" x="765" y="480.4492">Servicios de Dominio</text><!--MD5=[1d1dcd1cb16b4318c66adc1939e4d532]
+cluster Pkg_Entidades--><path d="M979,670.5 L1100,670.5 A6,6 0 0 1 1104,674.5 L1111,692.4609 L1803,692.4609 A4,4 0 0 1 1807,696.4609 L1807,773.5 A4,4 0 0 1 1803,777.5 L979,777.5 A4,4 0 0 1 975,773.5 L975,674.5 A4,4 0 0 1 979,670.5 " fill="#FEFCE8" style="stroke:#1E293B;stroke-width:1.5;"/><line style="stroke:#1E293B;stroke-width:1.5;" x1="975" x2="1111" y1="692.4609" y2="692.4609"/><text fill="#000000" font-family="Segoe UI" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="123" x="979" y="685.4492">Entidades del Dominio</text><!--MD5=[a9157359e5080f18f096de1fc92d73b0]
+cluster Pkg_Persistencia--><path d="M1891,662.5 L2096,662.5 A6,6 0 0 1 2100,666.5 L2107,684.4609 L2106,684.4609 A4,4 0 0 1 2110,688.4609 L2110,1023 A4,4 0 0 1 2106,1027 L1891,1027 A4,4 0 0 1 1887,1023 L1887,666.5 A4,4 0 0 1 1891,662.5 " fill="#DCFCE7" style="stroke:#1E293B;stroke-width:1.5;"/><line style="stroke:#1E293B;stroke-width:1.5;" x1="1887" x2="2107" y1="684.4609" y2="684.4609"/><text fill="#000000" font-family="Segoe UI" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="207" x="1891" y="677.4492">Capa de Persistencia y Acceso a Datos</text><!--MD5=[267fab11856afaa6941f700d01005177]
+cluster Pkg_Almacenamiento--><path d="M2154,891.5 L2335,891.5 A6,6 0 0 1 2339,895.5 L2346,913.4609 L2423,913.4609 A4,4 0 0 1 2427,917.4609 L2427,1035.5 A4,4 0 0 1 2423,1039.5 L2154,1039.5 A4,4 0 0 1 2150,1035.5 L2150,895.5 A4,4 0 0 1 2154,891.5 " fill="#F3E8FF" style="stroke:#1E293B;stroke-width:1.5;"/><line style="stroke:#1E293B;stroke-width:1.5;" x1="2150" x2="2346" y1="913.4609" y2="913.4609"/><text fill="#000000" font-family="Segoe UI" font-size="12" font-weight="bold" lengthAdjust="spacing" textLength="183" x="2154" y="906.4492">Capa de Base de Datos Relacional</text><!--MD5=[6db9f6b8fe529c9f7b3001b9d15bf39d]
+entity UI_HTML--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="145" x="231.5" y="252.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="356.5" y="257.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="354.5" y="259.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="354.5" y="263.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="46" x="246.5" y="283.291">index.html</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="105" x="246.5" y="296.5918">(Interfaz Cobalt Bay OS)</text><!--MD5=[d253fd66e2a5692d3d6386129e673559]
+entity UI_JS--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="153" x="238.5" y="48"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="371.5" y="53"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="369.5" y="55"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="369.5" y="59"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="25" x="253.5" y="78.791">app.js</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="113" x="253.5" y="92.0918">(Cliente SPA / Fetch REST)</text><!--MD5=[b99768ff821d272b26412bc5c64807d5]
+entity UI_CSS--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="173" x="30.5" y="48"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="183.5" y="53"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="181.5" y="55"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="181.5" y="59"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="34" x="45.5" y="78.791">style.css</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="133" x="45.5" y="92.0918">(DiseÃ±o y Grilla de 80 Celdas)</text><!--MD5=[9b5419a4b668f6d11a4882a6c014880a]
+entity API_Server--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="136" x="510" y="252.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="626" y="257.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="624" y="259.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="624" y="263.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="30" x="525" y="283.291">app.py</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="96" x="525" y="296.5918">(ThreadedHTTPServer)</text><!--MD5=[f4cfeed45dbf2f36339b4267abedf9f4]
+entity API_Handler--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="157" x="499.5" y="499.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="636.5" y="504.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="634.5" y="506.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="634.5" y="510.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="101" x="514.5" y="530.291">AutosColombiaHandler</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="117" x="514.5" y="543.5918">(Router GET / POST / PUT)</text><!--MD5=[7b4ea79d2ade036634eb1ad88947c95e]
+entity Svc_Parqueadero--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="158" x="777" y="499.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="915" y="504.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="913" y="506.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="913" y="510.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="86" x="792" y="530.291">ParqueaderoService</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="118" x="792" y="543.5918">(Control de Aforo y Celdas)</text><!--MD5=[5d4752dd6152c95bd3419999a218a4d2]
+entity Svc_Lock--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="155" x="777.5" y="704.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="912.5" y="709.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="910.5" y="711.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="910.5" y="715.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="114" x="792.5" y="735.291">SincronizadorConcurrente</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="115" x="792.5" y="748.5918">(threading.Lock / db_lock)</text><!--MD5=[757d8daf09e5745a2893d02a065e4e62]
+entity Ent_Vehiculo--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="125" x="991.5" y="704.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="1096.5" y="709.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1094.5" y="711.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1094.5" y="715.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="38" x="1006.5" y="735.291">Vehiculo</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="85" x="1006.5" y="748.5918">(Placa, Tipo, Activo)</text><!--MD5=[7e29a73ecff4e10eb20e45eb9825a5b6]
+entity Ent_Celda--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="136" x="1303" y="704.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="1419" y="709.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1417" y="711.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1417" y="715.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="24" x="1318" y="735.291">Celda</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="96" x="1318" y="748.5918">(80 Plazas: 70C / 10M)</text><!--MD5=[41c7723a9240f797aab8b104b967cf5e]
+entity Ent_Mensualidad--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="117" x="1474.5" y="704.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="1571.5" y="709.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1569.5" y="711.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1569.5" y="715.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="56" x="1489.5" y="735.291">Mensualidad</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="77" x="1489.5" y="748.5918">(Vigencia y Corte)</text><!--MD5=[5ed8c699455eec342cfa9326e8bc99d3]
+entity Ent_Propietario--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="116" x="1152" y="704.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="1248" y="709.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1246" y="711.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1246" y="715.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="47" x="1167" y="735.291">Propietario</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="76" x="1167" y="748.5918">(Abonado Titular)</text><!--MD5=[fe2377878159bc2be19c145982954f3c]
+entity Ent_Acceso--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="164" x="1627" y="704.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="1771" y="709.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1769" y="711.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="1769" y="715.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="66" x="1642" y="735.291">RegistroAcceso</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="124" x="1642" y="748.5918">(Ingreso / Salida / Novedad)</text><!--MD5=[523ad13c5d370c92734143dc418b99d7]
+entity DAO_Manager--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="136" x="1926" y="704.5"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="2042" y="709.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="2040" y="711.5"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="2040" y="715.5"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="52" x="1941" y="735.291">database.py</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="96" x="1941" y="748.5918">(ConnectionManager)</text><!--MD5=[9f6cec1a8e46fe5be4b16e76691756a3]
+entity DAO_Schema--><rect fill="#FFFFFF" height="56.6016" rx="4" ry="4" style="stroke:#475569;stroke-width:1.5;" width="155" x="1916.5" y="946"/><rect fill="#FFFFFF" height="10" style="stroke:#475569;stroke-width:1.5;" width="15" x="2051.5" y="951"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="2049.5" y="953"/><rect fill="#FFFFFF" height="2" style="stroke:#475569;stroke-width:1.5;" width="4" x="2049.5" y="957"/><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="115" x="1931.5" y="976.791">Esquema DDL / Ã�ndices</text><text fill="#000000" font-family="Segoe UI" font-size="10" lengthAdjust="spacing" textLength="97" x="1931.5" y="990.0918">(database_schema.sql)</text><!--MD5=[5102868f6147868679fc8ad89b4b51bb]
+entity DB_SQLite--><path d="M2193.5,943.5 C2193.5,933.5 2298,933.5 2298,933.5 C2298,933.5 2402.5,933.5 2402.5,943.5 L2402.5,1005.3281 C2402.5,1015.3281 2298,1015.3281 2298,1015.3281 C2298,1015.3281 2193.5,1015.3281 2193.5,1005.3281 L2193.5,943.5 " fill="#FEFECE" style="stroke:#000000;stroke-width:1.5;"/><path d="M2193.5,943.5 C2193.5,953.5 2298,953.5 2298,953.5 C2298,953.5 2402.5,953.5 2402.5,943.5 " fill="none" style="stroke:#000000;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119" x="2203.5" y="972.0332">autos_colombia.db</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="147" x="2203.5" y="989.6426">(SQLite 3 - Modo WAL)</text><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="189" x="2203.5" y="1007.252">Integridad Referencial FK=ON</text><path d="M462,34.5 L462,118.2578 A4,4 0 0 0 466,122.2578 L828,122.2578 A4,4 0 0 0 832,118.2578 L832,40.5 L822,30.5 L466,30.5 A4,4 0 0 0 462,34.5 " fill="#FBFB77" style="stroke:#A80036;stroke-width:1.0;"/><path d="M822,30.5 L822,38.5 A2,2 0 0 0 824,40.5 L832,40.5 L822,30.5 " fill="#FBFB77" style="stroke:#A80036;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="245" x="468" y="48.9951">Regla de Dependencia Unidireccional:</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="289" x="468" y="65.3467">La arquitectura sigue el patrÃ³n en capas estricto.</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="349" x="468" y="81.6982">Cada capa solo depende de la capa inmediatamente inferior,</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="277" x="468" y="98.0498">evitando acoplamientos circulares y permitiendo</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="210" x="468" y="114.4014">alta cohesiÃ³n y facilidad de prueba.</text><path d="M1874,502.5 L1874,553.5547 A4,4 0 0 0 1878,557.5547 L2186,557.5547 A4,4 0 0 0 2190,553.5547 L2190,508.5 L2180,498.5 L1878,498.5 A4,4 0 0 0 1874,502.5 " fill="#FBFB77" style="stroke:#A80036;stroke-width:1.0;"/><path d="M2180,498.5 L2180,506.5 A2,2 0 0 0 2182,508.5 L2190,508.5 L2180,498.5 " fill="#FBFB77" style="stroke:#A80036;stroke-width:1.0;"/><text fill="#000000" font-family="sans-serif" font-size="13" font-weight="bold" lengthAdjust="spacing" textLength="206" x="1880" y="516.9951">Control de OcupaciÃ³n Backend:</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="269" x="1880" y="533.3467">Encapsulado en ParqueaderoService mediante</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="295" x="1880" y="549.6982">db_lock y validaciÃ³n atÃ³mica en memoria y SQL.</text><!--MD5=[7c7f1975e8abea2bc9651ba87b229651]
+link UI_JS to UI_HTML--><path d="M313.49,105.23 C311.48,142.24 307.93,207.68 305.79,247.13 " fill="none" id="UI_JS-to-UI_HTML" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="305.51,252.28,309.9933,243.5108,305.7818,247.2874,302.0052,243.0759,305.51,252.28" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="86" x="312" y="174.9951">manipula DOM</text><!--MD5=[c5f3de3809a52373a8cc5f5e6b44a78a]
+reverse link API_Server to API_Handler--><path d="M578,322.8 C578,372.87 578,456.41 578,499.47 " fill="none" id="API_Server-backto-API_Handler" style="stroke:#1E3A8A;stroke-width:1.5;"/><polygon fill="#1E3A8A" points="578,309.63,574,315.63,578,321.63,582,315.63,578,309.63" style="stroke:#1E3A8A;stroke-width:1.5;"/><!--MD5=[85bc099e15517b25cbfcc86200459e96]
+link Svc_Parqueadero to Svc_Lock--><path d="M855.86,556.8 C855.68,593.9 855.36,659.5 855.16,699.05 " fill="none" id="Svc_Parqueadero-to-Svc_Lock" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="855.14,704.21,859.1914,695.233,855.1686,699.2101,851.1915,695.1873,855.14,704.21" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="101" x="857" y="626.9951">exclusiÃ³n mutua</text><!--MD5=[eb3432aa3808f81c265caac78805c2c7]
+link Svc_Parqueadero to Ent_Vehiculo--><path d="M883.9,556.51 C899.11,570.2 918.91,586.03 939,596.5 C950.48,602.48 956.51,596.93 967,604.5 C1000.83,628.91 1025.68,670.78 1039.97,699.85 " fill="none" id="Svc_Parqueadero-to-Ent_Vehiculo" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1042.17,704.4,1041.8612,694.556,1039.9971,699.8969,1034.6562,698.0327,1042.17,704.4" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="32" x="1002" y="626.9951">valida</text><!--MD5=[b6a22e4d3cef14c11ce2aabc73c371ba]
+link Svc_Parqueadero to Ent_Celda--><path d="M881.66,556.83 C896.82,571.34 917.27,587.82 939,596.5 C960.53,605.09 1020,601.63 1043,604.5 C1151.32,618.03 1188.03,596.37 1285,646.5 C1309.69,659.26 1331.79,681.6 1347.4,700.24 " fill="none" id="Svc_Parqueadero-to-Ent_Celda" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1350.83,704.4,1348.2,694.9088,1347.653,700.5391,1342.0226,699.992,1350.83,704.4" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="73" x="1270" y="626.9951">asigna/libera</text><!--MD5=[9be49ae4eee92f27f07b5bf638b1e0e2]
+link Svc_Parqueadero to Ent_Mensualidad--><path d="M880.76,556.62 C895.93,571.45 916.68,588.32 939,596.5 C982.1,612.28 1307.03,595.31 1352,604.5 C1400.84,614.48 1415.16,617.91 1456,646.5 C1477,661.2 1496.29,682.64 1510.31,700.37 " fill="none" id="Svc_Parqueadero-to-Ent_Mensualidad" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1513.4,704.33,1511.0248,694.7719,1510.3273,700.3855,1504.7136,699.6881,1513.4,704.33" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="49" x="1444" y="626.9951">consulta</text><!--MD5=[b72b3ffa9359d6afe6bf4e035b93c7ef]
+link Svc_Parqueadero to Ent_Acceso--><path d="M880.74,556.66 C895.91,571.51 916.66,588.38 939,596.5 C968.4,607.18 1471.31,598.47 1502,604.5 C1552.13,614.36 1565.2,620.2 1609,646.5 C1634.15,661.6 1659.24,683.07 1677.99,700.72 " fill="none" id="Svc_Parqueadero-to-Ent_Acceso" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1681.66,704.19,1677.8844,695.0936,1678.0329,700.7485,1672.378,700.897,1681.66,704.19" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="49" x="1596" y="626.9951">gestiona</text><!--MD5=[ba3fb6e94e96a9cf21e563a603aa6527]
+link DAO_Manager to DAO_Schema--><path d="M1994,761.94 C1994,806.47 1994,893.32 1994,940.72 " fill="none" id="DAO_Manager-to-DAO_Schema" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1994,945.74,1998,936.74,1994,940.74,1990,936.74,1994,945.74" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50" x="1995" y="855.9951">inicializa</text><!--MD5=[7e86d8cc5c26cc91172715f04db32b1b]
+link Pkg_Presentacion to Pkg_Controladores--><path d="M435.01,109.7312 C437.3006,114.4688 440.2375,118.9425 444,122.5 C521.54,195.78 605.94,111.52 673,194.5 C675.905,198.095 678.2238,202.0731 680.0556,206.2889 C680.5136,207.3428 680.9412,208.4116 681.3398,209.493 C681.4395,209.7633 681.5374,210.0344 681.6334,210.3063 " fill="none" id="Pkg_Presentacion-to-Pkg_Controladores" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="681.6334,210.3063,682.406,200.4878,679.9674,205.592,674.8632,203.1534,681.6334,210.3063" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="53" x="697.5" y="166.9951">Â«useÂ»</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="116" x="666" y="183.3467">HTTP / REST JSON</text><!--MD5=[45fa5d43ef3ef5028589c5f1b5e28946]
+link Pkg_Controladores to Pkg_Dominio--><path d="M689.5302,283.804 C691.2491,284.1676 693.2183,284.5842 695.4291,285.0519 C704.2724,286.9228 716.9817,289.6117 733.0048,293.0016 C765.0511,299.7815 810.3524,309.3658 864.4905,320.8197 C972.7666,343.7275 1116.3894,374.1138 1260.0113,404.5 C1268.9876,406.3991 1277.964,408.2983 1286.9317,410.1956 C1291.4156,411.1443 1295.8973,412.0925 1300.3758,413.04 C1302.615,413.5137 1304.8534,413.9873 1307.0909,414.4607 C1308.2096,414.6974 1309.3281,414.934 1310.4464,415.1706 " fill="none" id="Pkg_Controladores-to-Pkg_Dominio" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="1310.4464,415.1706,1302.4693,409.3944,1305.5547,414.1357,1300.8133,417.2211,1310.4464,415.1706" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="53" x="1235.5" y="371.9951">Â«useÂ»</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="140" x="1192" y="388.3467">InvocaciÃ³n de Servicios</text><!--MD5=[dfa5681bf87034ee265e09597cb9aef1]
+link Pkg_Dominio to Pkg_Persistencia--><path d="M1847.0237,584.051 C1847.2355,584.4703 1847.4525,584.8867 1847.6746,585.2999 C1848.1188,586.1263 1848.5836,586.9401 1849.07,587.7391 C1851.0156,590.9355 1853.3063,593.8975 1856,596.5 C1931.86,669.79 2016.63,568.84 2088,646.5 C2091.14,649.9163 2093.6808,653.7589 2095.7214,657.8746 C2096.2316,658.9035 2096.7105,659.9495 2097.1597,661.0101 C2097.272,661.2753 2097.3824,661.5414 2097.491,661.8084 C2097.5453,661.9418 2097.5992,662.0755 2097.6526,662.2094 " fill="none" id="Pkg_Dominio-to-Pkg_Persistencia" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="2097.6526,662.2094,2098.035,652.368,2095.8008,657.565,2090.6039,655.3308,2097.6526,662.2094" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="53" x="2165.5" y="618.9951">Â«useÂ»</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="222" x="2081" y="635.3467">Consultas y Transacciones AtÃ³micas</text><!--MD5=[815234a698f4de57d578a82df7b65c87]
+link Pkg_Persistencia to Pkg_Almacenamiento--><path d="M2110.0725,778.9466 C2110.2543,779.6844 2110.4376,780.4286 2110.6224,781.1788 C2111.3617,784.1796 2112.125,787.2781 2112.909,790.4602 C2114.4769,796.8244 2116.1272,803.5233 2117.8325,810.4453 C2121.243,824.2891 2124.8734,839.0253 2128.5038,853.7613 C2135.7644,883.2331 2143.0247,912.7041 2148.5255,935.0339 C2148.8693,936.4295 2149.2062,937.7972 2149.5358,939.1353 C2149.6182,939.4698 2149.7002,939.8025 2149.7817,940.1333 C2149.8224,940.2987 2149.863,940.4636 2149.9035,940.6281 " fill="none" id="Pkg_Persistencia-to-Pkg_Almacenamiento" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><polygon fill="#1E3A8A" points="2149.9035,940.6281,2151.6347,930.9326,2148.7076,935.7732,2143.8669,932.8461,2149.9035,940.6281" style="stroke:#1E3A8A;stroke-width:1.5;"/><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="74" x="2172" y="847.9951">Â«accessÂ»</text><text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="156" x="2131" y="864.3467">Driver Nativo SQLite (WAL)</text><!--MD5=[e99df18c54527d1d0b1df6ce13939660]
+link Pkg_Presentacion to GMN37--><path d="M435.0703,76.5 C435.115,76.5 435.1596,76.5 435.2043,76.5 C435.2937,76.5 435.383,76.5 435.4724,76.5 C435.6511,76.5 435.8297,76.5 436.0084,76.5 C438.8675,76.5 441.7263,76.5 444.585,76.5 C450.3025,76.5 456.02,76.5 461.74,76.5 " fill="none" id="Pkg_Presentacion-GMN37" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><!--MD5=[022f83d8e0af96cbe2f5734712a1f91b]
+link GMN40 to Pkg_Dominio--><path d="M1873.99,528 C1868.22,528 1862.45,528 1856.6813,528 C1853.7969,528 1850.9128,528 1848.0292,528 C1847.849,528 1847.6688,528 1847.4886,528 C1847.3984,528 1847.3083,528 1847.2182,528 C1847.1732,528 1847.1281,528 1847.0831,528 " fill="none" id="GMN40-Pkg_Dominio" style="stroke:#1E3A8A;stroke-width:1.5;stroke-dasharray:7.0,7.0;"/><!--MD5=[94e6d9705caaac680d4170758698abe5]
+@startuml Diagrama_Paquetes_Arquitectura_Corregido
+skinparam style strictuml
+skinparam packageStyle package
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam ArrowColor #1e3a8a
+skinparam ArrowThickness 1.5
+
+skinparam package {
+    BackgroundColor #f8fafc
+    BorderColor #1e293b
+    FontName "Segoe UI"
+    FontSize 12
+    FontStyle bold
+    BorderThickness 1.5
+}
+
+skinparam component {
+    BackgroundColor #ffffff
+    BorderColor #475569
+    FontName "Segoe UI"
+    FontSize 10
+}
+
+package "Capa de PresentaciÃ³n (Frontend SPA)" as Pkg_Presentacion #e0f2fe {
+    [index.html\n(Interfaz Cobalt Bay OS)] as UI_HTML
+    [app.js\n(Cliente SPA / Fetch REST)] as UI_JS
+    [style.css\n(DiseÃ±o y Grilla de 80 Celdas)] as UI_CSS
+    UI_JS ..> UI_HTML : manipula DOM
+}
+
+package "Capa de Controladores y API REST" as Pkg_Controladores #f1f5f9 {
+    [app.py\n(ThreadedHTTPServer)] as API_Server
+    [AutosColombiaHandler\n(Router GET / POST / PUT)] as API_Handler
+    API_Server *- - API_Handler
+}
+
+package "Capa de LÃ³gica de Negocio y Dominio" as Pkg_Dominio #fef3c7 {
+    package "Servicios de Dominio" as Pkg_Servicios #fffbeb {
+        [ParqueaderoService\n(Control de Aforo y Celdas)] as Svc_Parqueadero
+        [SincronizadorConcurrente\n(threading.Lock / db_lock)] as Svc_Lock
+        Svc_Parqueadero ..> Svc_Lock : exclusiÃ³n mutua
+    }
+    
+    package "Entidades del Dominio" as Pkg_Entidades #fefce8 {
+        [Vehiculo\n(Placa, Tipo, Activo)] as Ent_Vehiculo
+        [Celda\n(80 Plazas: 70C / 10M)] as Ent_Celda
+        [Mensualidad\n(Vigencia y Corte)] as Ent_Mensualidad
+        [Propietario\n(Abonado Titular)] as Ent_Propietario
+        [RegistroAcceso\n(Ingreso / Salida / Novedad)] as Ent_Acceso
+    }
+    
+    Svc_Parqueadero ..> Ent_Vehiculo : valida
+    Svc_Parqueadero ..> Ent_Celda : asigna/libera
+    Svc_Parqueadero ..> Ent_Mensualidad : consulta
+    Svc_Parqueadero ..> Ent_Acceso : gestiona
+}
+
+package "Capa de Persistencia y Acceso a Datos" as Pkg_Persistencia #dcfce7 {
+    [database.py\n(ConnectionManager)] as DAO_Manager
+    [Esquema DDL / Ã�ndices\n(database_schema.sql)] as DAO_Schema
+    DAO_Manager ..> DAO_Schema : inicializa
+}
+
+package "Capa de Base de Datos Relacional" as Pkg_Almacenamiento #f3e8ff {
+    database "autos_colombia.db\n(SQLite 3 - Modo WAL)\nIntegridad Referencial FK=ON" as DB_SQLite
+}
+
+' - - - DEPENDENCIAS ENTRE PAQUETES (UML 2.5) - - -
+Pkg_Presentacion .down.> Pkg_Controladores : Â«useÂ»\nHTTP / REST JSON
+Pkg_Controladores .down.> Pkg_Dominio : Â«useÂ»\nInvocaciÃ³n de Servicios
+Pkg_Dominio .down.> Pkg_Persistencia : Â«useÂ»\nConsultas y Transacciones AtÃ³micas
+Pkg_Persistencia .down.> Pkg_Almacenamiento : Â«accessÂ»\nDriver Nativo SQLite (WAL)
+
+note right of Pkg_Presentacion
+  <b>Regla de Dependencia Unidireccional:</b>
+  La arquitectura sigue el patrÃ³n en capas estricto.
+  Cada capa solo depende de la capa inmediatamente inferior,
+  evitando acoplamientos circulares y permitiendo
+  alta cohesiÃ³n y facilidad de prueba.
+end note
+
+note left of Pkg_Dominio
+  <b>Control de OcupaciÃ³n Backend:</b>
+  Encapsulado en ParqueaderoService mediante
+  db_lock y validaciÃ³n atÃ³mica en memoria y SQL.
+end note
+
+@enduml
+
+@startuml Diagrama_Paquetes_Arquitectura_Corregido
+skinparam style strictuml
+skinparam packageStyle package
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam ArrowColor #1e3a8a
+skinparam ArrowThickness 1.5
+
+skinparam package {
+    BackgroundColor #f8fafc
+    BorderColor #1e293b
+    FontName "Segoe UI"
+    FontSize 12
+    FontStyle bold
+    BorderThickness 1.5
+}
+
+skinparam component {
+    BackgroundColor #ffffff
+    BorderColor #475569
+    FontName "Segoe UI"
+    FontSize 10
+}
+
+package "Capa de PresentaciÃ³n (Frontend SPA)" as Pkg_Presentacion #e0f2fe {
+    [index.html\n(Interfaz Cobalt Bay OS)] as UI_HTML
+    [app.js\n(Cliente SPA / Fetch REST)] as UI_JS
+    [style.css\n(DiseÃ±o y Grilla de 80 Celdas)] as UI_CSS
+    UI_JS ..> UI_HTML : manipula DOM
+}
+
+package "Capa de Controladores y API REST" as Pkg_Controladores #f1f5f9 {
+    [app.py\n(ThreadedHTTPServer)] as API_Server
+    [AutosColombiaHandler\n(Router GET / POST / PUT)] as API_Handler
+    API_Server *- - API_Handler
+}
+
+package "Capa de LÃ³gica de Negocio y Dominio" as Pkg_Dominio #fef3c7 {
+    package "Servicios de Dominio" as Pkg_Servicios #fffbeb {
+        [ParqueaderoService\n(Control de Aforo y Celdas)] as Svc_Parqueadero
+        [SincronizadorConcurrente\n(threading.Lock / db_lock)] as Svc_Lock
+        Svc_Parqueadero ..> Svc_Lock : exclusiÃ³n mutua
+    }
+    
+    package "Entidades del Dominio" as Pkg_Entidades #fefce8 {
+        [Vehiculo\n(Placa, Tipo, Activo)] as Ent_Vehiculo
+        [Celda\n(80 Plazas: 70C / 10M)] as Ent_Celda
+        [Mensualidad\n(Vigencia y Corte)] as Ent_Mensualidad
+        [Propietario\n(Abonado Titular)] as Ent_Propietario
+        [RegistroAcceso\n(Ingreso / Salida / Novedad)] as Ent_Acceso
+    }
+    
+    Svc_Parqueadero ..> Ent_Vehiculo : valida
+    Svc_Parqueadero ..> Ent_Celda : asigna/libera
+    Svc_Parqueadero ..> Ent_Mensualidad : consulta
+    Svc_Parqueadero ..> Ent_Acceso : gestiona
+}
+
+package "Capa de Persistencia y Acceso a Datos" as Pkg_Persistencia #dcfce7 {
+    [database.py\n(ConnectionManager)] as DAO_Manager
+    [Esquema DDL / Ã�ndices\n(database_schema.sql)] as DAO_Schema
+    DAO_Manager ..> DAO_Schema : inicializa
+}
+
+package "Capa de Base de Datos Relacional" as Pkg_Almacenamiento #f3e8ff {
+    database "autos_colombia.db\n(SQLite 3 - Modo WAL)\nIntegridad Referencial FK=ON" as DB_SQLite
+}
+
+Pkg_Presentacion .down.> Pkg_Controladores : Â«useÂ»\nHTTP / REST JSON
+Pkg_Controladores .down.> Pkg_Dominio : Â«useÂ»\nInvocaciÃ³n de Servicios
+Pkg_Dominio .down.> Pkg_Persistencia : Â«useÂ»\nConsultas y Transacciones AtÃ³micas
+Pkg_Persistencia .down.> Pkg_Almacenamiento : Â«accessÂ»\nDriver Nativo SQLite (WAL)
+
+note right of Pkg_Presentacion
+  <b>Regla de Dependencia Unidireccional:</b>
+  La arquitectura sigue el patrÃ³n en capas estricto.
+  Cada capa solo depende de la capa inmediatamente inferior,
+  evitando acoplamientos circulares y permitiendo
+  alta cohesiÃ³n y facilidad de prueba.
+end note
+
+note left of Pkg_Dominio
+  <b>Control de OcupaciÃ³n Backend:</b>
+  Encapsulado en ParqueaderoService mediante
+  db_lock y validaciÃ³n atÃ³mica en memoria y SQL.
+end note
+
+@enduml
+
+PlantUML version 1.2021.00(Sun Jan 10 05:25:05 COT 2021)
+(MIT source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Default Encoding: Cp1252
+Language: es
+Country: CO
+--></g></svg>

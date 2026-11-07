@@ -1,0 +1,89 @@
+@startuml Diagrama_Paquetes_Arquitectura_Corregido
+skinparam style strictuml
+skinparam packageStyle package
+skinparam shadowing false
+skinparam roundcorner 8
+skinparam ArrowColor #1e3a8a
+skinparam ArrowThickness 1.5
+
+skinparam package {
+    BackgroundColor #f8fafc
+    BorderColor #1e293b
+    FontName "Segoe UI"
+    FontSize 12
+    FontStyle bold
+    BorderThickness 1.5
+}
+
+skinparam component {
+    BackgroundColor #ffffff
+    BorderColor #475569
+    FontName "Segoe UI"
+    FontSize 10
+}
+
+package "Capa de Presentación (Frontend SPA)" as Pkg_Presentacion #e0f2fe {
+    [index.html\n(Interfaz Cobalt Bay OS)] as UI_HTML
+    [app.js\n(Cliente SPA / Fetch REST)] as UI_JS
+    [style.css\n(Diseño y Grilla de 80 Celdas)] as UI_CSS
+    UI_JS ..> UI_HTML : manipula DOM
+}
+
+package "Capa de Controladores y API REST" as Pkg_Controladores #f1f5f9 {
+    [app.py\n(ThreadedHTTPServer)] as API_Server
+    [AutosColombiaHandler\n(Router GET / POST / PUT)] as API_Handler
+    API_Server *-- API_Handler
+}
+
+package "Capa de Lógica de Negocio y Dominio" as Pkg_Dominio #fef3c7 {
+    package "Servicios de Dominio" as Pkg_Servicios #fffbeb {
+        [ParqueaderoService\n(Control de Aforo y Celdas)] as Svc_Parqueadero
+        [SincronizadorConcurrente\n(threading.Lock / db_lock)] as Svc_Lock
+        Svc_Parqueadero ..> Svc_Lock : exclusión mutua
+    }
+    
+    package "Entidades del Dominio" as Pkg_Entidades #fefce8 {
+        [Vehiculo\n(Placa, Tipo, Activo)] as Ent_Vehiculo
+        [Celda\n(80 Plazas: 70C / 10M)] as Ent_Celda
+        [Mensualidad\n(Vigencia y Corte)] as Ent_Mensualidad
+        [Propietario\n(Abonado Titular)] as Ent_Propietario
+        [RegistroAcceso\n(Ingreso / Salida / Novedad)] as Ent_Acceso
+    }
+    
+    Svc_Parqueadero ..> Ent_Vehiculo : valida
+    Svc_Parqueadero ..> Ent_Celda : asigna/libera
+    Svc_Parqueadero ..> Ent_Mensualidad : consulta
+    Svc_Parqueadero ..> Ent_Acceso : gestiona
+}
+
+package "Capa de Persistencia y Acceso a Datos" as Pkg_Persistencia #dcfce7 {
+    [database.py\n(ConnectionManager)] as DAO_Manager
+    [Esquema DDL / Índices\n(database_schema.sql)] as DAO_Schema
+    DAO_Manager ..> DAO_Schema : inicializa
+}
+
+package "Capa de Base de Datos Relacional" as Pkg_Almacenamiento #f3e8ff {
+    database "autos_colombia.db\n(SQLite 3 - Modo WAL)\nIntegridad Referencial FK=ON" as DB_SQLite
+}
+
+' --- DEPENDENCIAS ENTRE PAQUETES (UML 2.5) ---
+Pkg_Presentacion .down.> Pkg_Controladores : «use»\nHTTP / REST JSON
+Pkg_Controladores .down.> Pkg_Dominio : «use»\nInvocación de Servicios
+Pkg_Dominio .down.> Pkg_Persistencia : «use»\nConsultas y Transacciones Atómicas
+Pkg_Persistencia .down.> Pkg_Almacenamiento : «access»\nDriver Nativo SQLite (WAL)
+
+note right of Pkg_Presentacion
+  <b>Regla de Dependencia Unidireccional:</b>
+  La arquitectura sigue el patrón en capas estricto.
+  Cada capa solo depende de la capa inmediatamente inferior,
+  evitando acoplamientos circulares y permitiendo
+  alta cohesión y facilidad de prueba.
+end note
+
+note left of Pkg_Dominio
+  <b>Control de Ocupación Backend:</b>
+  Encapsulado en ParqueaderoService mediante
+  db_lock y validación atómica en memoria y SQL.
+end note
+
+@enduml
