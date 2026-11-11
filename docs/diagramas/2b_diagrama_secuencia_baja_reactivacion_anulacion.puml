@@ -1,0 +1,95 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceGroupBackgroundColor #F8FAFC
+
+autonumber "<b>[00]"
+title Diagrama de Secuencia 3B — Baja Lógica, Reactivación y Anulación Auditada (CU-14, CU-15)
+
+actor "Operario / Admin" as Actor
+boundary "VistaAbonados / Pagos\n(Cobalt Bay OS)" as UI
+control "AutosColombiaHandler\n(app.py)" as API
+control "GestionPagosService\n(models.py)" as Domain
+database "SQLite WAL\n(autos_colombia.db)" as DB
+
+group Flujo 1: Baja Lógica / Cancelación de Suscripción (CU-15)
+  Actor -> UI : Solicita cancelar servicio de placa (Dar de Baja)
+  activate UI
+  UI -> API : POST /api/abonado/baja (placa, motivo, usuario_id)
+  activate API
+  API -> Domain : cancelar_suscripcion_abonado(placa, motivo, usuario_id)
+  activate Domain
+  Domain -> Domain : verificar_permiso(usuario_id, 'GESTION_PAGOS')
+  Domain -> DB : Consultar vehiculo, registro_acceso ('ADENTRO') y mensualidad
+  alt Vehículo ADENTRO o con MORA pendiente
+    Domain --> API : {success: false, codigo_error: 'VEHICULO_ADENTRO' | 'MORA_PENDIENTE'}
+    API --> UI : HTTP 400 Bad Request
+    UI --> Actor : Bloquea cancelación exigiendo salida o paz y salvo
+  else Vehículo afuera y al día
+    Domain -> DB : UPDATE vehiculo SET activo = 0 WHERE placa = ?
+    Domain -> DB : UPDATE mensualidad SET estado = 'CANCELADA' WHERE id = ?
+    Domain -> DB : INSERT INTO auditoria_accion ('BAJA_SUSCRIPCION')
+    Domain --> API : {success: true, mensaje: 'Baja lógica aplicada sin eliminar historial'}
+    API --> UI : HTTP 200 OK
+    UI --> Actor : Confirma inactivación y preserva historial en BD
+  end
+  deactivate Domain
+  deactivate API
+  deactivate UI
+end
+
+group Flujo 2: Reactivación de Cliente Inactivo (CU-15)
+  Actor -> UI : Selecciona cliente inactivo e ingresa pago de reingreso
+  activate UI
+  UI -> API : POST /api/abonado/reactivar (placa, fecha_pago, metodo, usuario_id)
+  activate API
+  API -> Domain : reactivar_suscripcion_abonado(datos, usuario_id)
+  activate Domain
+  Domain -> DB : BEGIN IMMEDIATE -> UPDATE vehiculo SET activo=1
+  Domain -> DB : INSERT mensualidad (vigencia = fecha_pago + 30d) + INSERT pago ('INICIAL_REACTIVACION')
+  Domain -> DB : COMMIT + INSERT auditoria_accion ('REACTIVAR_SUSCRIPCION')
+  Domain --> API : {success: true, nueva_fecha_vencimiento}
+  deactivate Domain
+  API --> UI : HTTP 200 OK
+  deactivate API
+  UI --> Actor : Reactiva suscripción y entrega comprobante
+  deactivate UI
+end
+
+group Flujo 3: Anulación Lógica de Pago Erróneo — Exclusivo ADMIN (CU-14)
+  Actor -> UI : Admin selecciona pago confirmado e ingresa motivo de anulación
+  activate UI
+  UI -> API : POST /api/pagos/anular (pago_id, motivo, admin_id)
+  activate API
+  API -> Domain : anular_pago(pago_id, motivo, admin_id)
+  activate Domain
+  Domain -> Domain : verificar_permiso(admin_id, 'ANULAR_PAGOS')
+  alt Actor es OPERARIO o AUDITOR
+    Domain --> API : HTTP 403 PERMISO_DENEGADO
+    UI --> Actor : Acceso denegado (solo ADMIN)
+  else Actor es ADMIN y es último pago confirmado
+    Domain -> DB : BEGIN IMMEDIATE -> UPDATE pago SET estado='ANULADO'
+    Domain -> DB : Revertir mensualidad al corte anterior + COMMIT
+    Domain -> DB : INSERT auditoria_accion ('ANULAR_PAGO')
+    Domain --> API : HTTP 200 OK
+    UI --> Actor : Pago marcado ANULADO sin DELETE físico; corte revertido
+  end
+  deactivate Domain
+  deactivate API
+  deactivate UI
+end
+@enduml

@@ -1,0 +1,78 @@
+@startuml
+left to right direction
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam NoteFontSize 11
+skinparam UsecaseBackgroundColor #EFF6FF
+skinparam UsecaseBorderColor #1D4ED8
+skinparam ActorBorderColor #1E3A8A
+skinparam ActorBackgroundColor #DBEAFE
+
+skinparam nodesep 28
+skinparam ranksep 55
+title Diagrama de Casos de Uso — Autos Colombia 24/7 (Iteración 3: Gestión de Pagos)
+
+actor "Administrador\n(ADMIN)" as Admin
+actor "Operario de Cabina\n(OPERARIO 24/7)" as Operario
+actor "Auditor de Calidad\n(AUDITOR)" as Auditor
+
+' Generalización jerárquica RBAC entre actores (OMG UML 2.5)
+Admin -down-|> Operario : hereda permisos
+Operario -down-|> Auditor : hereda supervisión
+
+rectangle "Módulo de Gestión de Pagos — Autos Colombia 24/7 (Iteración 3)" {
+
+  package "1. Recaudo Directo y Vigencia de Mensualidades" {
+    usecase "CU-11: Registrar Pago de\nMensualidad en Plataforma" as CU11
+    usecase "CU-12: Calcular Vigencia Consecutiva\n(30 Días sin Corrimiento)" as CU12
+    usecase "CU-13: Emitir Comprobante y Consultar\nLibro Mayor de Pagos" as CU13
+  }
+
+  package "2. Control Financiero, Bajas y Cartera" {
+    usecase "CU-14: Anular Pago Erróneo\n(Sin Borrado Físico)" as CU14
+    usecase "CU-15: Gestionar Baja Lógica\ny Reactivación de Servicio" as CU15
+    usecase "CU-16: Consultar Flujo de Caja\ny Cartera de Vencimientos" as CU16
+    usecase "Enviar Alerta Preventiva\nde Cobro (WhatsApp/Email)" as UC_Alerta
+  }
+
+  package "3. Seguridad Transversal" {
+    usecase "Verificar Permiso RBAC\n(GESTION_PAGOS / ANULAR_PAGOS)" as UC_RBAC
+    usecase "Registrar Traza Financiera\nen Auditoría 24/7" as UC_Audit
+  }
+}
+
+' Asociaciones limpias según jerarquía RBAC
+Operario --> CU11
+Operario --> CU15
+Admin --> CU14
+Auditor --> CU13
+Auditor --> CU16
+
+' Relaciones UML 2.5 obligatorias (<<include>>) y opcionales (<<extend>>)
+CU11 ..> CU12 : <<include>>
+CU11 ..> CU13 : <<include>>
+CU11 ..> UC_RBAC : <<include>>
+CU14 ..> UC_RBAC : <<include>>
+CU15 ..> UC_RBAC : <<include>>
+
+CU11 ..> UC_Audit : <<include>>
+CU14 ..> UC_Audit : <<include>>
+CU15 ..> UC_Audit : <<include>>
+
+UC_Alerta .up.> CU16 : <<extend>>
+
+note "Alcance Iteración 3:\nRecaudo directo por Operario/Admin\nen plataforma (sin pasarela externa).\nProhíbe pagos a futuro y separa\nfecha_pago de fecha_vencimiento." as N_Alcance
+@enduml

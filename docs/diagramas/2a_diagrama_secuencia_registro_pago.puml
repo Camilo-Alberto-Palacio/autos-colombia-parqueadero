@@ -1,0 +1,82 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceGroupBackgroundColor #F8FAFC
+
+autonumber "<b>[00]"
+title Diagrama de Secuencia 3A — Registro Directo de Pago y Cálculo Consecutivo (CU-11, CU-12, CU-13)
+
+actor "Operario / Admin" as Actor
+boundary "VistaPagosCaja\n(Cobalt Bay OS)" as UI
+control "AutosColombiaHandler\n(app.py)" as API
+control "GestionPagosService\n(models.py)" as Domain
+database "SQLite WAL\n(autos_colombia.db)" as DB
+
+Actor -> UI : Selecciona placa, fecha_pago, meses y método (Efectivo/QR/Banco)
+activate UI
+UI -> API : GET /api/pagos/previsualizar?placa=...&fecha_pago=...&meses=1
+activate API
+API -> Domain : previsualizar_pago_mensualidad(...)
+activate Domain
+Domain -> Domain : Validar fecha_pago <= hoy (sin futuro) y tarifa ($250k/$100k)
+Domain -> DB : SELECT vehiculo, ultima mensualidad
+DB --> Domain : Datos del abonado y fecha_vencimiento actual
+Domain --> API : Previsualización (PAGO_ANTICIPADO / PUNTUAL / MORA_CONSECUTIVA)
+deactivate Domain
+API --> UI : HTTP 200 OK (nuevo corte calculado y valor exacto)
+deactivate API
+UI --> Actor : Muestra corte anterior -> nuevo corte y explicación de regla
+
+Actor -> UI : Ingresa referencia (si QR/Banco) y pulsa Confirmar Pago
+UI -> API : POST /api/pagos (placa, fecha_pago, meses, metodo, ref, usuario_id)
+activate API
+API -> Domain : registrar_pago_mensualidad(datos, usuario_id)
+activate Domain
+Domain -> Domain : verificar_permiso(usuario_id, 'GESTION_PAGOS')
+
+alt Rol no autorizado (ej. AUDITOR)
+  Domain -> DB : INSERT INTO auditoria_accion ('ACCESO_DENEGADO_RBAC')
+  Domain --> API : {success: false, codigo_error: 'PERMISO_DENEGADO'}
+  API --> UI : HTTP 403 Forbidden
+  UI --> Actor : Notifica bloqueo RBAC
+else Fecha futura o datos inválidos (fecha_pago > hoy / sin referencia)
+  Domain --> API : {success: false, codigo_error: 'FECHA_FUTURA' | 'REFERENCIA_REQUERIDA'}
+  API --> UI : HTTP 400 Bad Request
+  UI --> Actor : Muestra error de validación sin mutar base de datos
+else Datos válidos y permiso autorizado
+  Domain -> DB : BEGIN IMMEDIATE TRANSACTION
+  activate DB
+  note right of Domain
+    Regla Consecutiva:
+    - Anticipado: corte_ant + 30*meses (conserva días)
+    - Puntual: corte_ant + 30*meses
+    - Mora: corte_ant + 30*meses (no corre la fecha)
+  end note
+  Domain -> Domain : _calcular_nueva_vigencia(m_actual, fecha_pago, meses)
+  Domain -> DB : UPDATE mensualidad SET fecha_pago=?, fecha_vencimiento=?, estado=?
+  Domain -> DB : INSERT INTO pago (numero_recibo, periodo_inicio, periodo_fin, valor, metodo, usuario_id)
+  Domain -> DB : COMMIT TRANSACTION
+  deactivate DB
+  Domain -> DB : INSERT INTO auditoria_accion ('REGISTRAR_PAGO')
+  Domain --> API : {success: true, numero_recibo, nueva_fecha_vencimiento, pago}
+  deactivate Domain
+  API --> UI : HTTP 201 Created
+  deactivate API
+  UI --> Actor : Muestra Comprobante Oficial (REC-YYYYMMDD-XXXX) y actualiza Flujo de Caja
+end
+deactivate UI
+@enduml

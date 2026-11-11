@@ -1,11 +1,12 @@
 /**
  * Controlador Frontend SPA - Autos Colombia 24/7 (Cobalt Bay OS)
- * Iteraciones 1 y 2 Unificadas:
+ * Iteraciones 1, 2 y 3 Unificadas:
  *  - Control de Entrada, Salida y Novedades 24/7
  *  - Autenticación SHA-256 y Control de Acceso Basado en Roles (RBAC)
  *  - Gestión CRUD de Usuarios y Roles (ADMIN / OPERARIO / AUDITOR)
  *  - Gestión CRUD, Mantenimiento y Reubicación Transaccional de 80 Celdas
- *  - Gestión CRUD de Clientes Abonados y Auditoría Inmutable
+ *  - Gestión CRUD de Clientes Abonados (Baja Lógica y Reactivación)
+ *  - Gestión de Pagos en Plataforma, Vigencia Consecutiva y Flujo de Caja (Iteración 3)
  * Asignatura: Ingeniería de Software - PREICA2602B020053 | Grupo 25
  */
 
@@ -23,6 +24,8 @@ const estadoApp = {
       "CRUD_CELDAS",
       "GESTION_USUARIOS",
       "GESTION_ABONADOS",
+      "GESTION_PAGOS",
+      "ANULAR_PAGOS",
       "CONSULTA_AUDITORIA",
     ],
   },
@@ -30,6 +33,7 @@ const estadoApp = {
   celdasCrud: [],
   usuarios: [],
   abonados: [],
+  pagosInfo: null,
   filtroMapa: "TODOS",
   celdaSeleccionada: null,
   vehiculoConsultado: null,
@@ -166,6 +170,7 @@ function cambiarVista(vistaId) {
     "view-celdas-crud": "side-link-celdas-crud",
     "view-usuarios": "side-link-usuarios",
     "view-abonados": "side-link-abonados",
+    "view-pagos": "side-link-pagos",
     "view-auditoria": "side-link-auditoria",
   };
   document.querySelectorAll(".sidebar-link").forEach((btn) => {
@@ -182,6 +187,8 @@ function cambiarVista(vistaId) {
     cargarTablaUsuarios();
   } else if (vistaId === "view-abonados") {
     cargarAbonadosServidor();
+  } else if (vistaId === "view-pagos") {
+    cargarVistaPagos();
   } else if (vistaId === "view-auditoria") {
     cargarAuditoria();
   } else if (vistaId === "view-mapa") {
@@ -217,13 +224,13 @@ function aplicarPermisosRBAC() {
   if (statusBar && statusText) {
     if (rol === "ADMIN") {
       statusBar.className = "bg-purple-950/90 text-purple-100 px-5 py-1.5 text-[11px] flex items-center justify-between border-b border-purple-800/50 flex-shrink-0";
-      statusText.innerHTML = `Rol activo: <strong>ADMIN (${escaparHtml(estadoApp.sesion.username)})</strong> — Control total habilitado (Acceso 24/7, CRUD Usuarios y Roles, CRUD Estructural de 80 Celdas, Mantenimiento, Reubicación y Auditoría).`;
+      statusText.innerHTML = `Rol activo: <strong>ADMIN (${escaparHtml(estadoApp.sesion.username)})</strong> — Control total habilitado (Acceso 24/7, CRUD Usuarios y Roles, CRUD Estructural de 80 Celdas, Pagos/Anulaciones y Auditoría).`;
     } else if (rol === "OPERARIO") {
       statusBar.className = "bg-blue-950/90 text-blue-100 px-5 py-1.5 text-[11px] flex items-center justify-between border-b border-blue-800/50 flex-shrink-0";
-      statusText.innerHTML = `Rol activo: <strong>OPERARIO (${escaparHtml(estadoApp.sesion.username)})</strong> — Operación de Cabina 24/7, Mantenimiento/Reubicación de Celdas y Padrón de Abonados activos. <em>CRUD de Usuarios y alta/baja estructural de Celdas restringidos (HTTP 403).</em>`;
+      statusText.innerHTML = `Rol activo: <strong>OPERARIO (${escaparHtml(estadoApp.sesion.username)})</strong> — Operación de Cabina 24/7, Mantenimiento/Reubicación, Padrón y Recaudo de Pagos activos. <em>CRUD de Usuarios, Celdas y Anulación de Pagos restringidos (HTTP 403).</em>`;
     } else {
       statusBar.className = "bg-emerald-950/90 text-emerald-100 px-5 py-1.5 text-[11px] flex items-center justify-between border-b border-emerald-800/50 flex-shrink-0";
-      statusText.innerHTML = `Rol activo: <strong>AUDITOR (${escaparHtml(estadoApp.sesion.username)})</strong> — Modo Supervisión de Solo Lectura. Todas las operaciones de escritura están protegidas por RBAC (HTTP 403).`;
+      statusText.innerHTML = `Rol activo: <strong>AUDITOR (${escaparHtml(estadoApp.sesion.username)})</strong> — Modo Supervisión de Solo Lectura. Todas las operaciones de escritura y pagos están protegidas por RBAC (HTTP 403).`;
     }
   }
 
@@ -285,6 +292,9 @@ async function ejecutarLogin() {
   await cargarResumenGeneral();
   cargarTablaCeldasCrud();
   cargarTablaUsuarios();
+  if (document.getElementById("view-pagos")?.classList.contains("active")) {
+    await cargarVistaPagos();
+  }
   mostrarNotificacion("Sesión Iniciada (SHA-256)", data.mensaje, "exito");
 }
 
@@ -395,6 +405,16 @@ async function consultarPlaca() {
         <div><strong>Vencimiento Mensualidad:</strong> ${m ? escaparHtml(m.fecha_vencimiento) : "Sin contrato"}</div>
         <div><strong>Tarifa Plana:</strong> ${m ? formatearMonedaCOP(m.valor_pagado) : "N/A"}</div>
       </div>
+      ${
+        !alDia && data.activo
+          ? `<div class="pt-2 border-t border-rose-200 flex items-center justify-between gap-2">
+               <span class="text-[11px] font-bold text-rose-800">Debe renovar su mensualidad para habilitar la barrera.</span>
+               <button onclick="irAPagosConPlaca('${escaparHtml(data.placa)}')" class="rbac-operacion bg-rose-600 hover:bg-rose-700 text-white font-extrabold px-3 py-1 rounded-lg text-[11px] shadow-sm">
+                 Ir a Registrar Pago &rarr;
+               </button>
+             </div>`
+          : ""
+      }
     </div>
   `;
 
@@ -1201,7 +1221,9 @@ async function cargarAbonadosServidor() {
 
 function filtrarAbonadosLocal() {
   const q = (document.getElementById("filtro-abonados-q")?.value || "").trim().toLowerCase();
+  const incluirInactivos = document.getElementById("chk-abonados-inactivos")?.checked ?? true;
   const filtrados = estadoApp.abonados.filter((a) => {
+    if (!incluirInactivos && !a.activo) return false;
     if (!q) return true;
     return (
       String(a.placa).toLowerCase().includes(q) ||
@@ -1220,15 +1242,21 @@ function renderizarTablaAbonados(lista) {
   if (!tbody) return;
 
   const puedeEditar = tienePermiso("GESTION_ABONADOS");
+  const puedePagar = tienePermiso("GESTION_PAGOS");
 
   tbody.innerHTML = lista
     .map((a) => {
-      const badgeVigencia = a.al_dia
-        ? `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">ACTIVA (${a.dias_restantes}d)</span>`
-        : `<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-black">VENCIDA / MORA</span>`;
+      let badgeVigencia = "";
+      if (!a.activo) {
+        badgeVigencia = `<span class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full text-[10px] font-black">INACTIVO (BAJA)</span>`;
+      } else if (a.al_dia) {
+        badgeVigencia = `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">ACTIVA (${a.dias_restantes}d)</span>`;
+      } else {
+        badgeVigencia = `<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-black">VENCIDA / MORA</span>`;
+      }
 
       return `
-        <tr class="hover:bg-slate-50">
+        <tr class="hover:bg-slate-50 ${a.activo ? "" : "bg-slate-50/70 opacity-80"}">
           <td class="py-3 px-4 font-mono-plate font-extrabold text-slate-900">${escaparHtml(formatearPlacaVisual(a.placa))}</td>
           <td class="py-3 px-4">
             <div class="font-bold text-slate-800">${escaparHtml(a.marca)} ${escaparHtml(a.modelo)}</div>
@@ -1241,10 +1269,16 @@ function renderizarTablaAbonados(lista) {
           <td class="py-3 px-4 font-extrabold text-slate-800">${formatearMonedaCOP(a.valor_pagado || (a.tipo_vehiculo === "CARRO" ? 250000 : 100000))}</td>
           <td class="py-3 px-4 text-slate-600 font-mono-plate text-[11px]">${escaparHtml(a.fecha_vencimiento || "Sin contrato")}</td>
           <td class="py-3 px-4">${badgeVigencia}</td>
-          <td class="py-3 px-4 text-center">
-            <button ${puedeEditar ? "" : "disabled"} onclick="abrirModalEditarAbonado('${escaparHtml(a.placa)}')" class="${puedeEditar ? "" : "opacity-40 cursor-not-allowed"} bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold px-2.5 py-1 rounded-lg text-[11px]">
-              Editar Datos
-            </button>
+          <td class="py-3 px-4 text-center whitespace-nowrap">
+            <div class="flex items-center justify-center gap-1.5">
+              ${
+                a.activo
+                  ? `<button ${puedePagar ? "" : "disabled"} onclick="irAPagosConPlaca('${escaparHtml(a.placa)}')" class="${puedePagar ? "" : "opacity-40 cursor-not-allowed"} bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold px-2.5 py-1 rounded-lg text-[11px]">Pagar</button>
+                     <button ${puedeEditar ? "" : "disabled"} onclick="abrirModalEditarAbonado('${escaparHtml(a.placa)}')" class="${puedeEditar ? "" : "opacity-40 cursor-not-allowed"} bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold px-2.5 py-1 rounded-lg text-[11px]">Editar</button>
+                     <button ${puedePagar ? "" : "disabled"} onclick="abrirModalBajaAbonado('${escaparHtml(a.placa)}')" class="${puedePagar ? "" : "opacity-40 cursor-not-allowed"} bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-bold px-2.5 py-1 rounded-lg text-[11px]">Dar Baja</button>`
+                  : `<button ${puedePagar ? "" : "disabled"} onclick="abrirModalReactivarAbonado('${escaparHtml(a.placa)}')" class="${puedePagar ? "" : "opacity-40 cursor-not-allowed"} bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">Reactivar</button>`
+              }
+            </div>
           </td>
         </tr>
       `;
@@ -1328,7 +1362,447 @@ async function guardarAbonado() {
 }
 
 // ============================================================================
-// VISTA 6: BITÁCORA CENTRAL INMUTABLE DE AUDITORÍA 24/7
+// VISTA 6: GESTIÓN DE PAGOS, MENSUALIDADES, BAJAS Y FLUJO DE CAJA (ITER. 3)
+// ============================================================================
+
+function obtenerFechaHoyISO() {
+  const ahora = new Date();
+  const y = ahora.getFullYear();
+  const m = String(ahora.getMonth() + 1).padStart(2, "0");
+  const d = String(ahora.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
+}
+
+function irAPagosConPlaca(placa) {
+  cambiarVista("view-pagos");
+  setTimeout(() => seleccionarPlacaPago(placa), 100);
+}
+
+function seleccionarPlacaPago(placa) {
+  const sel = document.getElementById("pago-placa");
+  if (sel) {
+    sel.value = placa;
+    actualizarPreviewPago();
+  }
+}
+
+function ajustarPlaceholderReferenciaPago() {
+  const met = document.getElementById("pago-metodo")?.value || "EFECTIVO";
+  const inp = document.getElementById("pago-referencia");
+  if (!inp) return;
+  if (met === "EFECTIVO") {
+    inp.placeholder = "Opcional en efectivo (ej. CAJA-01)";
+  } else if (met === "CODIGO_QR") {
+    inp.placeholder = "Obligatorio: N° aprobación QR";
+  } else if (met === "TRANSFERENCIA_BANCARIA") {
+    inp.placeholder = "Obligatorio: CUS / Ref. bancaria";
+  } else {
+    inp.placeholder = "Obligatorio: N° volante consignación";
+  }
+}
+
+async function cargarVistaPagos(placaPreferida = null) {
+  const inpFecha = document.getElementById("pago-fecha");
+  const hoyISO = obtenerFechaHoyISO();
+  if (inpFecha) {
+    inpFecha.max = hoyISO;
+    if (!inpFecha.value) inpFecha.value = hoyISO;
+  }
+
+  const selPlaca = document.getElementById("pago-placa");
+  const placaActual = placaPreferida || selPlaca?.value || "XYZ999";
+  if (selPlaca) {
+    const activos = (estadoApp.abonados || []).filter((a) => a.activo);
+    selPlaca.innerHTML = activos
+      .map(
+        (a) =>
+          `<option value="${escaparHtml(a.placa)}">${escaparHtml(formatearPlacaVisual(a.placa))} — ${escaparHtml(a.nombre_completo)} (${a.al_dia ? "Vigente" : "EN MORA"})</option>`
+      )
+      .join("");
+    if (activos.some((a) => a.placa === placaActual)) {
+      selPlaca.value = placaActual;
+    }
+  }
+
+  const fPlaca = (document.getElementById("filtro-pagos-placa")?.value || "").trim();
+  const fMet = document.getElementById("filtro-pagos-metodo")?.value || "";
+  const params = new URLSearchParams();
+  if (fPlaca) params.set("placa", fPlaca);
+  if (fMet) params.set("metodo", fMet);
+
+  const { ok, data } = await apiGet(`/api/pagos?${params.toString()}`);
+  if (!ok) return;
+
+  estadoApp.pagosInfo = data;
+  renderizarKPIsYFlujoCaja(data);
+  renderizarAlertasCartera(data.cartera || {});
+  renderizarTablaPagos(data.pagos || []);
+  ajustarPlaceholderReferenciaPago();
+  await actualizarPreviewPago();
+}
+
+function renderizarKPIsYFlujoCaja(data) {
+  const fc = data.flujo_caja || {};
+  const cc = data.conteo_cartera || {};
+
+  document.getElementById("kpi-recaudo-total").textContent = formatearMonedaCOP(fc.recaudo_total);
+  document.getElementById("kpi-recaudo-recibos").textContent = `${fc.confirmados || 0} recibos confirmados`;
+  document.getElementById("kpi-recaudo-mes").textContent = formatearMonedaCOP(fc.recaudo_mes);
+  document.getElementById("kpi-recaudo-hoy").textContent = `Recaudo hoy: ${formatearMonedaCOP(fc.recaudo_hoy)}`;
+  document.getElementById("kpi-cartera-aldia").textContent = String(cc.al_dia || 0);
+  document.getElementById("kpi-cartera-proximos").textContent = `${cc.proximos_vencer || 0} próximos a vencer (<=5d)`;
+  document.getElementById("kpi-cartera-mora").textContent = String(cc.en_mora || 0);
+  document.getElementById("kpi-cartera-inactivos").textContent = `${cc.inactivos || 0} dados de baja`;
+
+  const cat = fc.por_categoria || {};
+  document.getElementById("caja-desglose-categorias").textContent = `Carros: ${formatearMonedaCOP(cat.CARRO)} | Motos: ${formatearMonedaCOP(cat.MOTO)}`;
+
+  const met = fc.por_metodo || {};
+  const tarjetas = [
+    { label: "Efectivo", key: "EFECTIVO", cls: "bg-emerald-50 border-emerald-200 text-emerald-800" },
+    { label: "Código QR", key: "CODIGO_QR", cls: "bg-purple-50 border-purple-200 text-purple-800" },
+    { label: "Transferencia", key: "TRANSFERENCIA_BANCARIA", cls: "bg-blue-50 border-blue-200 text-blue-800" },
+    { label: "Consignación", key: "CONSIGNACION", cls: "bg-amber-50 border-amber-200 text-amber-800" },
+  ];
+  const grid = document.getElementById("grid-caja-metodos");
+  if (grid) {
+    grid.innerHTML = tarjetas
+      .map(
+        (t) => `
+        <div class="border rounded-xl p-2.5 ${t.cls}">
+          <div class="text-[10px] font-black uppercase">${t.label}</div>
+          <div class="text-sm font-extrabold mt-0.5">${formatearMonedaCOP(met[t.key])}</div>
+        </div>
+      `
+      )
+      .join("");
+  }
+}
+
+function renderizarAlertasCartera(cartera) {
+  const cont = document.getElementById("lista-alertas-cartera");
+  if (!cont) return;
+
+  const mora = (cartera.en_mora || []).map((a) => ({ ...a, nivel: "MORA" }));
+  const prox = (cartera.proximos_vencer || []).map((a) => ({ ...a, nivel: "PROXIMO" }));
+  const alertas = [...mora, ...prox];
+
+  if (alertas.length === 0) {
+    cont.innerHTML = `<div class="py-6 text-center text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">Todos los abonados activos están al día con más de 5 días de vigencia.</div>`;
+    return;
+  }
+
+  const puedePagar = tienePermiso("GESTION_PAGOS");
+  const disCls = puedePagar ? "" : "opacity-40 cursor-not-allowed";
+
+  cont.innerHTML = alertas
+    .map((a) => {
+      const esMora = a.nivel === "MORA";
+      const badge = esMora
+        ? `<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-black">MORA (${Math.abs(a.dias_restantes)}d atraso)</span>`
+        : `<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-black">VENCE EN ${a.dias_restantes}d</span>`;
+      const cajaCls = esMora ? "bg-rose-50/60 border-rose-200" : "bg-amber-50/60 border-amber-200";
+      return `
+        <div class="border rounded-xl p-3 flex flex-wrap items-center justify-between gap-2 ${cajaCls}">
+          <div class="space-y-0.5">
+            <div class="flex items-center gap-2">
+              <span class="font-mono-plate font-extrabold text-slate-900">${escaparHtml(formatearPlacaVisual(a.placa))}</span>
+              ${badge}
+            </div>
+            <div class="text-[11px] text-slate-700">
+              <strong>${escaparHtml(a.nombre_completo)}</strong> &bull; Tel: ${escaparHtml(a.telefono)} &bull; Corte: <span class="font-mono-plate font-bold">${escaparHtml(a.fecha_vencimiento)}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button ${puedePagar ? "" : "disabled"} onclick="enviarAlertaCartera('${escaparHtml(a.placa)}')" class="${disCls} bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 font-bold px-2.5 py-1 rounded-lg text-[11px]">Notificar WhatsApp</button>
+            <button ${puedePagar ? "" : "disabled"} onclick="seleccionarPlacaPago('${escaparHtml(a.placa)}')" class="${disCls} bg-blue-600 hover:bg-blue-700 text-white font-bold px-2.5 py-1 rounded-lg text-[11px]">Cobrar</button>
+          </div>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+async function actualizarPreviewPago() {
+  const placa = document.getElementById("pago-placa")?.value || "";
+  const fecha_pago = document.getElementById("pago-fecha")?.value || obtenerFechaHoyISO();
+  const meses = document.getElementById("pago-meses")?.value || "1";
+  const box = document.getElementById("pago-preview-box");
+  if (!box || !placa) return;
+
+  const { ok, data } = await apiGet(
+    `/api/pagos/previsualizar?placa=${encodeURIComponent(placa)}&fecha_pago=${encodeURIComponent(fecha_pago)}&meses=${encodeURIComponent(meses)}`
+  );
+
+  if (!ok || !data.success) {
+    box.className = "bg-rose-50 border border-rose-300 rounded-xl p-3 text-xs text-rose-900 space-y-1";
+    box.innerHTML = `<div class="font-extrabold">Validación Temporal / Negocio:</div><p>${escaparHtml(data.mensaje || "Error en cálculo")}</p>`;
+    return;
+  }
+
+  const esMora = data.tipo_aplicacion === "MORA_CONSECUTIVA";
+  const esAnt = data.tipo_aplicacion === "PAGO_ANTICIPADO";
+  box.className = esMora
+    ? "bg-amber-50 border border-amber-300 rounded-xl p-3 text-xs text-amber-950 space-y-1.5"
+    : esAnt
+    ? "bg-emerald-50 border border-emerald-300 rounded-xl p-3 text-xs text-emerald-950 space-y-1.5"
+    : "bg-blue-50 border border-blue-200 rounded-xl p-3 text-xs text-blue-950 space-y-1.5";
+
+  box.innerHTML = `
+    <div class="flex items-center justify-between gap-2">
+      <span class="font-black uppercase text-[10px] px-2 py-0.5 rounded bg-white/80 border">${escaparHtml(data.tipo_aplicacion)}</span>
+      <span class="font-extrabold text-sm">${formatearMonedaCOP(data.valor_total)} COP</span>
+    </div>
+    <div class="grid grid-cols-2 gap-1 text-[11px]">
+      <div><strong>Corte Anterior:</strong> <span class="font-mono-plate">${escaparHtml(data.corte_anterior || "Nuevo")}</span></div>
+      <div><strong>Nuevo Corte:</strong> <span class="font-mono-plate font-extrabold">${escaparHtml(data.nueva_fecha_vencimiento)}</span></div>
+    </div>
+    <p class="text-[11px] leading-snug opacity-90">${escaparHtml(data.explicacion)}</p>
+  `;
+}
+
+async function ejecutarRegistroPago() {
+  if (!tienePermiso("GESTION_PAGOS")) {
+    mostrarNotificacion("Acceso Denegado (RBAC)", "Su rol actual no tiene permisos para registrar pagos.", "error");
+    return;
+  }
+
+  const payload = {
+    placa: document.getElementById("pago-placa").value,
+    fecha_pago: document.getElementById("pago-fecha").value,
+    meses_pagados: Number(document.getElementById("pago-meses").value),
+    metodo_pago: document.getElementById("pago-metodo").value,
+    referencia_comprobante: document.getElementById("pago-referencia").value.trim(),
+    observaciones: document.getElementById("pago-observaciones").value.trim(),
+    usuario_id: estadoApp.sesion.id,
+  };
+
+  const { ok, data } = await apiPost("/api/pagos", payload);
+  if (!ok || !data.success) {
+    mostrarNotificacion("Pago Rechazado", data.mensaje || "Verifique los datos ingresados", "error");
+    return;
+  }
+
+  document.getElementById("pago-referencia").value = "";
+  document.getElementById("pago-observaciones").value = "";
+  mostrarNotificacion("Pago Registrado Exitosamente", data.mensaje, "exito");
+  await cargarResumenGeneral();
+  await cargarVistaPagos(payload.placa);
+  if (data.pago) {
+    mostrarModalReciboPago(data.pago);
+  }
+}
+
+function renderizarTablaPagos(pagos) {
+  const lbl = document.getElementById("contador-pagos");
+  if (lbl) lbl.textContent = `${pagos.length} movimientos`;
+  const tbody = document.getElementById("tbody-pagos");
+  if (!tbody) return;
+
+  const esAdmin = tienePermiso("ANULAR_PAGOS");
+
+  if (pagos.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="10" class="py-6 text-center text-slate-400">No hay pagos registrados para el filtro seleccionado.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = pagos
+    .map((p) => {
+      const estBadge =
+        p.estado === "CONFIRMADO"
+          ? `<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-black">CONFIRMADO</span>`
+          : `<span class="bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full text-[10px] font-black">ANULADO</span>`;
+
+      const appCls =
+        p.tipo_aplicacion === "MORA_CONSECUTIVA"
+          ? "bg-amber-100 text-amber-800"
+          : p.tipo_aplicacion === "PAGO_ANTICIPADO"
+          ? "bg-emerald-100 text-emerald-800"
+          : "bg-blue-100 text-blue-800";
+
+      return `
+        <tr class="hover:bg-slate-50 ${p.estado === "ANULADO" ? "opacity-60" : ""}">
+          <td class="py-2.5 px-3 font-mono-plate font-bold text-slate-800">${escaparHtml(p.numero_recibo)}</td>
+          <td class="py-2.5 px-3 font-mono-plate text-slate-600">${escaparHtml(p.fecha_pago)}</td>
+          <td class="py-2.5 px-3">
+            <div class="font-mono-plate font-extrabold text-slate-900">${escaparHtml(formatearPlacaVisual(p.vehiculo_placa))}</div>
+            <div class="text-[11px] text-slate-500">${escaparHtml(p.propietario_nombre)}</div>
+          </td>
+          <td class="py-2.5 px-3">
+            <div class="font-bold text-slate-800">${escaparHtml(p.metodo_pago)}</div>
+            <div class="text-[10px] font-mono-plate text-slate-500">${escaparHtml(p.referencia_comprobante || "")}</div>
+          </td>
+          <td class="py-2.5 px-3"><span class="px-2 py-0.5 rounded text-[10px] font-black ${appCls}">${escaparHtml(p.tipo_aplicacion)}</span></td>
+          <td class="py-2.5 px-3 font-mono-plate text-[11px] text-slate-700">${escaparHtml(p.periodo_inicio)} &rarr; <strong>${escaparHtml(p.periodo_fin)}</strong></td>
+          <td class="py-2.5 px-3 font-extrabold text-slate-900">${formatearMonedaCOP(p.valor_pagado)}</td>
+          <td class="py-2.5 px-3 text-[11px] text-slate-600">${escaparHtml(p.recaudador_username || "sistema")}</td>
+          <td class="py-2.5 px-3">${estBadge}</td>
+          <td class="py-2.5 px-3 text-center whitespace-nowrap">
+            <div class="flex items-center justify-center gap-1">
+              <button onclick="abrirReciboPorNumero('${escaparHtml(p.numero_recibo)}')" class="bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold px-2 py-1 rounded text-[11px]">Recibo</button>
+              ${
+                p.estado === "CONFIRMADO"
+                  ? `<button ${esAdmin ? "" : "disabled"} onclick="abrirModalAnularPago(${p.id}, '${escaparHtml(p.numero_recibo)}', '${escaparHtml(p.vehiculo_placa)}')" class="${esAdmin ? "" : "opacity-40 cursor-not-allowed"} bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold px-2 py-1 rounded text-[11px]">Anular</button>`
+                  : ""
+              }
+            </div>
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
+}
+
+async function abrirReciboPorNumero(numeroRecibo) {
+  const { ok, data } = await apiGet(`/api/pagos/recibo?numero_recibo=${encodeURIComponent(numeroRecibo)}`);
+  if (!ok || !data.success) {
+    mostrarNotificacion("Recibo no disponible", data.mensaje || "No se encontró el comprobante", "error");
+    return;
+  }
+  mostrarModalReciboPago(data.pago);
+}
+
+function mostrarModalReciboPago(p) {
+  const cont = document.getElementById("contenido-recibo-pago");
+  if (!cont) return;
+
+  cont.innerHTML = `
+    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2.5">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+        <span class="font-mono-plate font-extrabold text-sm text-slate-900">${escaparHtml(p.numero_recibo)}</span>
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${p.estado === "CONFIRMADO" ? "bg-emerald-100 text-emerald-800" : "bg-rose-100 text-rose-800"}">${escaparHtml(p.estado)}</span>
+      </div>
+      <div class="grid grid-cols-2 gap-2 text-[11px]">
+        <div><span class="text-slate-500">Vehículo:</span><br/><strong class="font-mono-plate text-slate-900">${escaparHtml(formatearPlacaVisual(p.vehiculo_placa))} (${escaparHtml(p.tipo_vehiculo)})</strong></div>
+        <div><span class="text-slate-500">Titular:</span><br/><strong class="text-slate-900">${escaparHtml(p.propietario_nombre)}</strong></div>
+        <div><span class="text-slate-500">Fecha de Pago:</span><br/><strong class="font-mono-plate text-slate-900">${escaparHtml(p.fecha_pago)}</strong></div>
+        <div><span class="text-slate-500">Método / Ref.:</span><br/><strong class="text-slate-900">${escaparHtml(p.metodo_pago)} (${escaparHtml(p.referencia_comprobante || "-")})</strong></div>
+        <div><span class="text-slate-500">Aplicación:</span><br/><strong class="text-blue-700">${escaparHtml(p.tipo_aplicacion)}</strong></div>
+        <div><span class="text-slate-500">Vigencia Cubierta:</span><br/><strong class="font-mono-plate text-emerald-700">${escaparHtml(p.periodo_inicio)} &rarr; ${escaparHtml(p.periodo_fin)}</strong></div>
+      </div>
+      <div class="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center justify-between">
+        <span class="font-bold text-slate-700">Total Pagado (${p.meses_pagados} mes/es):</span>
+        <span class="text-lg font-black text-emerald-700">${formatearMonedaCOP(p.valor_pagado)} COP</span>
+      </div>
+      <div class="text-[11px] text-slate-600">${escaparHtml(p.observaciones || "")}</div>
+      <div class="text-[10px] text-slate-400 border-t border-slate-200 pt-2">
+        Recaudado en plataforma por: <strong>${escaparHtml(p.recaudador_nombre || p.recaudador_username || "Operario")} (${escaparHtml(p.recaudador_rol || "OPERARIO")})</strong>
+      </div>
+    </div>
+  `;
+  abrirModal("modal-recibo-pago");
+}
+
+function abrirModalAnularPago(pagoId, numeroRecibo, placa) {
+  if (!tienePermiso("ANULAR_PAGOS")) {
+    mostrarNotificacion("Acceso Denegado (RBAC)", "Solo el rol ADMIN puede anular pagos confirmados.", "error");
+    return;
+  }
+  document.getElementById("modal-anular-pago-id").value = String(pagoId);
+  document.getElementById("modal-anular-pago-sub").innerHTML = `Se anulará el recibo <strong class="font-mono-plate">${escaparHtml(numeroRecibo)}</strong> de la placa <strong>${escaparHtml(formatearPlacaVisual(placa))}</strong>, revirtiendo la fecha de corte sin eliminar el registro contable.`;
+  document.getElementById("modal-anular-pago-motivo").value = "";
+  abrirModal("modal-anular-pago");
+}
+
+async function confirmarAnularPago() {
+  const pago_id = Number(document.getElementById("modal-anular-pago-id").value);
+  const motivo = document.getElementById("modal-anular-pago-motivo").value.trim();
+
+  const { ok, data } = await apiPost("/api/pagos/anular", {
+    pago_id,
+    motivo,
+    admin_id: estadoApp.sesion.id,
+  });
+
+  if (!ok || !data.success) {
+    mostrarNotificacion("No se pudo anular", data.mensaje || "Error al anular pago", "error");
+    return;
+  }
+
+  cerrarModal("modal-anular-pago");
+  mostrarNotificacion("Pago Anulado (Auditado)", data.mensaje, "alerta");
+  await cargarResumenGeneral();
+  await cargarVistaPagos();
+}
+
+async function enviarAlertaCartera(placa) {
+  const { ok, data } = await apiPost("/api/pagos/notificar", {
+    placa,
+    canal: "WHATSAPP",
+    usuario_id: estadoApp.sesion.id,
+  });
+  if (!ok || !data.success) {
+    mostrarNotificacion("No se pudo notificar", data.mensaje || "Error", "error");
+    return;
+  }
+  mostrarNotificacion(`Alerta ${data.canal} Enviada`, data.mensaje_enviado, "info");
+}
+
+function abrirModalBajaAbonado(placa) {
+  if (!tienePermiso("GESTION_PAGOS")) {
+    mostrarNotificacion("Acceso Denegado (RBAC)", "No posee permisos para gestionar bajas de servicio.", "error");
+    return;
+  }
+  document.getElementById("modal-baja-placa").value = placa;
+  document.getElementById("modal-baja-sub").innerHTML = `Se inactivará el servicio para el vehículo <strong class="font-mono-plate">${escaparHtml(formatearPlacaVisual(placa))}</strong> conservando su historial en base de datos.`;
+  abrirModal("modal-baja-abonado");
+}
+
+async function confirmarBajaAbonado() {
+  const placa = document.getElementById("modal-baja-placa").value;
+  const motivo = document.getElementById("modal-baja-motivo").value.trim();
+  const { ok, data } = await apiPost("/api/abonado/baja", {
+    placa,
+    motivo,
+    usuario_id: estadoApp.sesion.id,
+  });
+  if (!ok || !data.success) {
+    mostrarNotificacion("Baja Bloqueada", data.mensaje || "No se pudo cancelar la suscripción", "error");
+    return;
+  }
+  cerrarModal("modal-baja-abonado");
+  mostrarNotificacion("Suscripción Cancelada (Baja Lógica)", data.mensaje, "exito");
+  await cargarResumenGeneral();
+  filtrarAbonadosLocal();
+}
+
+function abrirModalReactivarAbonado(placa) {
+  if (!tienePermiso("GESTION_PAGOS")) {
+    mostrarNotificacion("Acceso Denegado (RBAC)", "No posee permisos para reactivar servicios.", "error");
+    return;
+  }
+  const hoyISO = obtenerFechaHoyISO();
+  document.getElementById("modal-reactivar-placa").value = placa;
+  document.getElementById("modal-reactivar-sub").innerHTML = `Reactivación del servicio para <strong class="font-mono-plate">${escaparHtml(formatearPlacaVisual(placa))}</strong>. La nueva mensualidad de 30 días correrá desde la fecha de pago.`;
+  const f = document.getElementById("modal-reactivar-fecha");
+  f.max = hoyISO;
+  f.value = hoyISO;
+  document.getElementById("modal-reactivar-ref").value = "";
+  abrirModal("modal-reactivar-abonado");
+}
+
+async function confirmarReactivarAbonado() {
+  const payload = {
+    placa: document.getElementById("modal-reactivar-placa").value,
+    fecha_pago: document.getElementById("modal-reactivar-fecha").value,
+    metodo_pago: document.getElementById("modal-reactivar-metodo").value,
+    referencia_comprobante: document.getElementById("modal-reactivar-ref").value.trim(),
+    meses_pagados: 1,
+    usuario_id: estadoApp.sesion.id,
+  };
+  const { ok, data } = await apiPost("/api/abonado/reactivar", payload);
+  if (!ok || !data.success) {
+    mostrarNotificacion("Error al Reactivar", data.mensaje || "Revise los datos", "error");
+    return;
+  }
+  cerrarModal("modal-reactivar-abonado");
+  mostrarNotificacion("Servicio Reactivado", data.mensaje, "exito");
+  await cargarResumenGeneral();
+  filtrarAbonadosLocal();
+}
+
+// ============================================================================
+// VISTA 7: BITÁCORA CENTRAL INMUTABLE DE AUDITORÍA 24/7
 // ============================================================================
 
 async function cargarAuditoria() {
@@ -1357,6 +1831,8 @@ async function cargarAuditoria() {
           ? "bg-amber-100 text-amber-800"
           : a.modulo === "ABONADOS"
           ? "bg-blue-100 text-blue-800"
+          : a.modulo === "PAGOS"
+          ? "bg-teal-100 text-teal-800"
           : "bg-emerald-100 text-emerald-800";
 
       return `
@@ -1433,6 +1909,20 @@ async function aplicarModoMockupSiExiste() {
   } else if (mockup === "abonados") {
     cambiarVista("view-abonados");
     await cargarAbonadosServidor();
+  } else if (mockup === "pagos_mora") {
+    cambiarVista("view-pagos");
+    await cargarVistaPagos("XYZ999");
+  } else if (mockup === "pagos_anticipado") {
+    cambiarVista("view-pagos");
+    await cargarVistaPagos("ABC123");
+  } else if (mockup === "pagos_recibo") {
+    cambiarVista("view-pagos");
+    await cargarVistaPagos("ABC123");
+    await abrirReciboPorNumero("REC-SEED-0001");
+  } else if (mockup === "abonados_baja") {
+    cambiarVista("view-abonados");
+    await cargarAbonadosServidor();
+    abrirModalBajaAbonado("ABC123");
   } else if (mockup === "auditoria") {
     cambiarVista("view-auditoria");
     await cargarAuditoria();

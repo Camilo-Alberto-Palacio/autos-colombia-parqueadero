@@ -1,6 +1,6 @@
 """
 Módulo de Gestión de Base de Datos - Autos Colombia 24/7
-Iteración 1 y 2 Unificada: Entrada/Salida, Gestión de Usuarios (RBAC) y Gestión CRUD de Celdas
+Iteraciones 1, 2 y 3 Unificadas: Entrada/Salida, Usuarios (RBAC), Celdas y Gestión de Pagos
 Asignatura: Ingeniería de Software - PREICA2602B020053
 Docente: Reinaldo Rojas | Grupo: 25
 Soporte de Concurrencia Multi-Operario (WAL Mode + Transacciones Atómicas + Migración Idempotente)
@@ -70,18 +70,30 @@ def inicializar_base_datos():
         cursor.execute("SELECT count(*) AS total FROM vehiculo;")
         total_vehiculos = cursor.fetchone()["total"]
 
-        if total_celdas < 80 or total_usuarios < 4 or total_vehiculos == 0:
+        cursor.execute("SELECT count(*) AS total FROM pago;")
+        total_pagos = cursor.fetchone()["total"]
+
+        if total_celdas < 80 or total_usuarios < 4 or total_vehiculos == 0 or total_pagos == 0:
             # Ejecutar el script completo con INSERT OR IGNORE sin duplicar mensualidades existentes
             if total_vehiculos > 0:
-                # Si ya había vehículos y mensualidades, solo aseguramos celdas y usuarios semilla
+                # Si ya había vehículos y mensualidades, aseguramos celdas, usuarios y pagos semilla sin duplicar mensualidades
                 lineas_semilla = []
                 en_mensualidad = False
                 for linea in schema_sql.splitlines():
-                    if linea.strip().startswith("-- Mensualidades registradas"):
+                    s = linea.strip()
+                    if s.startswith("-- Mensualidades registradas"):
                         en_mensualidad = True
+                        continue
+                    if s.startswith("-- Historial semilla de pagos"):
+                        en_mensualidad = False
                     if not en_mensualidad:
                         lineas_semilla.append(linea)
-                cursor.executescript("\n".join(lineas_semilla))
+                if total_pagos > 0:
+                    # Evitar reinsertar pagos semilla si ya existen pagos reales
+                    texto_seed = "\n".join(lineas_semilla).split("-- Historial semilla de pagos")[0]
+                    cursor.executescript(texto_seed)
+                else:
+                    cursor.executescript("\n".join(lineas_semilla))
             else:
                 cursor.executescript(schema_sql)
 
@@ -103,7 +115,7 @@ def inicializar_base_datos():
 
         conn.commit()
         conn.close()
-        print("Base de datos 'autos_colombia.db' verificada e inicializada (Iteraciones 1 y 2 - Modo WAL Concurrente).")
+        print("Base de datos 'autos_colombia.db' verificada e inicializada (Iteraciones 1, 2 y 3 - Modo WAL Concurrente).")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,351 @@
+{
+  "_type": "Project",
+  "_id": "PROJ_AUTOS_COLOMBIA_IT3",
+  "name": "Autos_Colombia_24_7_Iteraciones_1_2_y_3",
+  "ownedElements": [
+    {
+      "_type": "UMLModel",
+      "_id": "MODEL_CASOS_USO_PAGOS",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT3"
+      },
+      "name": "01_Modelo_Casos_de_Uso_Pagos_Iteracion_3",
+      "ownedElements": [
+        {
+          "_type": "UMLUseCaseDiagram",
+          "_id": "DIAG_UC_IT3_PAGOS",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "Diagrama_Casos_Uso_Gestion_de_Pagos"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_ADMIN",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "Administrador (ADMIN)"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_OPER",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "Operario de Cabina (OPERARIO)"
+        },
+        {
+          "_type": "UMLActor",
+          "_id": "ACT_AUDIT",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "Auditor de Calidad (AUDITOR)"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_11",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "CU-11 Registrar Pago de Mensualidad en Plataforma"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_12",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "CU-12 Calcular Vigencia Consecutiva (30 Dias)"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_13",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "CU-13 Emitir Comprobante y Consultar Libro de Pagos"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_14",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "CU-14 Anular Pago Erroneo (Sin Borrado Fisico)"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_15",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "CU-15 Gestionar Baja Logica y Reactivacion"
+        },
+        {
+          "_type": "UMLUseCase",
+          "_id": "UC_16",
+          "_parent": {
+            "$ref": "MODEL_CASOS_USO_PAGOS"
+          },
+          "name": "CU-16 Consultar Flujo de Caja y Alertas de Cartera"
+        }
+      ]
+    },
+    {
+      "_type": "UMLModel",
+      "_id": "MODEL_COMPONENTES_IT3",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT3"
+      },
+      "name": "02_Arquitectura_Componentes_Iteraciones_1_2_y_3",
+      "ownedElements": [
+        {
+          "_type": "UMLComponentDiagram",
+          "_id": "DIAG_COMP_IT3",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "Diagrama_Componentes_Actualizado_Iteracion_3"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_SPA",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "SPA_Cobalt_Bay_OS (index.html + app.js)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_VISTA_PAGOS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "Vista_Gestion_Pagos_y_Caja (Iteracion 3)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_HTTP",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "AutosColombiaHandler_REST (app.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_RBAC",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "Servicio_Usuarios_y_RBAC (models.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_CELDAS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "Servicio_CRUD_y_Mantenimiento_Celdas (models.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_ACCESO",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "Servicio_Control_Acceso_24_7 (models.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_PAGOS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "Servicio_Gestion_Pagos_y_Caja (models.py)"
+        },
+        {
+          "_type": "UMLComponent",
+          "_id": "COMP_WAL",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "Gestor_SQLite_WAL_9_Tablas (database.py)"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_RBAC",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "IAutenticacionRBAC"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_USERS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "IGestionUsuarios"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_CELDAS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "IGestionCeldas"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_ABONADOS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "IGestionAbonados"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_ACCESO",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "IControlAcceso"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_PAGOS",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "IGestionPagos"
+        },
+        {
+          "_type": "UMLInterface",
+          "_id": "IF_WAL",
+          "_parent": {
+            "$ref": "MODEL_COMPONENTES_IT3"
+          },
+          "name": "IPersistenciaWAL"
+        }
+      ]
+    },
+    {
+      "_type": "UMLModel",
+      "_id": "MODEL_CLASES_IT3",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT3"
+      },
+      "name": "03_Modelo_Clases_Dominio_3FN_Iteracion_3",
+      "ownedElements": [
+        {
+          "_type": "UMLClassDiagram",
+          "_id": "DIAG_CLS_IT3",
+          "_parent": {
+            "$ref": "MODEL_CLASES_IT3"
+          },
+          "name": "Diagrama_Clases_Dominio_Iteracion_3"
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_PAGO",
+          "_parent": {
+            "$ref": "MODEL_CLASES_IT3"
+          },
+          "name": "Pago",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_P1", "name": "id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_P2", "name": "numero_recibo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_P3", "name": "vehiculo_placa", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_P4", "name": "mensualidad_id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_P5", "name": "fecha_pago", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_P6", "name": "periodo_inicio", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_P7", "name": "periodo_fin", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_P8", "name": "valor_pagado", "type": "decimal" },
+            { "_type": "UMLAttribute", "_id": "AT_P9", "name": "metodo_pago", "type": "MetodoPago" },
+            { "_type": "UMLAttribute", "_id": "AT_P10", "name": "tipo_aplicacion", "type": "TipoAplicacion" },
+            { "_type": "UMLAttribute", "_id": "AT_P11", "name": "estado", "type": "EstadoPago" }
+          ],
+          "operations": [
+            { "_type": "UMLOperation", "_id": "OP_P1", "name": "previsualizar_pago_mensualidad" },
+            { "_type": "UMLOperation", "_id": "OP_P2", "name": "registrar_pago_mensualidad" },
+            { "_type": "UMLOperation", "_id": "OP_P3", "name": "anular_pago" },
+            { "_type": "UMLOperation", "_id": "OP_P4", "name": "obtener_estado_pagos_y_caja" },
+            { "_type": "UMLOperation", "_id": "OP_P5", "name": "registrar_alerta_vencimiento" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_MENS",
+          "_parent": {
+            "$ref": "MODEL_CLASES_IT3"
+          },
+          "name": "Mensualidad",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_M1", "name": "id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_M2", "name": "vehiculo_placa", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_M3", "name": "fecha_pago", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_M4", "name": "fecha_vencimiento", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_M5", "name": "estado", "type": "EstadoMensualidad" }
+          ],
+          "operations": [
+            { "_type": "UMLOperation", "_id": "OP_M1", "name": "calcular_nueva_vigencia" },
+            { "_type": "UMLOperation", "_id": "OP_M2", "name": "esta_al_dia" }
+          ]
+        },
+        { "_type": "UMLClass", "_id": "CLS_USUARIO", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Usuario" },
+        { "_type": "UMLClass", "_id": "CLS_PROP", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Propietario" },
+        { "_type": "UMLClass", "_id": "CLS_VEH", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Vehiculo" },
+        { "_type": "UMLClass", "_id": "CLS_CELDA", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Celda" },
+        { "_type": "UMLClass", "_id": "CLS_REG", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "RegistroAcceso" },
+        { "_type": "UMLClass", "_id": "CLS_HIST", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "HistorialCelda" },
+        { "_type": "UMLClass", "_id": "CLS_AUD", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "AuditoriaAccion" }
+      ]
+    },
+    {
+      "_type": "UMLCollaboration",
+      "_id": "COLLAB_SEQ_IT3",
+      "_parent": {
+        "$ref": "PROJ_AUTOS_COLOMBIA_IT3"
+      },
+      "name": "04_Interacciones_Secuencia_Iteracion_3",
+      "ownedElements": [
+        {
+          "_type": "UMLInteraction",
+          "_id": "INTER_SEQ_IT3",
+          "_parent": {
+            "$ref": "COLLAB_SEQ_IT3"
+          },
+          "name": "Secuencia_Gestion_Pagos_y_Entrada_Actualizada",
+          "ownedElements": [
+            {
+              "_type": "UMLSequenceDiagram",
+              "_id": "DIAG_SEQ_3A",
+              "_parent": { "$ref": "INTER_SEQ_IT3" },
+              "name": "3A_Registro_Pago_y_Vigencia_Consecutiva"
+            },
+            {
+              "_type": "UMLSequenceDiagram",
+              "_id": "DIAG_SEQ_3B",
+              "_parent": { "$ref": "INTER_SEQ_IT3" },
+              "name": "3B_Baja_Logica_Reactivacion_y_Anulacion"
+            },
+            {
+              "_type": "UMLSequenceDiagram",
+              "_id": "DIAG_SEQ_3C",
+              "_parent": { "$ref": "INTER_SEQ_IT3" },
+              "name": "3C_Entrada_Integrada_Actualizada_con_Pagos"
+            }
+          ],
+          "participants": [
+            { "_type": "UMLLifeline", "_id": "LF_UI", "name": "VistaPagosCaja (app.js)" },
+            { "_type": "UMLLifeline", "_id": "LF_API", "name": "AutosColombiaHandler (app.py)" },
+            { "_type": "UMLLifeline", "_id": "LF_DOM", "name": "GestionPagosService (models.py)" },
+            { "_type": "UMLLifeline", "_id": "LF_DB", "name": "SQLiteWAL (autos_colombia.db)" }
+          ]
+        }
+      ]
+    }
+  ]
+}

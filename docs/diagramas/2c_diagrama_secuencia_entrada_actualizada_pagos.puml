@@ -1,0 +1,80 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam NoteBackgroundColor #FEF9C3
+skinparam NoteBorderColor #CA8A04
+skinparam SequenceLifeLineBorderColor #334155
+skinparam SequenceLifeLineBackgroundColor #F8FAFC
+skinparam SequenceParticipantBackgroundColor #EFF6FF
+skinparam SequenceParticipantBorderColor #1D4ED8
+skinparam SequenceActorBackgroundColor #DBEAFE
+skinparam SequenceActorBorderColor #1E3A8A
+skinparam SequenceGroupBackgroundColor #F8FAFC
+
+autonumber "<b>[00]"
+title Diagrama de Secuencia 3C (Actualizado de 2C) — Entrada Vehicular Integrada con Gestión de Pagos
+
+actor "Operario de Cabina" as Operario
+boundary "ControlAcceso / Pagos\n(Cobalt Bay OS)" as UI
+control "AutosColombiaHandler\n(app.py)" as API
+control "Acceso & Pagos Services\n(models.py)" as Domain
+database "SQLite WAL\n(autos_colombia.db)" as DB
+
+Operario -> UI : Digita placa (ej. XYZ-999) y pulsa Verificar Placa
+activate UI
+UI -> API : GET /api/vehiculo?placa=XYZ-999
+activate API
+API -> Domain : consultar_vehiculo('XYZ-999')
+Domain -> DB : SELECT vehiculo, propietario, ultima mensualidad
+DB --> Domain : mensualidad.estado = 'VENCIDA', al_dia = false
+Domain --> API : Ficha técnica con alerta de MORA
+deactivate API
+UI --> Operario : Bloquea ingreso y habilita enlace directo "Ir a Registrar Pago"
+
+alt Operario intenta forzar entrada con mensualidad vencida
+  Operario -> UI : Pulsa Abrir Barrera
+  UI -> API : POST /api/ingreso (placa='XYZ-999', usuario_id)
+  API -> Domain : registrar_ingreso(...)
+  Domain --> API : {success: false, codigo_error: 'MENSUALIDAD_VENCIDA'}
+  API --> UI : HTTP 400 Bad Request (Barrera cerrada)
+end
+
+note over UI, Domain
+  Cruce directo con Iteración 3 (Gestión de Pagos):
+  El Operario cobra en cabina/plataforma y habilita la vigencia consecutiva.
+end note
+
+Operario -> UI : Clic en "Ir a Registrar Pago" -> Registra pago (fecha_pago, método, ref)
+UI -> API : POST /api/pagos (placa='XYZ-999', ...)
+activate API
+API -> Domain : registrar_pago_mensualidad(...)
+activate Domain
+Domain -> DB : BEGIN IMMEDIATE -> Calcula corte consecutivo (+30d desde corte anterior)
+Domain -> DB : UPDATE mensualidad SET estado='ACTIVA' + INSERT INTO pago
+Domain -> DB : COMMIT + Auditoría 'REGISTRAR_PAGO'
+Domain --> API : {success: true, nuevo_estado_mensualidad: 'ACTIVA'}
+deactivate Domain
+API --> UI : HTTP 201 Created (Emite Recibo)
+deactivate API
+
+Operario -> UI : Regresa a Entrada y pulsa Abrir Barrera para XYZ-999
+UI -> API : POST /api/ingreso (placa='XYZ-999', puerta, usuario_id)
+activate API
+API -> Domain : registrar_ingreso(...)
+activate Domain
+Domain -> Domain : verificar_permiso('OPERACION_ACCESO') + Validar al_dia == True
+Domain -> DB : BEGIN IMMEDIATE -> SELECT celda DISPONIBLE compatible
+Domain -> DB : UPDATE celda='OCUPADA' + INSERT registro_acceso='ADENTRO' + COMMIT
+Domain --> API : {success: true, celda_asignada}
+deactivate Domain
+API --> UI : HTTP 200 OK
+deactivate API
+UI --> Operario : ¡Barrera Abierta! Celda asignada dinámicamente
+deactivate UI
+@enduml

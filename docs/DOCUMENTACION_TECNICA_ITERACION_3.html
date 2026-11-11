@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Evidencia de Aprendizaje 3 — Iteración 3 Gestión de Pagos (Grupo 25)</title>
+  <style>
+    @page { size: letter; margin: 18mm 16mm 18mm 16mm; }
+    * { box-sizing: border-box; }
+    body { font-family: "Calibri", "Segoe UI", Arial, sans-serif; font-size: 10.5pt; line-height: 1.48; color: #1e293b; margin: 0; padding: 0; background: #ffffff; }
+    .cover { min-height: 238mm; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; padding: 16mm 12mm 12mm 12mm; border: 1.5px solid #cbd5e1; border-top: 8px solid #059669; border-radius: 6px; page-break-after: always; }
+    .cover-badge { display: inline-block; background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-weight: 700; font-size: 9.5pt; padding: 4px 14px; border-radius: 999px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .cover-title { font-size: 19pt; font-weight: 800; color: #0f172a; line-height: 1.25; margin: 14px 0 10px 0; max-width: 92%; }
+    .cover-subtitle { font-size: 12pt; font-weight: 700; color: #047857; max-width: 88%; margin: 0 auto; }
+    .cover-authors { margin: 18px 0; font-size: 11.5pt; }
+    .cover-authors p { margin: 4px 0; font-weight: 600; color: #0f172a; text-align: center; }
+    .cover-inst p { margin: 3px 0; font-size: 10.5pt; color: #334155; text-align: center; }
+    .page-break { page-break-before: always; }
+    h1 { font-size: 15pt; color: #0f172a; border-bottom: 2.5px solid #059669; padding-bottom: 5px; margin-top: 0; margin-bottom: 12px; page-break-after: avoid; }
+    h2 { font-size: 12.2pt; color: #065f46; margin-top: 16px; margin-bottom: 8px; page-break-after: avoid; }
+    p { text-align: justify; margin: 0 0 9px 0; }
+    .toc-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 22px; }
+    .toc-list { list-style: none; padding: 0; margin: 0; }
+    .toc-list li { padding: 5px 0; border-bottom: 1px dashed #cbd5e1; font-size: 10.2pt; display: flex; justify-content: space-between; font-weight: 600; color: #1e293b; }
+    .toc-list li:last-child { border-bottom: none; }
+    .callout { background: #ecfdf5; border-left: 4px solid #059669; border-top: 1px solid #a7f3d0; border-right: 1px solid #a7f3d0; border-bottom: 1px solid #a7f3d0; padding: 10px 14px; border-radius: 6px; margin: 10px 0 14px 0; font-size: 9.8pt; break-inside: avoid; }
+    table { width: 100%; border-collapse: collapse; margin: 10px 0 16px 0; font-size: 8.7pt; }
+    thead { display: table-header-group; }
+    tr { break-inside: avoid; }
+    th { background: #0f172a; color: #ffffff; font-weight: 700; padding: 7px 6px; border: 1px solid #0f172a; text-align: center; }
+    td { padding: 6px 6px; border: 1px solid #cbd5e1; vertical-align: top; text-align: left; }
+    tbody tr:nth-child(even) td { background: #f8fafc; }
+    .center { text-align: center; }
+    .bold { font-weight: 700; }
+    .mono { font-family: "Consolas", "Courier New", monospace; font-size: 8.4pt; }
+    .ok { color: #065f46; }
+    .deny { color: #9f1239; }
+    .pill { display: inline-block; padding: 2px 7px; border-radius: 999px; font-size: 7.8pt; font-weight: 800; }
+    .pill-blue { background: #dbeafe; color: #1e40af; }
+    .pill-ok { background: #d1fae5; color: #065f46; }
+    .hu-card { border: 1px solid #cbd5e1; border-left: 4px solid #059669; border-radius: 7px; margin-bottom: 12px; background: #ffffff; break-inside: avoid; }
+    .hu-header { background: #f8fafc; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; }
+    .hu-badge { background: #065f46; color: #ffffff; font-weight: 800; font-size: 8.8pt; padding: 2px 8px; border-radius: 4px; margin-right: 6px; }
+    .hu-title { font-weight: 800; color: #0f172a; font-size: 10.2pt; }
+    .hu-meta { font-size: 8.6pt; color: #475569; margin-top: 3px; }
+    .hu-body { padding: 9px 12px; }
+    .hu-narrative { margin-bottom: 7px; font-size: 9.8pt; }
+    .gherkin-box { background: #f1f5f9; border-radius: 5px; padding: 7px 10px; font-size: 8.9pt; }
+    .gherkin-label { font-weight: 700; color: #065f46; margin-bottom: 3px; }
+    .gherkin-box ul { margin: 0; padding-left: 17px; }
+    .gherkin-box li { margin-bottom: 4px; }
+    .figure-card { border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin: 12px 0 16px 0; background: #ffffff; text-align: center; break-inside: avoid; }
+    .figure-card img { max-width: 100%; max-height: 180mm; height: auto; border: 1px solid #e2e8f0; border-radius: 4px; }
+    .figure-card img.uml-seq-img { max-height: 192mm; }
+    .figure-caption { margin-top: 7px; font-size: 8.9pt; color: #334155; text-align: justify; }
+    .link-box { border: 2px solid #2563eb; background: #eff6ff; border-radius: 8px; padding: 10px 14px; margin: 8px 0; break-inside: avoid; }
+    .video-box { border: 2px solid #059669; background: #ecfdf5; border-radius: 8px; padding: 10px 14px; margin: 8px 0; break-inside: avoid; }
+    .apa-ref { padding-left: 1.27cm; text-indent: -1.27cm; margin-bottom: 4px; text-align: left; font-size: 9pt; line-height: 1.28; }
+  </style>
+</head>
+<body>
+
+  <section class="cover">
+    <div><span class="cover-badge">Evidencia de Aprendizaje 3 • Iteración 3 (Entrega Final)</span></div>
+    <div>
+      <div class="cover-title">Sistema de Gestión de Operaciones — Parqueadero “Autos Colombia”</div>
+      <div class="cover-subtitle">Iteración 3: Diseño e Implementación del Módulo de Gestión de Pagos en Plataforma, Cálculo Consecutivo de Mensualidades, Control de Bajas y Flujo de Caja</div>
+    </div>
+    <div class="cover-authors">
+      <div style="font-size:9.5pt;color:#64748b;font-weight:700;text-transform:uppercase;margin-bottom:6px;">Integrantes — Grupo 25</div>
+      <p>Adriana Andrea Agudelo Agudelo</p>
+      <p>Camilo Alberto Palacios Turriago</p>
+      <p>Juan Daniel Pulgarin García</p>
+    </div>
+    <div class="cover-inst">
+      <p><strong>Docente: Prof. Reinaldo Rojas</strong></p>
+      <p>Asignatura: Ingeniería de Software (Código: PREICA2602B020053)</p>
+      <p>Facultad de Ingeniería y Ciencias Agropecuarias</p>
+      <p><strong>Institución Universitaria Digital de Antioquia (IU Digital)</strong></p>
+      <p>Medellín, Antioquia — Noviembre de 2026</p>
+    </div>
+  </section>
+
+  <section>
+    <h1>Tabla de Contenido</h1>
+    <div class="toc-box">
+      <ul class="toc-list">
+        <li><span>Introducción y Reglas de Negocio del Módulo de Pagos</span><span>Sección 0</span></li>
+        <li><span>1. Requerimientos Funcionales, Matriz RBAC y Requerimientos No Funcionales</span><span>Ítem A</span></li>
+        <li><span>2. Diagrama de Casos de Uso Exclusivo de Gestión de Pagos (StarUML)</span><span>Ítem B</span></li>
+        <li><span>3. Historias de Usuario de Gestión de Pagos con Criterios Gherkin (HU-11 a HU-16)</span><span>Ítem C</span></li>
+        <li><span>4. Mockups de Interfaces Gráficas — Gestión de Pagos (Cobalt Bay OS)</span><span>Ítem D</span></li>
+        <li><span>5. Diagramas de Secuencia Nuevos y Actualizados (StarUML)</span><span>Ítem E</span></li>
+        <li><span>6. Diagrama de Componentes Actualizado, Clases y Modelo 3FN (9 Tablas)</span><span>Ítem F</span></li>
+        <li><span>7. Plan de Pruebas Resumido de Gestión de Pagos (CP-21 a CP-32)</span><span>Ítem G</span></li>
+        <li><span>8. Repositorio GitHub Actualizado y Video Demostrativo</span><span>Ítems H e I</span></li>
+        <li><span>Conclusiones y Referencias Bibliográficas (Norma APA 7.ª Edición)</span><span>Cierre</span></li>
+      </ul>
+    </div>
+
+    <h1 style="margin-top:20px;">Introducción</h1>
+    <p>
+      Este documento consolida los artefactos de análisis, modelamiento UML 2.5, diseño de interfaces, arquitectura persistente y verificación automatizada correspondientes a la <strong>Iteración 3 (Entrega Final)</strong> del sistema de información para el parqueadero <strong>Autos Colombia 24/7</strong>, centrado exclusivamente en el módulo de <strong>Gestión de Pagos</strong> y su acoplamiento directo con el control de acceso vehicular (Iteración 1) y la gobernanza RBAC de usuarios y celdas (Iteración 2).
+    </p>
+    <p>
+      Atendiendo los lineamientos concertados con el docente en la sesión de la Semana 6, el recaudo se ejecuta directamente en plataforma a cargo del <strong>Operario de Cabina</strong> o del <strong>Administrador</strong> —sin intermediación de pasarelas externas de pago— registrando fecha real de pago, monto según tarifa plana reglamentaria (<strong>$250.000 COP</strong> para automóviles y <strong>$100.000 COP</strong> para motocicletas), método utilizado (Efectivo, Código QR, Transferencia Bancaria o Consignación) y comprobante de soporte.
+    </p>
+    <div class="callout">
+      <strong>Principio Rector de Temporalidad y Trazabilidad Financiera:</strong> El diseño separa de forma estricta la <code>fecha_pago</code> (prohibiendo pagos a futuro) de la <code>fecha_vencimiento</code> de la mensualidad. Los pagos anticipados conservan los días restantes sumando 30 días adicionales al corte vigente, mientras que los pagos en mora corren consecutivamente desde la fecha de corte vencida —evitando el corrimiento fraudulento de plazos— y toda baja de servicio o anulación contable se gestiona lógicamente sin destruir registros en la base de datos.
+    </div>
+  </section>
+
+  <section class="page-break">
+    <h1>1. Requerimientos Funcionales, Matriz RBAC y No Funcionales (Ítem A)</h1>
+    <p>
+      Manteniendo la secuencia trazable respecto a las Iteraciones 1 (<code>RF-01</code> a <code>RF-07</code>) y 2 (<code>RF-08</code> a <code>RF-18</code>), se especifican seis requerimientos funcionales (<code>RF-19</code> a <code>RF-24</code>) con correspondencia biunívoca exacta frente a los seis casos de uso (<code>CU-11</code> a <code>CU-16</code>) y seis historias de usuario (<code>HU-11</code> a <code>HU-16</code>) de Gestión de Pagos.
+    </p>
+    <h2>1.1. Especificación de Requerimientos Funcionales — Gestión de Pagos</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:8%;">Código</th><th style="width:21%;">Nombre del Requerimiento</th><th style="width:8%;">Prioridad</th><th style="width:13%;">Trazabilidad</th><th style="width:50%;">Especificación Técnica Verificable</th>
+        </tr>
+      </thead>
+      <tbody><tr>
+          <td class="mono bold center">RF-19</td>
+          <td class="bold">Registro Directo de Pago en Plataforma</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-11 / HU-11</td>
+          <td>Permitir exclusivamente a los roles ADMIN y OPERARIO registrar pagos de mensualidad desde la interfaz del sistema (sin pasarela externa), soportando Efectivo, Código QR, Transferencia Bancaria y Consignación con exigencia de referencia comprobante en canales electrónicos, prohibiendo fechas futuras y validando la tarifa reglamentaria ($250.000 Carro / $100.000 Moto).</td>
+        </tr><tr>
+          <td class="mono bold center">RF-20</td>
+          <td class="bold">Cálculo Consecutivo de Vigencia sin Corrimiento</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-12 / HU-12</td>
+          <td>Separar estrictamente fecha_pago de fecha_vencimiento (corte mensual) y calcular automáticamente +30 días por mes abonado: (a) pago anticipado conserva días restantes sumando desde el corte vigente; (b) pago puntual extiende desde el corte exacto; (c) pago en mora corre consecutivamente desde el corte vencido sin regalar días por atraso.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-21</td>
+          <td class="bold">Emisión de Comprobante y Libro Mayor de Pagos</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-13 / HU-13</td>
+          <td>Generar número único de recibo (REC-YYYYMMDD-XXXX), persistir el detalle completo en la tabla inmutable pago (periodo cubierto, método, tipo de aplicación y operario recaudador), permitir visualizar/imprimir el comprobante oficial y filtrar el libro mayor por placa o método de pago.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-22</td>
+          <td class="bold">Anulación Auditada de Pago (Sin Borrado Físico)</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-14 / HU-14</td>
+          <td>Permitir únicamente al rol ADMIN anular lógicamente el último pago confirmado de un vehículo registrando un motivo contable obligatorio, marcando el registro como ANULADO sin ejecutar DELETE físico, revirtiendo la fecha_vencimiento de la mensualidad al corte anterior y dejando traza en auditoria_accion.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-23</td>
+          <td class="bold">Baja Lógica de Servicio y Reactivación</td>
+          <td class="center"><span class="pill pill-blue">Alta</span></td>
+          <td class="mono center">CU-15 / HU-15</td>
+          <td>Permitir dar de baja del servicio a un abonado que se retira (vehiculo.activo=0, mensualidad=&#x27;CANCELADA&#x27;) conservando su historial en BD, siempre que el vehículo NO esté ADENTRO ni tenga mora pendiente. Si el cliente regresa, permite reactivar el contrato calculando 30 días desde la nueva fecha_pago.</td>
+        </tr><tr>
+          <td class="mono bold center">RF-24</td>
+          <td class="bold">Flujo de Caja Mensual y Alertas de Vencimiento</td>
+          <td class="center"><span class="pill pill-blue">Media</span></td>
+          <td class="mono center">CU-16 / HU-16</td>
+          <td>Consolidar en tiempo real el flujo de caja (recaudo del día, del mes actual e histórico desglosado por método de pago y categoría Carro/Moto), clasificar la cartera (al día, próximos a vencer &lt;= 5 días, en mora, inactivos) y emitir alertas preventivas auditadas vía WhatsApp/Email.</td>
+        </tr></tbody>
+    </table>
+
+    <h2>1.2. Matriz RBAC Actualizada con Permisos Financieros</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:21%;">Permiso del Sistema</th><th style="width:43%;">Alcance Operativo Autorizado</th><th style="width:11%;">ADMIN</th><th style="width:12%;">OPERARIO</th><th style="width:13%;">AUDITOR</th>
+        </tr>
+      </thead>
+      <tbody><tr>
+          <td class="mono bold">OPERACION_ACCESO</td>
+          <td>Autorizar entrada, registrar novedad física en ronda y procesar salida 24/7</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">MANTENIMIENTO_CELDAS</td>
+          <td>Cambiar estado operativo de celda libre y reubicar vehículos</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">GESTION_ABONADOS</td>
+          <td>Registrar nuevos abonados y actualizar datos de titular o vehículo</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">GESTION_PAGOS</td>
+          <td>Registrar pagos en plataforma, emitir alertas y gestionar bajas/reactivaciones</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">ANULAR_PAGOS</td>
+          <td>Anular lógicamente pagos erróneos revirtiendo fecha de corte (sin DELETE)</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">CRUD_CELDAS</td>
+          <td>Crear nuevas celdas físicas, editar zona/piso y eliminar celdas sin historial</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">GESTION_USUARIOS</td>
+          <td>Crear cuentas internas, cambiar roles RBAC, restablecer claves y dar baja</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+          <td class="center bold deny">NO (HTTP 403)</td>
+        </tr><tr>
+          <td class="mono bold">CONSULTA_AUDITORIA</td>
+          <td>Consultar Dashboard, Mapa, Flujo de Caja, Libro de Pagos y Auditoría 24/7</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ</td>
+          <td class="center bold ok">SÍ (Solo Lectura)</td>
+        </tr></tbody>
+    </table>
+
+    <h2>1.3. Requerimientos No Funcionales (ISO/IEC 25010 y Calidad Estática)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:9%;">Código</th><th style="width:23%;">Atributo de Calidad</th><th style="width:18%;">Categoría ISO 25010</th><th style="width:50%;">Métrica Cuantitativa y Mecanismo Arquitectónico</th>
+        </tr>
+      </thead>
+      <tbody><tr>
+          <td class="mono bold center">RNF-11</td>
+          <td class="bold">Integridad Contable y Atomicidad Transaccional</td>
+          <td class="center">ISO 25010 — Fiabilidad</td>
+          <td>Toda operación de cobro, anulación o reactivación actualiza simultáneamente las tablas pago, mensualidad y vehiculo dentro de una transacción atómica BEGIN IMMEDIATE protegida por threading.Lock sobre SQLite WAL.</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-12</td>
+          <td class="bold">Seguridad RBAC y Trazabilidad Financiera Inmutable</td>
+          <td class="center">ISO 25010 — Seguridad</td>
+          <td>Prohibición absoluta de DELETE físico en pago, mensualidad y auditoria_accion. El permiso ANULAR_PAGOS se restringe al rol ADMIN y el rol AUDITOR recibe bloqueo HTTP 403 ante cualquier escritura.</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-13</td>
+          <td class="bold">Determinismo Temporal y Validación de Fechas</td>
+          <td class="center">ISO 25010 — Adecuación Funcional</td>
+          <td>Rechazo determinista de pagos con fecha_pago &gt; fecha_actual (código FECHA_FUTURA) y función única compartida (_calcular_nueva_vigencia) entre previsualización y confirmación para garantizar cero divergencias.</td>
+        </tr><tr>
+          <td class="mono bold center">RNF-14</td>
+          <td class="bold">Calidad Estática del Código y Cobertura QA</td>
+          <td class="center">ISO 25010 — Mantenibilidad</td>
+          <td>Código modular bajo criterios de análisis estático (SonarQube: cero duplicación crítica en cálculos de vigencia, manejo explícito de errores y cero secretos expuestos), respaldado por 12 pruebas automatizadas dedicadas (100% OK) y 20 pruebas previas sin regresiones.</td>
+        </tr></tbody>
+    </table>
+  </section>
+
+  <section class="page-break">
+    <h1>2. Diagrama de Casos de Uso — Exclusivo de Gestión de Pagos (Ítem B)</h1>
+    <p>
+      El diagrama de casos de uso modelado para la Iteración 3 se enfoca exclusivamente en el dominio de <strong>Gestión de Pagos</strong>, aplicando herencia jerárquica entre actores (<code>Administrador --|&gt; Operario --|&gt; Auditor</code>), relaciones obligatorias <code>&lt;&lt;include&gt;&gt;</code> hacia el cálculo consecutivo de fechas, la emisión de recibos, la verificación RBAC y la auditoría, así como la extensión opcional <code>&lt;&lt;extend&gt;&gt;</code> para el envío de recordatorios preventivos de cobro.
+    </p>
+    <div class="figure-card">
+      <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/diagramas_uml/1_diagrama_casos_de_uso_pagos.png" alt="Diagrama de Casos de Uso Gestión de Pagos" />
+      <div class="figure-caption"><strong>Figura 1. Diagrama de Casos de Uso Exclusivo del Módulo de Gestión de Pagos (StarUML / UML 2.5).</strong> Fuente: Elaboración propia (Archivo editable <code>Autos_Colombia_StarUML_Iteracion_3.mdj</code>).</div>
+    </div>
+
+    <h2>2.1. Especificación Estructurada de Casos de Uso (CU-11 a CU-16)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:7%;">ID</th><th style="width:17%;">Caso de Uso</th><th style="width:13%;">Actores</th><th style="width:15%;">Precondición</th><th style="width:26%;">Flujo Principal Exitoso</th><th style="width:22%;">Flujos Alternos / Excepciones</th>
+        </tr>
+      </thead>
+      <tbody><tr>
+          <td class="mono bold center">CU-11</td>
+          <td class="bold">Registrar Pago de Mensualidad en Plataforma</td>
+          <td class="center">OPERARIO, ADMIN</td>
+          <td>Sesión con permiso GESTION_PAGOS; vehículo activo registrado en padrón.</td>
+          <td>El actor selecciona placa, ingresa fecha_pago (&lt;= hoy), meses, método y referencia -&gt; El sistema valida tarifa, delega cálculo consecutivo (CU-12), persiste en pago/mensualidad y emite comprobante (CU-13).</td>
+          <td>Rechaza con HTTP 400 si fecha_pago &gt; hoy (FECHA_FUTURA), falta comprobante en QR/Banco o monto difiere de tarifa; retorna HTTP 403 si el actor es AUDITOR.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-12</td>
+          <td class="bold">Calcular Vigencia Consecutiva (30 Días sin Corrimiento)</td>
+          <td class="center">Sistema (Incluido desde CU-11)</td>
+          <td>Mensualidad previa o nueva del vehículo y fecha_pago válida.</td>
+          <td>Si hay corte previo (ACTIVA o VENCIDA), suma exactamente 30*meses días desde fecha_vencimiento anterior clasificando PAGO_ANTICIPADO, PAGO_PUNTUAL o MORA_CONSECUTIVA.</td>
+          <td>Si la mora supera los 30 días y 1 mes no alcanza la fecha actual, mantiene estado VENCIDA hasta cubrir los meses atrasados.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-13</td>
+          <td class="bold">Emitir Comprobante y Consultar Libro Mayor de Pagos</td>
+          <td class="center">OPERARIO, ADMIN, AUDITOR</td>
+          <td>Pago confirmado en tabla pago o permiso CONSULTA_AUDITORIA.</td>
+          <td>Genera consecutivo REC-YYYYMMDD-XXXX con datos del vehículo, titular, periodo cubierto, valor y recaudador; permite filtrar historial por placa y método.</td>
+          <td>Si el número de recibo consultado no existe en la base de datos retorna HTTP 404 con mensaje descriptivo.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-14</td>
+          <td class="bold">Anular Pago Erróneo (Sin Borrado Físico)</td>
+          <td class="center">ADMIN</td>
+          <td>Permiso ANULAR_PAGOS activo y motivo contable suministrado.</td>
+          <td>Marca el último pago confirmado de la placa como ANULADO conservando el registro, revierte la mensualidad al corte previo y audita ANULAR_PAGO.</td>
+          <td>Retorna HTTP 403 si lo intenta un OPERARIO o AUDITOR; impide anular pagos antiguos si existe otro posterior confirmado.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-15</td>
+          <td class="bold">Gestionar Baja Lógica y Reactivación de Servicio</td>
+          <td class="center">OPERARIO, ADMIN</td>
+          <td>Permiso GESTION_PAGOS; vehículo existente en tabla vehiculo.</td>
+          <td>Para baja: marca vehiculo.activo=0 y mensualidad=&#x27;CANCELADA&#x27; preservando historial. Para reactivación: activa vehículo y cobra 30 días desde la fecha_pago de reingreso.</td>
+          <td>Bloquea la baja con VEHICULO_ADENTRO si ocupa una celda o con MORA_PENDIENTE si presenta deuda vigente; vehículo inactivo no puede ingresar por barrera.</td>
+        </tr><tr>
+          <td class="mono bold center">CU-16</td>
+          <td class="bold">Consultar Flujo de Caja y Cartera de Vencimientos</td>
+          <td class="center">AUDITOR, OPERARIO, ADMIN</td>
+          <td>Permiso CONSULTA_AUDITORIA activo.</td>
+          <td>Agrupa recaudos confirmados (excluyendo anulados) por día, mes, método y categoría Carro/Moto, listando alertas de mora y próximos vencimientos (&lt;= 5 días).</td>
+          <td>Extensión opcional &lt;&lt;extend&gt;&gt;: al pulsar Notificar WhatsApp registra evento NOTIFICACION_COBRO con los datos de contacto del titular.</td>
+        </tr></tbody>
+    </table>
+  </section>
+
+  <section class="page-break">
+    <h1>3. Historias de Usuario — Gestión de Pagos con Criterios Gherkin (Ítem C)</h1>
+    <p>
+      Continuando desde <code>HU-10</code>, se detallan las seis historias de usuario exclusivas de la Gestión de Pagos (<code>HU-11</code> a <code>HU-16</code>) bajo el estándar ejecutable <em>Behavior-Driven Development</em> (<code>Dado / Cuando / Entonces</code>), cubriendo tanto los caminos principales como los casos límite de fechas y permisos.
+    </p>
+    
+        <div class="hu-card">
+          <div class="hu-header">
+            <div><span class="hu-badge">HU-11</span><span class="hu-title">Registro Directo de Pago de Mensualidad en Plataforma (Sin Pasarela Externa)</span></div>
+            <div class="hu-meta">Prioridad: <strong>Alta (Crítica)</strong> | Estimación: <strong>8 pts</strong> | Trazabilidad: <code>RF-19 / CU-11</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative"><strong>Como</strong> Operario de Cabina o Administrador General, <strong>quiero</strong> registrar directamente en la plataforma los pagos de mensualidad presentados por los clientes (en efectivo, código QR, transferencia bancaria o consignación) validando fecha y comprobante, <strong>para</strong> habilitar la vigencia del contrato sin depender de pasarelas externas y dejando registro exacto del recaudador en turno.</p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul><li>Escenario 1 (Registro exitoso en plataforma): Dado que el operario &#x27;adriana_op&#x27; está autenticado y el vehículo &#x27;MOT-101&#x27; existe en el padrón, Cuando registra el pago con método CODIGO_QR, referencia &#x27;QR-CABINA-9901&#x27;, fecha actual y tarifa de $100.000, Entonces el backend retorna HTTP 201 Created, genera el recibo REC-YYYYMMDD-XXXX y audita REGISTRAR_PAGO.</li><li>Escenario 2 (Rechazo de fecha futura, referencia faltante y bloqueo RBAC): Dado que se intenta registrar un pago con fecha posterior a hoy, sin referencia bancaria en transferencia o desde una sesión AUDITOR, Cuando se envía la petición POST /api/pagos, Entonces el sistema rechaza la operación con FECHA_FUTURA (HTTP 400), REFERENCIA_REQUERIDA (HTTP 400) o PERMISO_DENEGADO (HTTP 403).</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-header">
+            <div><span class="hu-badge">HU-12</span><span class="hu-title">Cálculo Consecutivo de Vigencia sin Pérdida ni Corrimiento de Fecha de Corte</span></div>
+            <div class="hu-meta">Prioridad: <strong>Alta (Crítica)</strong> | Estimación: <strong>8 pts</strong> | Trazabilidad: <code>RF-20 / CU-12</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative"><strong>Como</strong> Operario de Cabina o Administrador, <strong>quiero</strong> que el sistema separe la fecha real del pago de la fecha de vencimiento de la mensualidad y calcule el nuevo corte de forma consecutiva (+30 días por mes sobre el corte anterior), <strong>para</strong> impedir que un cliente pierda días al pagar anticipadamente o gane días gratuitos al retrasarse en su mensualidad.</p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul><li>Escenario 1 (Pago anticipado conserva días): Dado que &#x27;ABC-123&#x27; tiene corte vigente en hoy+20 días, Cuando paga 1 mes hoy, Entonces el cálculo se clasifica como PAGO_ANTICIPADO y la nueva fecha de vencimiento se fija en hoy+50 días sin perder los 20 días restantes.</li><li>Escenario 2 (Pago en mora corre consecutivo y desbloquea barrera): Dado que &#x27;XYZ-999&#x27; venció hace 15 días (hoy-15d) y tiene acceso bloqueado por MENSUALIDAD_VENCIDA, Cuando paga 1 mes hoy, Entonces la nueva fecha de vencimiento corre consecutiva hasta hoy+15d (no hoy+30d) y la barrera autoriza el ingreso inmediato.</li><li>Escenario 3 (Mora multi-mes &gt; 30 días): Dado que un vehículo venció hace 45 días, Cuando abona 1 mes, Entonces el corte avanza a hoy-15d permaneciendo en estado VENCIDA hasta que cubra el segundo mes pendiente.</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-header">
+            <div><span class="hu-badge">HU-13</span><span class="hu-title">Emisión de Comprobante Oficial y Consulta Filtrada del Libro Mayor de Pagos</span></div>
+            <div class="hu-meta">Prioridad: <strong>Alta</strong> | Estimación: <strong>5 pts</strong> | Trazabilidad: <code>RF-21 / CU-13</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative"><strong>Como</strong> Operario, Administrador o Auditor, <strong>quiero</strong> emitir automáticamente el comprobante detallado de cada pago confirmado y consultar el libro mayor filtrando por placa o método de pago, <strong>para</strong> entregar respaldo verificable al propietario del vehículo y facilitar auditorías contables en cualquier turno 24/7.</p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul><li>Escenario 1 (Consulta de comprobante oficial): Dado que existe el recibo &#x27;REC-SEED-0001&#x27; asociado a &#x27;ABC-123&#x27;, Cuando consulto GET /api/pagos/recibo o pulso el botón Recibo, Entonces el sistema muestra placa, titular, fecha de pago, periodo cubierto (inicio -&gt; fin), método, valor pagado y recaudador.</li><li>Escenario 2 (Filtrado del libro mayor): Dado que hay pagos en distintos métodos, Cuando filtro por placa &#x27;XYZ999&#x27; y método &#x27;CONSIGNACION&#x27;, Entonces la tabla despliega exclusivamente las transacciones coincidentes.</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-header">
+            <div><span class="hu-badge">HU-14</span><span class="hu-title">Anulación Auditada de Pago Erróneo (Sin Eliminación Física en Base de Datos)</span></div>
+            <div class="hu-meta">Prioridad: <strong>Alta</strong> | Estimación: <strong>5 pts</strong> | Trazabilidad: <code>RF-22 / CU-14</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative"><strong>Como</strong> Administrador General (rol ADMIN), <strong>quiero</strong> anular lógicamente el último pago confirmado cuando ocurra un error de digitación, especificando un motivo obligatorio, <strong>para</strong> revertir la fecha de vencimiento al corte anterior y descontar el valor del flujo de caja sin destruir registros contables.</p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul><li>Escenario 1 (Anulación exitosa por ADMIN): Dado que se registró un pago erróneo sobre &#x27;KLR-500&#x27;, Cuando el ADMIN ejecuta POST /api/pagos/anular con motivo justificado, Entonces el registro pasa a estado ANULADO (sin DELETE), el corte de &#x27;KLR-500&#x27; vuelve al valor previo y se audita ANULAR_PAGO.</li><li>Escenario 2 (Restricción RBAC a OPERARIO): Dado que un usuario con rol OPERARIO intenta invocar POST /api/pagos/anular, Cuando envía la petición, Entonces el backend responde HTTP 403 PERMISO_DENEGADO.</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-header">
+            <div><span class="hu-badge">HU-15</span><span class="hu-title">Control de Baja Lógica (Cancelación de Servicio) y Reactivación de Abonados</span></div>
+            <div class="hu-meta">Prioridad: <strong>Alta</strong> | Estimación: <strong>5 pts</strong> | Trazabilidad: <code>RF-23 / CU-15</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative"><strong>Como</strong> Operario de Cabina o Administrador, <strong>quiero</strong> cancelar el servicio de un abonado que se retira temporalmente conservando su historial en la base de datos y reactivarlo cuando regrese iniciando el mes desde su nueva fecha de pago, <strong>para</strong> liberar el cupo lógico de mensualidades activas sin perder trazabilidad ni permitir retiros con vehículos adentro o con mora.</p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul><li>Escenario 1 (Bloqueos de integridad en baja lógica): Dado que un vehículo figura ADENTRO en una celda o presenta mensualidad VENCIDA, Cuando se solicita su baja, Entonces el sistema rechaza la operación con VEHICULO_ADENTRO o MORA_PENDIENTE.</li><li>Escenario 2 (Baja válida y posterior reactivación): Dado que &#x27;KLR-500&#x27; está afuera y al día, Cuando confirmo la baja lógica, Entonces pasa a activo=0 y mensualidad CANCELADA (bloqueando ingresos en barrera); cuando regresa y se reactiva pagando hoy, su nueva vigencia corre 30 días desde hoy.</li></ul>
+            </div>
+          </div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-header">
+            <div><span class="hu-badge">HU-16</span><span class="hu-title">Flujo de Caja Mensual, Clasificación de Cartera y Alertas de Vencimiento</span></div>
+            <div class="hu-meta">Prioridad: <strong>Media</strong> | Estimación: <strong>5 pts</strong> | Trazabilidad: <code>RF-24 / CU-16</code></div>
+          </div>
+          <div class="hu-body">
+            <p class="hu-narrative"><strong>Como</strong> Administrador, Operario o Auditor, <strong>quiero</strong> visualizar el flujo de caja consolidado por método de pago y categoría vehicular junto con un listado prioritario de abonados en mora o próximos a vencer, <strong>para</strong> controlar la contabilidad del parqueadero y notificar oportunamente a los clientes antes de bloquear su acceso en barrera.</p>
+            <div class="gherkin-box">
+              <div class="gherkin-label">Criterios de Aceptación (Formato Gherkin — Dado / Cuando / Entonces):</div>
+              <ul><li>Escenario 1 (Cuadre contable del flujo de caja): Dado que existen pagos confirmados y anulados, Cuando consulto GET /api/pagos, Entonces recaudo_total excluye pagos anulados y coincide exactamente con la suma de Efectivo + QR + Transferencia + Consignación y con Carros + Motos.</li><li>Escenario 2 (Envío auditado de alerta de cobro): Dado que &#x27;DEB-300&#x27; se encuentra en mora, Cuando el operario pulsa Notificar WhatsApp, Entonces el sistema genera el mensaje con teléfono y tarifa y guarda la traza NOTIFICACION_COBRO.</li></ul>
+            </div>
+          </div>
+        </div>
+  </section>
+
+  <section class="page-break">
+    <h1>4. Mockups de Interfaces Gráficas — Gestión de Pagos (Ítem D)</h1>
+    <p>
+      Las pantallas presentadas en esta sección corresponden exclusivamente al flujo de <strong>Gestión de Pagos, Mensualidades, Flujo de Caja y Bajas/Reactivación</strong> dentro del entorno operativo <strong>Cobalt Bay OS</strong>, respetando la identidad visual de las entregas anteriores e incorporando retroalimentación inmediata sobre las reglas de cálculo de fechas.
+    </p>
+    
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/mockups_figma/Mockup_1_Registro_Pago_Mora_Consecutiva_y_Flujo_Caja.png" alt="Figura 2. Interfaz de Registro Directo de Pago en Mora Consecutiva, Flujo de Caja y Alertas de Cartera (HU-11, HU-12, HU-16)." />
+              <div class="figure-caption"><strong>Figura 2. Interfaz de Registro Directo de Pago en Mora Consecutiva, Flujo de Caja y Alertas de Cartera (HU-11, HU-12, HU-16).</strong> Captura real de Cobalt Bay OS mostrando la previsualización automática de MORA_CONSECUTIVA sobre la placa XYZ-999 (sumando 30 días desde el corte vencido sin regalar días de atraso), junto con el desglose por método de pago y las alertas preventivas de cobro.</div>
+            </div>
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/mockups_figma/Mockup_2_Pago_Anticipado_y_Libro_Mayor_Pagos.png" alt="Figura 3. Interfaz de Pago Anticipado con Conservación de Días y Libro Mayor de Pagos (HU-12, HU-13)." />
+              <div class="figure-caption"><strong>Figura 3. Interfaz de Pago Anticipado con Conservación de Días y Libro Mayor de Pagos (HU-12, HU-13).</strong> Evidencia el escenario de PAGO_ANTICIPADO para la placa ABC-123 (conservando sus días vigentes y sumando 30 días consecutivos) y el libro mayor de recibos filtrable por placa o método con controles RBAC para anulación exclusiva de ADMIN.</div>
+            </div>
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/mockups_figma/Mockup_3_Comprobante_Oficial_Recibo_Pago.png" alt="Figura 4. Comprobante Oficial de Pago de Mensualidad Generado en Plataforma (HU-13)." />
+              <div class="figure-caption"><strong>Figura 4. Comprobante Oficial de Pago de Mensualidad Generado en Plataforma (HU-13).</strong> Modal oficial del recibo REC-SEED-0001 detallando vehículo, titular, fecha real del pago, método y referencia, tipo de aplicación, periodo cubierto, total COP y usuario recaudador, listo para impresión.</div>
+            </div>
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/mockups_figma/Mockup_4_Baja_Logica_y_Reactivacion_Servicio.png" alt="Figura 5. Control de Baja Lógica (Cancelación de Servicio) y Reactivación de Abonados (HU-15)." />
+              <div class="figure-caption"><strong>Figura 5. Control de Baja Lógica (Cancelación de Servicio) y Reactivación de Abonados (HU-15).</strong> Modal de cancelación lógica de servicio integrado en el padrón de abonados, aplicando las validaciones de no ocupación en celda ni deuda pendiente sin eliminar registros históricos de la base de datos.</div>
+            </div>
+  </section>
+
+  <section class="page-break">
+    <h1>5. Diagramas de Secuencia Nuevos y Actualizados (Ítem E)</h1>
+    <p>
+      De acuerdo con la directriz metodológica de no duplicar flujos inalterados de iteraciones previas (como el inicio de sesión <code>2A</code>, el mantenimiento/reubicación de celdas <code>2B</code> y la salida vehicular <code>2D</code>), se presentan dos diagramas de secuencia nuevos para las operaciones financieras y la actualización del diagrama de entrada vehicular (<code>3C</code>, evolución directa de <code>2C</code>) donde ambos módulos se cruzan.
+    </p>
+    
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/diagramas_uml/2a_diagrama_secuencia_registro_pago.png" alt="Figura 6. Diagrama de Secuencia 3A — Registro Directo de Pago, Validaciones y Cálculo Consecutivo (CU-11, CU-12, CU-13)." class="uml-seq-img" />
+              <div class="figure-caption"><strong>Figura 6. Diagrama de Secuencia 3A — Registro Directo de Pago, Validaciones y Cálculo Consecutivo (CU-11, CU-12, CU-13).</strong> Detalla la interacción desde la previsualización en tiempo real hasta la transacción atómica BEGIN IMMEDIATE que actualiza la tabla mensualidad e inserta el recibo inmutable en pago, contemplando bloqueos HTTP 403 RBAC y rechazo de fechas futuras.</div>
+            </div>
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/diagramas_uml/2b_diagrama_secuencia_baja_reactivacion_anulacion.png" alt="Figura 7. Diagrama de Secuencia 3B — Baja Lógica de Servicio, Reactivación y Anulación Auditada (CU-14, CU-15)." class="uml-seq-img" />
+              <div class="figure-caption"><strong>Figura 7. Diagrama de Secuencia 3B — Baja Lógica de Servicio, Reactivación y Anulación Auditada (CU-14, CU-15).</strong> Representa los tres flujos de ciclo de vida del contrato: cancelación lógica validando ausencia en celda y paz y salvo, reactivación cobrando desde la fecha de reingreso, y anulación exclusiva de ADMIN revirtiendo el corte sin DELETE físico.</div>
+            </div>
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/diagramas_uml/2c_diagrama_secuencia_entrada_actualizada_pagos.png" alt="Figura 8. Diagrama de Secuencia 3C (Actualizado de 2C) — Entrada Vehicular Integrada con Gestión de Pagos." class="uml-seq-img" />
+              <div class="figure-caption"><strong>Figura 8. Diagrama de Secuencia 3C (Actualizado de 2C) — Entrada Vehicular Integrada con Gestión de Pagos.</strong> Actualización del diagrama de entrada vehicular de la Iteración 2 para mostrar el cruce funcional cuando la barrera rechaza un vehículo en mora (MENSUALIDAD_VENCIDA), el operario recauda directamente en plataforma y reintenta la entrada obteniendo asignación inmediata de celda.</div>
+            </div>
+  </section>
+
+  <section class="page-break">
+    <h1>6. Diagrama de Componentes Actualizado, Clases y Modelo 3FN (Ítem F)</h1>
+    <p>
+      La actualización arquitectónica conserva intactos los servicios de acceso, usuarios y celdas mientras acopla la vista <code>Vista_Gestion_Pagos_y_Caja</code>, el contrato de interfaz <code>IGestionPagos</code> y la nueva entidad persistente <code>PAGO</code> dentro del esquema relacional en Tercera Forma Normal (elevando la base de datos a <strong>9 tablas normalizadas</strong>).
+    </p>
+    
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/diagramas_uml/3_diagrama_componentes_actualizado_iteracion_3.png" alt="Figura 9. Diagrama de Componentes Actualizado (Iteraciones 1, 2 y 3) con Interfaces Explícitas." />
+              <div class="figure-caption"><strong>Figura 9. Diagrama de Componentes Actualizado (Iteraciones 1, 2 y 3) con Interfaces Explícitas.</strong> Extiende la arquitectura por capas incorporando la Vista de Gestión de Pagos y Caja en presentación, la interfaz IGestionPagos y su servicio transaccional en models.py, y el almacenamiento persistente sobre 9 tablas en SQLite WAL.</div>
+            </div>
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/diagramas_uml/5_diagrama_clases_iteracion_3.png" alt="Figura 10. Diagrama de Clases del Dominio Integrado con el Módulo de Pagos (Iteración 3)." />
+              <div class="figure-caption"><strong>Figura 10. Diagrama de Clases del Dominio Integrado con el Módulo de Pagos (Iteración 3).</strong> Muestra la incorporación de la clase Pago con su composición respecto a Mensualidad, asociación con Vehiculo y trazabilidad hacia Usuario recaudador/administrador.</div>
+            </div>
+            <div class="figure-card">
+              <img src="file:///c:/Users/Camilo Palacios/Documents/ingenieria de software/Actividad 3 - ing software/01_Evidencia_Aprendizaje_3_Iteracion_3_Pagos/diagramas_uml/4_modelo_entidad_relacion_mer_iteracion_3.png" alt="Figura 11. Modelo Entidad-Relación Físico en Tercera Forma Normal (3FN — 9 Tablas en SQLite WAL)." />
+              <div class="figure-caption"><strong>Figura 11. Modelo Entidad-Relación Físico en Tercera Forma Normal (3FN — 9 Tablas en SQLite WAL).</strong> Presenta el esquema físico completo de 9 tablas relacionales en 3FN, evidenciando las llaves foráneas de la nueva tabla PAGO hacia VEHICULO, MENSUALIDAD y USUARIO.</div>
+            </div>
+  </section>
+
+  <section class="page-break">
+    <h1>7. Formato de Plan de Pruebas Resumido — Gestión de Pagos (Ítem G)</h1>
+    <p>
+      La verificación funcional y de integración se restringió específicamente a los flujos de Gestión de Pagos mediante <strong>12 casos de prueba (<code>CP-21</code> a <code>CP-32</code>)</strong> documentados en el libro adjunto <code>Plan_de_Pruebas_Resumido_Iteracion_3_Pagos.xlsx</code> y automatizados en <code>tests_iteracion3_pagos.py</code>, logrando <strong>12/12 pruebas aprobadas (100%)</strong> sin regresiones sobre la suite previa de 20 pruebas (<code>tests_iteracion2.py</code>).
+    </p>
+    <div class="callout">
+      <strong>Resumen Ejecutivo QA (Módulo de Pagos):</strong> Casos Planificados: <strong>12</strong> &nbsp;|&nbsp; Ejecutados: <strong>12</strong> &nbsp;|&nbsp; Aprobados: <strong>12 (100%)</strong> &nbsp;|&nbsp; Fallidos: <strong>0</strong> &nbsp;|&nbsp; Comando: <code>python -X utf8 tests_iteracion3_pagos.py</code>.
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:6%;">ID</th><th style="width:9%;">CU</th><th style="width:11%;">HU / RF</th><th style="width:17%;">Objetivo de Prueba</th><th style="width:17%;">Entrada / Estímulo</th><th style="width:18%;">Resultado Esperado</th><th style="width:14%;">Resultado Obtenido</th><th style="width:8%;">Estado</th>
+        </tr>
+      </thead>
+      <tbody><tr>
+          <td class="mono bold center">CP-21</td>
+          <td class="mono center">CU-11</td>
+          <td class="mono center">HU-11 / RF-19</td>
+          <td class="bold">Registro directo de pago en plataforma por OPERARIO (QR/Efectivo)</td>
+          <td>POST /api/pagos placa=MOT-101, CODIGO_QR, ref=QR-CABINA-9901.</td>
+          <td>HTTP 201; emite recibo REC-..., activa mensualidad y audita REGISTRAR_PAGO.</td>
+          <td>HTTP 201 retornado y recibo emitido en 1 transacción.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-22</td>
+          <td class="mono center">CU-11 / CU-14</td>
+          <td class="mono center">HU-11, HU-14 / RF-19, RF-22</td>
+          <td class="bold">Control RBAC: bloqueo HTTP 403 a AUDITOR en pagos y a OPERARIO al anular</td>
+          <td>AUDITOR invoca /api/pagos, /baja y /notificar; OPERARIO invoca /anular.</td>
+          <td>HTTP 403 PERMISO_DENEGADO en los 4 vectores con traza ACCESO_DENEGADO_RBAC.</td>
+          <td>HTTP 403 verificado sin alterar registros.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-23</td>
+          <td class="mono center">CU-11</td>
+          <td class="mono center">HU-11 / RF-19, RNF-13</td>
+          <td class="bold">Rechazo estricto de fecha futura, monto inválido y falta de referencia QR/Banco</td>
+          <td>Enviar fecha_pago=mañana; transferencia sin ref.; valor_pagado=120000.</td>
+          <td>Rechaza con FECHA_FUTURA, REFERENCIA_REQUERIDA y MONTO_INVALIDO.</td>
+          <td>Las 3 validaciones bloquearon la operación.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-24</td>
+          <td class="mono center">CU-12</td>
+          <td class="mono center">HU-12 / RF-20</td>
+          <td class="bold">Pago anticipado conserva días restantes y suma 30d al corte vigente</td>
+          <td>ABC-123 (vence hoy+20d) paga 1 mes hoy con transferencia.</td>
+          <td>Clasifica PAGO_ANTICIPADO; nuevo corte exacto en hoy+50d.</td>
+          <td>Vigencia extendida a hoy+50d conservando 20d.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-25</td>
+          <td class="mono center">CU-12</td>
+          <td class="mono center">HU-12 / RF-20</td>
+          <td class="bold">Pago puntual realizado exactamente en la fecha de corte mensual</td>
+          <td>PUN-100 (corte=hoy) paga 1 mes hoy en efectivo.</td>
+          <td>Clasifica PAGO_PUNTUAL y extiende vigencia exacta a hoy+30d.</td>
+          <td>Corte actualizado a hoy+30d en estado ACTIVA.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-26</td>
+          <td class="mono center">CU-12 + CU-01</td>
+          <td class="mono center">HU-12 / RF-20, RNF-13</td>
+          <td class="bold">Pago en mora consecutiva sin corrimiento de fecha y desbloqueo de ingreso</td>
+          <td>XYZ-999 (vencido hoy-15d) paga hoy y luego solicita POST /api/ingreso.</td>
+          <td>MORA_CONSECUTIVA fija corte en hoy+15d (no +30d) y autoriza ingreso.</td>
+          <td>Corte fijado en hoy+15d e ingreso exitoso.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-27</td>
+          <td class="mono center">CU-12</td>
+          <td class="mono center">HU-12 / RF-20</td>
+          <td class="bold">Mora multi-mes (&gt;30 días atraso) exige cubrir periodos adeudados</td>
+          <td>MOR-200 (vencido hoy-45d) abona 1er mes y luego 2do mes.</td>
+          <td>1er pago lleva a hoy-15d (VENCIDA); 2do pago lleva a hoy+15d (ACTIVA).</td>
+          <td>Transición VENCIDA -&gt; ACTIVA verificada.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-28</td>
+          <td class="mono center">CU-13</td>
+          <td class="mono center">HU-13 / RF-21</td>
+          <td class="bold">Previsualización, consulta de recibo individual y filtros del libro mayor</td>
+          <td>GET /api/pagos/previsualizar (2m), /recibo?REC-SEED-0001 y /pagos?placa=XYZ999.</td>
+          <td>HTTP 200 OK; tarifa 2m=$500.000 y recibo/filtros íntegros.</td>
+          <td>Respuestas JSON validadas en los 3 endpoints.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-29</td>
+          <td class="mono center">CU-14</td>
+          <td class="mono center">HU-14 / RF-22, RNF-12</td>
+          <td class="bold">Anulación lógica por ADMIN (sin DELETE) revirtiendo corte de mensualidad</td>
+          <td>POST /api/pagos/anular sobre pago reciente de KLR-500 como ADMIN.</td>
+          <td>Estado pasa a ANULADO sin borrarse y corte regresa al original.</td>
+          <td>Recibo marcado ANULADO y corte revertido.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-30</td>
+          <td class="mono center">CU-15</td>
+          <td class="mono center">HU-15 / RF-23</td>
+          <td class="bold">Bloqueos de baja lógica si el vehículo está ADENTRO o presenta mora</td>
+          <td>POST /api/abonado/baja sobre TOY-456 adentro y DEB-300 en mora.</td>
+          <td>Rechaza con VEHICULO_ADENTRO y MORA_PENDIENTE.</td>
+          <td>Ambos intentos rechazados correctamente.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-31</td>
+          <td class="mono center">CU-15</td>
+          <td class="mono center">HU-15 / RF-23</td>
+          <td class="bold">Baja lógica bloquea entrada y reactivación inicia 30d desde fecha_pago</td>
+          <td>Baja de KLR-500 -&gt; intento ingreso -&gt; reactivar pagando hoy.</td>
+          <td>Baja marca activo=0; barrera da VEHICULO_INACTIVO; reactivar da hoy+30d.</td>
+          <td>Ciclo completo validado preservando BD.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr><tr>
+          <td class="mono bold center">CP-32</td>
+          <td class="mono center">CU-16</td>
+          <td class="mono center">HU-16 / RF-24, RNF-11</td>
+          <td class="bold">Cuadre de flujo de caja por método/categoría y alerta preventiva auditada</td>
+          <td>GET /api/pagos y POST /api/pagos/notificar (DEB-300, WHATSAPP).</td>
+          <td>recaudo_total igual a suma por métodos y categorías; alerta auditada.</td>
+          <td>Cuadre exacto (delta 0.00) y alerta emitida.</td>
+          <td class="center"><span class="pill pill-ok">APROBADO</span></td>
+        </tr></tbody>
+    </table>
+  </section>
+
+  <section class="page-break">
+    <h1>8. Repositorio GitHub Actualizado y Video Demostrativo (Ítems H e I)</h1>
+    <h2>8.1. URL del Repositorio Público Actualizado en GitHub (Ítem H)</h2>
+    <div class="link-box">
+      <div style="font-size:9.5pt;font-weight:800;color:#1e3a8a;text-transform:uppercase;margin-bottom:4px;">Repositorio Oficial GitHub — Código Fuente Unificado (Iteraciones 1, 2 y 3):</div>
+      <a href="https://github.com/Camilo-Alberto-Palacio/autos-colombia-parqueadero" target="_blank" style="color:#1d4ed8;font-weight:800;font-size:11.5pt;word-break:break-all;">https://github.com/Camilo-Alberto-Palacio/autos-colombia-parqueadero</a>
+      <div style="margin-top:6px;font-size:9.2pt;color:#334155;">
+        <strong>Ejecución local:</strong> Clonar el repositorio, iniciar el servidor con <code>python app.py</code> y abrir <code>http://localhost:8000</code>. Para validar la batería de pruebas de pagos ejecutar <code>python -X utf8 tests_iteracion3_pagos.py</code> (y <code>tests_iteracion2.py</code> para regresión completa).
+      </div>
+    </div>
+
+    <h2>8.2. Enlace Público al Video Demostrativo del Sistema (Ítem I)</h2>
+    <div class="video-box">
+      <div style="font-size:9.5pt;font-weight:800;color:#065f46;text-transform:uppercase;margin-bottom:6px;">URL Pública del Video de Sustentación (YouTube / Google Drive — Sin Restricción de Acceso):</div>
+      <!-- VIDEO_URL_START -->
+      <div style="background:#ffffff;border:1.5px dashed #059669;border-radius:6px;padding:10px 12px;font-size:10pt;color:#0f172a;">
+        <strong>Enlace del Video Demostrativo Público:</strong><br/>
+        <span style="color:#047857;font-weight:700;">[Pegar aquí el enlace público definitivo de YouTube o Google Drive antes de subir a Canvas]</span>
+      </div>
+      <!-- VIDEO_URL_END -->
+      <div style="margin-top:8px;font-size:9pt;color:#1e293b;">
+        <strong>Alcance verificado en el video:</strong> (1) Ejecución de <code>tests_iteracion3_pagos.py</code> (12/12 OK) y arranque de <code>app.py</code>; (2) Demostración del bloqueo de barrera a <code>XYZ-999</code> por mora y enlace directo a Pagos; (3) Registro de pago en mora consecutiva (sin corrimiento de corte) y pago anticipado en <code>ABC-123</code> conservando días; (4) Rechazo de fecha futura y verificación de permisos RBAC; (5) Flujo de caja, alertas preventivas, comprobante oficial, anulación exclusiva por ADMIN y baja/reactivación lógica.
+      </div>
+    </div>
+
+    <h1 style="margin-top:10px;margin-bottom:8px;">Conclusiones</h1>
+    <p style="margin-bottom:5px;font-size:9.5pt;line-height:1.38;">
+      <strong>1. Separación Estricta entre Recaudo y Vigencia:</strong> Diferenciar arquitectónicamente la fecha real de transacción (<code>fecha_pago</code>) frente al periodo de cobertura (<code>fecha_vencimiento</code>) eliminó el riesgo financiero de corrimiento progresivo de cortes por pagos tardíos y garantizó que quienes cancelan anticipadamente no pierdan días ya pagados.
+    </p>
+    <p style="margin-bottom:5px;font-size:9.5pt;line-height:1.38;">
+      <strong>2. Trazabilidad Contable sin Eliminación Física:</strong> Al restringir las anulaciones al perfil administrativo con motivo obligatorio y aplicar bajas lógicas condicionadas a la salida previa del vehículo y al paz y salvo de mora, el libro mayor de pagos conserva consistencia referencial completa para auditoría interna.
+    </p>
+    <p style="margin-bottom:5px;font-size:9.5pt;line-height:1.38;">
+      <strong>3. Cohesión Evolutiva en Tres Iteraciones:</strong> La integración modular sobre SQLite en modo WAL y el control RBAC unificado permitieron acoplar el nuevo componente de pagos sin alterar el desempeño ni romper los 20 casos de prueba certificados en las iteraciones previas, consolidando un producto auditable y listo para producción local.
+    </p>
+
+    <h1 style="margin-top:10px;margin-bottom:8px;">Referencias Bibliográficas</h1>
+    <p class="apa-ref">Fowler, M. (2018). Patterns of enterprise application architecture (2nd ed.). Addison-Wesley Professional.</p><p class="apa-ref">International Organization for Standardization. (2011). Systems and software engineering — Systems and software Quality Requirements and Evaluation (SQuaRE) — System and software quality models (ISO/IEC 25010:2011).</p><p class="apa-ref">Object Management Group. (2017). OMG Unified Modeling Language (OMG UML), Version 2.5.1. https://www.omg.org/spec/UML/2.5.1/</p><p class="apa-ref">Owens, M., &amp; Allen, G. (2010). The definitive guide to SQLite (2nd ed.). Apress.</p><p class="apa-ref">Pressman, R. S., &amp; Maxim, B. R. (2021). Ingeniería del software: Un enfoque práctico (9.ª ed.). McGraw-Hill Interamericana.</p><p class="apa-ref">Sandhu, R. S., Coyne, E. J., Feinstein, H. L., &amp; Youman, C. E. (1996). Role-based access control models. Computer, 29(2), 38–47. https://doi.org/10.1109/2.485845</p><p class="apa-ref">Sommerville, I. (2011). Ingeniería de software (9.ª ed.). Pearson Educación.</p>
+  </section>
+</body>
+</html>

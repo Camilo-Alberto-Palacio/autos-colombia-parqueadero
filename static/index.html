@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Autos Colombia 24/7 — Sistema Integral (Iteraciones 1 y 2)</title>
+  <title>Autos Colombia 24/7 — Sistema Integral (Iteraciones 1, 2 y 3)</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -36,7 +36,7 @@
     <div class="flex items-center gap-2.5 flex-wrap">
       <div class="flex items-center gap-2 bg-blue-600/25 border border-blue-500/40 text-blue-300 px-2.5 py-1 rounded-lg text-xs font-extrabold">
         <span class="w-2 h-2 rounded-full bg-emerald-400 badge-pulse"></span>
-        <span>AUTOS COLOMBIA 24/7 • ITERACIÓN 1 &amp; 2</span>
+        <span>AUTOS COLOMBIA 24/7 • ITERACIÓN 1, 2 &amp; 3</span>
       </div>
 
       <div class="hidden xl:flex items-center gap-2 bg-slate-800 border border-slate-700 px-2.5 py-1 rounded-lg text-xs">
@@ -75,8 +75,11 @@
       <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-abonados" onclick="cambiarVista('view-abonados')">
         5. Abonados
       </button>
+      <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-pagos" onclick="cambiarVista('view-pagos')">
+        6. Pagos y Caja
+      </button>
       <button class="nav-tab px-2.5 py-1 rounded-md text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition-all" data-target="view-auditoria" onclick="cambiarVista('view-auditoria')">
-        6. Auditoría 24/7
+        7. Auditoría 24/7
       </button>
     </div>
   </header>
@@ -136,7 +139,7 @@
         <!-- NAVEGACIÓN LATERAL -->
         <nav class="flex flex-col gap-1 text-xs font-bold">
           <div class="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1 px-2">
-            Módulos Iteraciones 1 y 2
+            Módulos Iteraciones 1, 2 y 3
           </div>
           <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all bg-blue-700 text-white shadow-sm" id="side-link-control" onclick="cambiarVista('view-control')">
             <span>1. Control Entrada / Salida</span>
@@ -153,8 +156,11 @@
           <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-abonados" onclick="cambiarVista('view-abonados')">
             <span>5. Clientes Abonados (CRUD)</span>
           </button>
+          <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-pagos" onclick="cambiarVista('view-pagos')">
+            <span>6. Gestión de Pagos y Caja</span>
+          </button>
           <button class="sidebar-link flex items-center gap-2.5 px-3 py-2 rounded-xl text-left transition-all text-slate-600 hover:bg-slate-100" id="side-link-auditoria" onclick="cambiarVista('view-auditoria')">
-            <span>6. Bitácora Auditoría 24/7</span>
+            <span>7. Bitácora Auditoría 24/7</span>
           </button>
         </nav>
       </div>
@@ -503,7 +509,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
             <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Gestión CRUD de Clientes Abonados y Vehículos</h1>
-            <p class="text-xs text-slate-500 font-medium">Registro y actualización de titulares y automotores asociados ($250.000 Carro / $100.000 Moto). <em>Recaudo de pagos reservado para Iteración 3.</em></p>
+            <p class="text-xs text-slate-500 font-medium">Registro, actualización, baja lógica (sin borrado físico) y enlace directo a pagos mensuales ($250.000 Carro / $100.000 Moto).</p>
           </div>
           <button onclick="abrirModalNuevoAbonado()" class="rbac-operacion bg-blue-600 hover:bg-blue-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs shadow-sm">
             + Registrar Cliente / Vehículo
@@ -511,14 +517,20 @@
         </div>
 
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-          <div class="p-4 border-b border-slate-100 bg-slate-50/70 flex items-center justify-between gap-3">
-            <input
-              type="text"
-              id="filtro-abonados-q"
-              oninput="filtrarAbonadosLocal()"
-              placeholder="Buscar por placa, cédula o nombre del titular..."
-              class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs w-72 focus:outline-none focus:border-blue-500"
-            />
+          <div class="p-4 border-b border-slate-100 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-3">
+              <input
+                type="text"
+                id="filtro-abonados-q"
+                oninput="filtrarAbonadosLocal()"
+                placeholder="Buscar por placa, cédula o nombre del titular..."
+                class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs w-72 focus:outline-none focus:border-blue-500"
+              />
+              <label class="flex items-center gap-1.5 text-xs font-semibold text-slate-600 cursor-pointer">
+                <input type="checkbox" id="chk-abonados-inactivos" checked onchange="filtrarAbonadosLocal()" class="rounded text-blue-600" />
+                <span>Mostrar bajas / inactivos</span>
+              </label>
+            </div>
             <span class="text-[11px] font-bold text-slate-500" id="contador-abonados">0 abonados</span>
           </div>
           <div class="overflow-x-auto">
@@ -541,13 +553,180 @@
       </section>
 
       <!-- ==================================================================== -->
-      <!-- VISTA 6: BITÁCORA CENTRAL DE AUDITORÍA 24/7                          -->
+      <!-- VISTA 6: GESTIÓN DE PAGOS, MENSUALIDADES Y FLUJO DE CAJA (ITER. 3)   -->
+      <!-- ==================================================================== -->
+      <section class="view-container space-y-5 max-w-7xl mx-auto" id="view-pagos">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-200 pb-3">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Gestión de Pagos de Mensualidad, Cartera y Flujo de Caja</h1>
+            <p class="text-xs text-slate-500 font-medium">Registro directo en plataforma por el Operario/Admin (Efectivo, QR, Transferencia o Consignación), sin pasarela externa y con corte consecutivo de 30 días.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="bg-emerald-50 text-emerald-800 border border-emerald-200 text-[11px] font-extrabold px-2.5 py-1 rounded-lg">
+              Carro: $250.000/mes &bull; Moto: $100.000/mes
+            </span>
+            <button onclick="cargarVistaPagos()" class="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
+              Actualizar Caja
+            </button>
+          </div>
+        </div>
+
+        <!-- KPIs FINANCIEROS Y DE CARTERA -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+            <div class="text-[10px] font-bold uppercase text-slate-400">Recaudo Histórico Confirmado</div>
+            <div class="text-2xl font-black text-slate-900" id="kpi-recaudo-total">$0</div>
+            <div class="text-[11px] text-slate-500" id="kpi-recaudo-recibos">0 recibos confirmados</div>
+          </div>
+          <div class="bg-emerald-50/60 p-4 rounded-xl border border-emerald-200 shadow-sm">
+            <div class="text-[10px] font-bold uppercase text-emerald-700">Flujo de Caja Mes Actual</div>
+            <div class="text-2xl font-black text-emerald-700" id="kpi-recaudo-mes">$0</div>
+            <div class="text-[11px] text-emerald-700 font-semibold" id="kpi-recaudo-hoy">Hoy: $0</div>
+          </div>
+          <div class="bg-blue-50/60 p-4 rounded-xl border border-blue-200 shadow-sm">
+            <div class="text-[10px] font-bold uppercase text-blue-700">Abonados Al Día / Próximos</div>
+            <div class="text-2xl font-black text-blue-700" id="kpi-cartera-aldia">0</div>
+            <div class="text-[11px] text-amber-700 font-bold" id="kpi-cartera-proximos">0 próximos a vencer (&le;5d)</div>
+          </div>
+          <div class="bg-rose-50/60 p-4 rounded-xl border border-rose-200 shadow-sm">
+            <div class="text-[10px] font-bold uppercase text-rose-700">Vehículos En Mora / Inactivos</div>
+            <div class="text-2xl font-black text-rose-700" id="kpi-cartera-mora">0</div>
+            <div class="text-[11px] text-slate-600 font-semibold" id="kpi-cartera-inactivos">0 dados de baja</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          <!-- FORMULARIO DIRECTO DE RECAUDO -->
+          <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-3.5">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+              <span class="text-xs font-black uppercase tracking-wider text-slate-800">1. Registrar Pago en Plataforma</span>
+              <span class="text-[10px] bg-blue-50 text-blue-700 border border-blue-200 font-bold px-2 py-0.5 rounded">CABINA / ADMIN</span>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Vehículo Abonado (Placa):</label>
+              <select id="pago-placa" onchange="actualizarPreviewPago()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate font-extrabold text-slate-900"></select>
+              <div class="flex flex-wrap gap-1.5 mt-1.5">
+                <span class="text-[10px] text-slate-400 font-semibold">Escenarios:</span>
+                <button type="button" onclick="seleccionarPlacaPago('XYZ999')" class="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded font-bold font-mono-plate hover:bg-rose-100">XYZ-999 (Mora)</button>
+                <button type="button" onclick="seleccionarPlacaPago('MOT101')" class="text-[10px] bg-rose-50 text-rose-700 border border-rose-200 px-2 py-0.5 rounded font-bold font-mono-plate hover:bg-rose-100">MOT-101 (Moto Mora)</button>
+                <button type="button" onclick="seleccionarPlacaPago('ABC123')" class="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-bold font-mono-plate hover:bg-emerald-100">ABC-123 (Anticipado)</button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Fecha del Pago (Sin futuro):</label>
+                <input type="date" id="pago-fecha" onchange="actualizarPreviewPago()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate font-bold text-slate-900" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Mensualidades (30d c/u):</label>
+                <select id="pago-meses" onchange="actualizarPreviewPago()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900">
+                  <option value="1">1 Mes (30 días)</option>
+                  <option value="2">2 Meses (60 días)</option>
+                  <option value="3">3 Meses (90 días)</option>
+                  <option value="6">6 Meses (180 días)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">Método de Pago:</label>
+                <select id="pago-metodo" onchange="ajustarPlaceholderReferenciaPago()" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-900">
+                  <option value="EFECTIVO">EFECTIVO EN CABINA</option>
+                  <option value="CODIGO_QR">CÓDIGO QR / NEQUI / DAVIPLATA</option>
+                  <option value="TRANSFERENCIA_BANCARIA">TRANSFERENCIA BANCARIA</option>
+                  <option value="CONSIGNACION">CONSIGNACIÓN / RECIBO BANCO</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 mb-1">N° Comprobante / Recibo:</label>
+                <input type="text" id="pago-referencia" placeholder="Opcional en efectivo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate text-slate-900" />
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 mb-1">Observación (Opcional):</label>
+              <input type="text" id="pago-observaciones" placeholder="Ej: Cliente presentó soporte bancario en cabina norte" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900" />
+            </div>
+
+            <!-- CAJA DE PREVISUALIZACIÓN DE REGLA DE FECHAS -->
+            <div id="pago-preview-box" class="bg-slate-50 border border-slate-200 rounded-xl p-3 text-xs space-y-1.5">
+              <div class="text-slate-500">Seleccione una placa para previsualizar el corte de mensualidad.</div>
+            </div>
+
+            <button onclick="ejecutarRegistroPago()" id="btn-registrar-pago" class="rbac-operacion w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-2.5 px-4 rounded-xl text-xs shadow-md transition-all">
+              CONFIRMAR PAGO Y GENERAR COMPROBANTE
+            </button>
+          </div>
+
+          <!-- PANEL DERECHO: FLUJO DE CAJA POR MÉTODO + ALERTAS DE VENCIMIENTO -->
+          <div class="lg:col-span-7 space-y-4">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="text-xs font-black uppercase tracking-wider text-slate-800">2. Desglose de Flujo de Caja por Método y Categoría</span>
+                <span class="text-[11px] font-bold text-slate-500" id="caja-desglose-categorias">Carros: $0 | Motos: $0</span>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs" id="grid-caja-metodos"></div>
+            </div>
+
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 space-y-3">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <span class="text-xs font-black uppercase tracking-wider text-slate-800">3. Alertas de Vencimiento Próximo y Cartera en Mora</span>
+                <span class="text-[10px] bg-amber-100 text-amber-800 font-extrabold px-2 py-0.5 rounded-full">Notificación Preventiva</span>
+              </div>
+              <div id="lista-alertas-cartera" class="space-y-2 max-h-[275px] overflow-y-auto custom-scroll pr-1 text-xs"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HISTORIAL INMUTABLE DE PAGOS -->
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="p-4 border-b border-slate-100 bg-slate-50/70 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-xs font-extrabold uppercase text-slate-700 mr-2">Libro Mayor de Pagos:</span>
+              <input type="text" id="filtro-pagos-placa" oninput="cargarVistaPagos()" placeholder="Filtrar placa..." class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-mono-plate uppercase w-36" />
+              <select id="filtro-pagos-metodo" onchange="cargarVistaPagos()" class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold text-slate-700">
+                <option value="">Todos los Métodos</option>
+                <option value="EFECTIVO">EFECTIVO</option>
+                <option value="CODIGO_QR">CODIGO_QR</option>
+                <option value="TRANSFERENCIA_BANCARIA">TRANSFERENCIA_BANCARIA</option>
+                <option value="CONSIGNACION">CONSIGNACION</option>
+              </select>
+            </div>
+            <span class="text-[11px] font-bold text-slate-500" id="contador-pagos">0 movimientos</span>
+          </div>
+          <div class="overflow-x-auto max-h-[360px] custom-scroll">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200 sticky top-0">
+                <tr>
+                  <th class="py-2.5 px-3">N° Recibo</th>
+                  <th class="py-2.5 px-3">Fecha Pago</th>
+                  <th class="py-2.5 px-3">Placa / Titular</th>
+                  <th class="py-2.5 px-3">Método / Ref.</th>
+                  <th class="py-2.5 px-3">Aplicación</th>
+                  <th class="py-2.5 px-3">Periodo Cubierto</th>
+                  <th class="py-2.5 px-3">Valor COP</th>
+                  <th class="py-2.5 px-3">Operario</th>
+                  <th class="py-2.5 px-3">Estado</th>
+                  <th class="py-2.5 px-3 text-center">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-pagos" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==================================================================== -->
+      <!-- VISTA 7: BITÁCORA CENTRAL DE AUDITORÍA 24/7                          -->
       <!-- ==================================================================== -->
       <section class="view-container space-y-5 max-w-7xl mx-auto" id="view-auditoria">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-3">
           <div>
             <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Bitácora Central Inmutable de Auditoría 24/7</h1>
-            <p class="text-xs text-slate-500 font-medium">Trazabilidad cronológica de sesiones RBAC, administración de usuarios, mantenimiento/reubicación de celdas y accesos.</p>
+            <p class="text-xs text-slate-500 font-medium">Trazabilidad cronológica de sesiones RBAC, administración de usuarios, celdas, accesos y recaudos de pagos.</p>
           </div>
           <div class="flex items-center gap-2">
             <select id="filtro-auditoria-modulo" onchange="cargarAuditoria()" class="bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-bold text-slate-700">
@@ -557,6 +736,7 @@
               <option value="CELDAS">CELDAS</option>
               <option value="ACCESO">ACCESO</option>
               <option value="ABONADOS">ABONADOS</option>
+              <option value="PAGOS">PAGOS</option>
             </select>
             <button onclick="cargarAuditoria()" class="bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold px-3 py-1.5 rounded-xl text-xs shadow-sm">
               Refrescar
@@ -886,6 +1066,102 @@
       <div class="flex justify-end gap-2 pt-2 border-t">
         <button onclick="cerrarModal('modal-salida')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
         <button id="btn-confirmar-salida-modal" onclick="confirmarAccionSalidaNovedad()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. MODAL COMPROBANTE DE PAGO DE MENSUALIDAD (ITERACIÓN 3) -->
+  <div id="modal-recibo-pago" class="fixed inset-0 bg-slate-900/65 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+        <div>
+          <span class="text-[10px] font-black uppercase text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded">Comprobante Oficial</span>
+          <h3 class="font-extrabold text-slate-900 text-base mt-1">Autos Colombia 24/7 — Recibo de Mensualidad</h3>
+        </div>
+        <button onclick="cerrarModal('modal-recibo-pago')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <div id="contenido-recibo-pago" class="space-y-3 text-xs"></div>
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+        <button onclick="cerrarModal('modal-recibo-pago')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cerrar</button>
+        <button onclick="window.print()" class="px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white">Imprimir Comprobante</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. MODAL ANULAR PAGO (EXCLUSIVO ADMIN) -->
+  <div id="modal-anular-pago" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-sm">Anulación Auditada de Pago (Sin Eliminación Física)</h3>
+        <button onclick="cerrarModal('modal-anular-pago')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <input type="hidden" id="modal-anular-pago-id" />
+      <p id="modal-anular-pago-sub" class="text-xs text-slate-600"></p>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Motivo Contable de la Anulación:</label>
+        <input type="text" id="modal-anular-pago-motivo" placeholder="Ej: Error de digitación en referencia bancaria" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-anular-pago')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="confirmarAnularPago()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white">Confirmar Anulación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. MODAL BAJA LÓGICA DE SUSCRIPCIÓN -->
+  <div id="modal-baja-abonado" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-sm">Cancelar Suscripción (Baja Lógica de Servicio)</h3>
+        <button onclick="cerrarModal('modal-baja-abonado')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <input type="hidden" id="modal-baja-placa" />
+      <p id="modal-baja-sub" class="text-xs text-slate-600"></p>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-2.5 text-[11px] text-amber-900">
+        Reglas de integridad: El vehículo no puede estar <strong>ADENTRO</strong> ni presentar <strong>mora pendiente</strong>. Los registros históricos se conservan para auditoría.
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-slate-700 mb-1">Motivo del Retiro:</label>
+        <input type="text" id="modal-baja-motivo" value="Viaje / retiro temporal del parqueadero" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-baja-abonado')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="confirmarBajaAbonado()" class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-600 hover:bg-amber-700 text-white">Confirmar Baja del Servicio</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12. MODAL REACTIVAR SUSCRIPCIÓN -->
+  <div id="modal-reactivar-abonado" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b pb-3">
+        <h3 class="font-extrabold text-slate-900 text-sm">Reactivar Servicio de Abonado con Nuevo Pago</h3>
+        <button onclick="cerrarModal('modal-reactivar-abonado')" class="text-slate-400 hover:text-slate-600 font-bold text-lg">&times;</button>
+      </div>
+      <input type="hidden" id="modal-reactivar-placa" />
+      <p id="modal-reactivar-sub" class="text-xs text-slate-600"></p>
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Fecha Pago Reingreso:</label>
+          <input type="date" id="modal-reactivar-fecha" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate font-bold" />
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 mb-1">Método de Pago:</label>
+          <select id="modal-reactivar-metodo" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold">
+            <option value="EFECTIVO">EFECTIVO</option>
+            <option value="CODIGO_QR">CÓDIGO QR</option>
+            <option value="TRANSFERENCIA_BANCARIA">TRANSFERENCIA</option>
+            <option value="CONSIGNACION">CONSIGNACIÓN</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="block text-[11px] font-bold text-slate-700 mb-1">Referencia / Recibo:</label>
+        <input type="text" id="modal-reactivar-ref" placeholder="Ref. bancaria o caja" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono-plate" />
+      </div>
+      <div class="flex justify-end gap-2 pt-2 border-t">
+        <button onclick="cerrarModal('modal-reactivar-abonado')" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100">Cancelar</button>
+        <button onclick="confirmarReactivarAbonado()" class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white">Reactivar y Cobrar 30 Días</button>
       </div>
     </div>
   </div>

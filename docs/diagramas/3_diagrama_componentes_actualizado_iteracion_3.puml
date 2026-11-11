@@ -1,0 +1,102 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ArrowFontSize 11
+skinparam PackageBorderColor #475569
+skinparam PackageBackgroundColor #F8FAFC
+skinparam PackageFontColor #0F172A
+skinparam ComponentBackgroundColor #F0F9FF
+skinparam ComponentBorderColor #0369A1
+skinparam InterfaceBackgroundColor #FEF3C7
+skinparam InterfaceBorderColor #D97706
+
+skinparam nodesep 38
+skinparam ranksep 46
+title Diagrama de Componentes Actualizado (Iteraciones 1, 2 y 3) — Inclusión de Gestión de Pagos
+
+package "Capa de Presentación Cliente (Navegador Web Cabina / Administración)" {
+  [SPA Cobalt Bay OS\n(index.html + TailwindCSS)] as CompHTML
+  [Controlador Reactivo RBAC\n(static/app.js)] as CompJS
+  [Vista Gestión de Pagos,\nCartera y Recibos (Iteración 3)] as CompVistaPagos
+  CompHTML -right-> CompJS : Eventos DOM
+  CompVistaPagos -up-> CompJS : Fetch Pagos / Preview
+}
+
+package "Capa de Transporte y API REST Concurrente (app.py)" {
+  interface "IRestAPI_JSON" as IRest
+  [ThreadedHTTPServer\n(Multi-Operario 24/7)] as CompServer
+  [AutosColombiaHandler\n(Enrutador REST 32 Rutas)] as CompRouter
+  IRest -down- CompServer
+  CompServer *-down- CompRouter
+}
+
+package "Capa de Lógica de Dominio y Seguridad (models.py)" {
+  interface "IGestionUsuarios" as IUsuarios
+  interface "IGestionCeldas" as ICeldas
+  interface "IGestionAbonados" as IAbonados
+  interface "IControlAcceso" as IAcceso
+  interface "IGestionPagos" as IPagos
+  interface "IAutenticacionRBAC" as IAuth
+  interface "IAuditoriaInmutable" as IAudit
+
+  [Servicio CRUD Usuarios\n(Alta, Rol, Clave, Baja)] as SvcUsers
+  [Servicio CRUD y Mant. Celdas\n(80 Plazas + Reubicación)] as SvcCeldas
+  [Servicio CRUD Abonados\n(Propietarios y Vehículos)] as SvcAbonados
+  [Servicio Control Acceso 24/7\n(Sorteo Dinámico)] as SvcAcceso
+  [Servicio Gestión de Pagos,\nVigencia Consecutiva y Caja\n(Iteración 3)] as SvcPagos
+  [Servicio Seguridad y RBAC\n(SHA-256 + Matriz Roles)] as SvcAuth
+  [Servicio Bitácora 24/7\n(Auditoría e Historial)] as SvcAudit
+
+  IUsuarios -down- SvcUsers
+  ICeldas -down- SvcCeldas
+  IAbonados -down- SvcAbonados
+  IAcceso -down- SvcAcceso
+  IPagos -down- SvcPagos
+  IAuth -down- SvcAuth
+  IAudit -down- SvcAudit
+}
+
+package "Capa de Persistencia Transaccional (database.py + SQLite 3)" {
+  interface "IPersistenciaWAL" as IDB
+  [Gestor Transaccional Concurrente\n(threading.Lock + BEGIN IMMEDIATE)] as CompDBMgr
+  database "autos_colombia.db\n(9 Tablas 3FN en Modo WAL)" as SQLiteDB
+  IDB -down- CompDBMgr
+  CompDBMgr -down-> SQLiteDB : SQL DDL / DML
+}
+
+CompJS ..> IRest : HTTP Fetch JSON
+
+CompRouter ..> IUsuarios
+CompRouter ..> ICeldas
+CompRouter ..> IAbonados
+CompRouter ..> IAcceso
+CompRouter ..> IPagos
+CompRouter ..> IAuth
+CompRouter ..> IAudit
+
+SvcUsers ..> IAuth : verificar_permiso()
+SvcCeldas ..> IAuth : verificar_permiso()
+SvcAbonados ..> IAuth : verificar_permiso()
+SvcAcceso ..> IAuth : verificar_permiso()
+SvcPagos ..> IAuth : GESTION_PAGOS /\nANULAR_PAGOS
+
+SvcUsers ..> IAudit
+SvcCeldas ..> IAudit
+SvcAbonados ..> IAudit
+SvcAcceso ..> IAudit
+SvcPagos ..> IAudit
+
+SvcAuth ..> IDB
+SvcUsers ..> IDB
+SvcCeldas ..> IDB
+SvcAbonados ..> IDB
+SvcAcceso ..> IDB
+SvcPagos ..> IDB
+SvcAudit ..> IDB
+@enduml

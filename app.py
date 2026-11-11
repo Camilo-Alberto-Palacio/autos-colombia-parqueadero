@@ -1,6 +1,6 @@
 """
 Servidor Principal Concurrente (Multi-Operario) - Autos Colombia 24/7
-Iteraciones 1 y 2 Unificadas: Gestión de Usuarios (RBAC), Gestión CRUD de Celdas y Control de Acceso
+Iteraciones 1, 2 y 3 Unificadas: Control de Acceso, Usuarios (RBAC), Celdas y Gestión de Pagos
 Asignatura: Ingeniería de Software - PREICA2602B020053
 Docente: Reinaldo Rojas | Grupo: 25
 Ejecución: python app.py
@@ -126,12 +126,38 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
             items = models.obtener_historial_celdas(limite)
             return self._send_json({"total": len(items), "historial": items})
 
-        # 9. Endpoint de Salud del Sistema
+        # 9. Gestión de Pagos: Historial, Flujo de Caja y Cartera (Iteración 3)
+        elif path == "/api/pagos":
+            placa = params.get("placa", [None])[0]
+            metodo = params.get("metodo", [None])[0]
+            desde = params.get("desde", [None])[0]
+            hasta = params.get("hasta", [None])[0]
+            estado_pagos = models.obtener_estado_pagos_y_caja(placa, metodo, desde, hasta)
+            return self._send_json(estado_pagos)
+
+        # 10. Gestión de Pagos: Previsualización de Cálculo Consecutivo de Fechas
+        elif path == "/api/pagos/previsualizar":
+            placa = params.get("placa", [""])[0]
+            fecha_pago = params.get("fecha_pago", [None])[0]
+            meses = params.get("meses", [1])[0]
+            reactivacion = params.get("reactivacion", ["false"])[0].lower() == "true"
+            res = models.previsualizar_pago_mensualidad(placa, fecha_pago, meses, reactivacion)
+            return self._send_json(res, self._status_for_result(res, 200))
+
+        # 11. Gestión de Pagos: Consulta de Comprobante / Recibo Individual
+        elif path == "/api/pagos/recibo":
+            numero_recibo = params.get("numero_recibo", [""])[0]
+            recibo = models.obtener_recibo_pago(numero_recibo)
+            if recibo:
+                return self._send_json({"success": True, "pago": recibo})
+            return self._send_json({"success": False, "mensaje": f"Recibo '{numero_recibo}' no encontrado."}, 404)
+
+        # 12. Endpoint de Salud del Sistema
         elif path == "/api/salud":
             return self._send_json(
                 {
                     "status": "OK",
-                    "sistema": "Autos Colombia 24/7 - Iteraciones 1 y 2 Unificadas",
+                    "sistema": "Autos Colombia 24/7 - Iteraciones 1, 2 y 3 Unificadas",
                     "docente": "Reinaldo Rojas",
                     "grupo": "25",
                     "modulos": [
@@ -139,6 +165,7 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
                         "Gestión CRUD de Usuarios y Control RBAC (Admin, Operario, Auditor)",
                         "Gestión CRUD, Mantenimiento y Reubicación de Celdas (80 Plazas)",
                         "Gestión CRUD de Clientes Abonados y Vehículos",
+                        "Gestión de Pagos en Plataforma, Vigencia Consecutiva y Flujo de Caja (Iteración 3)",
                         "Auditoría Inmutable 24/7",
                     ],
                     "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -279,6 +306,42 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
             resultado = models.actualizar_abonado_vehiculo(placa, datos, usuario_id)
             return self._send_json(resultado, self._status_for_result(resultado, 200))
 
+        # 16. Gestión de Pagos: Registrar Pago de Mensualidad en Plataforma (Iteración 3)
+        elif path == "/api/pagos":
+            usuario_id = int(datos.get("usuario_id", 2))
+            resultado = models.registrar_pago_mensualidad(datos, usuario_id)
+            return self._send_json(resultado, self._status_for_result(resultado, 201))
+
+        # 17. Gestión de Pagos: Anular Pago Erróneo (Exclusivo ADMIN, sin borrado físico)
+        elif path == "/api/pagos/anular":
+            pago_id = int(datos.get("pago_id", 0))
+            motivo = datos.get("motivo", "")
+            admin_id = int(datos.get("admin_id", datos.get("usuario_id", 1)))
+            resultado = models.anular_pago(pago_id, motivo, admin_id)
+            return self._send_json(resultado, self._status_for_result(resultado, 200))
+
+        # 18. Gestión de Pagos: Emitir Recordatorio / Alerta de Vencimiento o Mora
+        elif path == "/api/pagos/notificar":
+            placa = datos.get("placa", "")
+            canal = datos.get("canal", "WHATSAPP")
+            usuario_id = int(datos.get("usuario_id", 2))
+            resultado = models.registrar_alerta_vencimiento(placa, canal, usuario_id)
+            return self._send_json(resultado, self._status_for_result(resultado, 200))
+
+        # 19. Gestión de Pagos: Baja Lógica / Cancelación de Servicio de Abonado
+        elif path == "/api/abonado/baja":
+            placa = datos.get("placa", "")
+            motivo = datos.get("motivo", "")
+            usuario_id = int(datos.get("usuario_id", 1))
+            resultado = models.cancelar_suscripcion_abonado(placa, motivo, usuario_id)
+            return self._send_json(resultado, self._status_for_result(resultado, 200))
+
+        # 20. Gestión de Pagos: Reactivación de Servicio con Nuevo Pago
+        elif path == "/api/abonado/reactivar":
+            usuario_id = int(datos.get("usuario_id", 2))
+            resultado = models.reactivar_suscripcion_abonado(datos, usuario_id)
+            return self._send_json(resultado, self._status_for_result(resultado, 200))
+
         return self._send_json({"error": "Ruta POST no encontrada"}, 404)
 
 
@@ -286,13 +349,14 @@ def iniciar_servidor():
     database.inicializar_base_datos()
     with ThreadedHTTPServer(("", PORT), AutosColombiaHandler) as httpd:
         print("=" * 72)
-        print("   SISTEMA DE GESTIÓN AUTOS COLOMBIA 24/7 - ITERACIONES 1 & 2")
+        print("   SISTEMA DE GESTIÓN AUTOS COLOMBIA 24/7 - ITERACIONES 1, 2 Y 3")
         print("   Docente: Prof. Reinaldo Rojas | Grupo: 25 | IU Digital de Antioquia")
         print(f"   Servidor activo en: http://localhost:{PORT}")
         print("   - Módulo 1: Gestión de Entrada, Salida y Novedades 24/7")
         print("   - Módulo 2: Gestión CRUD de Usuarios y Control RBAC (Admin/Operario/Auditor)")
         print("   - Módulo 3: Gestión CRUD, Mantenimiento y Reubicación de Celdas (80 Plazas)")
         print("   - Módulo 4: Gestión CRUD de Clientes Abonados y Auditoría Inmutable")
+        print("   - Módulo 5: Gestión de Pagos, Mensualidades Consecutivas y Flujo de Caja")
         print("=" * 72)
         try:
             httpd.serve_forever()

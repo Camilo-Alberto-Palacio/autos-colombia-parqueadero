@@ -1,0 +1,134 @@
+@startuml
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam dpi 180
+skinparam roundcorner 6
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam ArrowColor #2C3E50
+skinparam ArrowFontColor #1E293B
+skinparam ClassBackgroundColor #FFFBEB
+skinparam ClassHeaderBackgroundColor #FEF3C7
+skinparam ClassBorderColor #B45309
+
+hide circle
+skinparam nodesep 35
+skinparam ranksep 45
+title Modelo Entidad-Relación Físico en 3FN (9 Tablas) — Iteración 3 (Gestión de Pagos)
+
+entity "PROPIETARIO" as e_prop {
+  * **id** : INTEGER <<PK>>
+  --
+  * documento : VARCHAR(20) <<UNIQUE>>
+  * nombre_completo : VARCHAR(120)
+  * telefono : VARCHAR(20)
+  email : VARCHAR(100)
+  direccion : VARCHAR(120)
+  fecha_registro : DATETIME
+}
+
+entity "VEHICULO" as e_veh {
+  * **placa** : VARCHAR(10) <<PK>>
+  --
+  * tipo_vehiculo : VARCHAR(10) <<CARRO|MOTO>>
+  * marca : VARCHAR(50)
+  * modelo : VARCHAR(50)
+  * color : VARCHAR(30)
+  * propietario_id : INTEGER <<FK>>
+  * activo : BOOLEAN
+  fecha_creacion : DATETIME
+}
+
+entity "MENSUALIDAD" as e_mens {
+  * **id** : INTEGER <<PK>>
+  --
+  * vehiculo_placa : VARCHAR(10) <<FK>>
+  * fecha_pago : DATE
+  * fecha_vencimiento : DATE
+  * valor_pagado : DECIMAL(10,2)
+  * estado : VARCHAR(15) <<ACTIVA|VENCIDA|CANCELADA>>
+}
+
+entity "PAGO (Nuevo Iteración 3)" as e_pago #ECFDF5;line:059669 {
+  * **id** : INTEGER <<PK>>
+  --
+  * numero_recibo : VARCHAR(30) <<UNIQUE>>
+  * vehiculo_placa : VARCHAR(10) <<FK>>
+  * mensualidad_id : INTEGER <<FK>>
+  * fecha_pago : DATE
+  * periodo_inicio : DATE
+  * periodo_fin : DATE
+  * meses_pagados : INTEGER
+  * valor_pagado : DECIMAL(10,2)
+  * metodo_pago : VARCHAR(25)
+  referencia_comprobante : VARCHAR(80)
+  * tipo_aplicacion : VARCHAR(30)
+  * estado : VARCHAR(15) <<CONFIRMADO|ANULADO>>
+  observaciones : TEXT
+  usuario_id : INTEGER <<FK>>
+}
+
+entity "CELDA" as e_celda {
+  * **codigo** : VARCHAR(10) <<PK>>
+  --
+  * tipo_permitido : VARCHAR(10)
+  * estado : VARCHAR(15)
+  piso : INTEGER
+  zona : VARCHAR(20)
+  motivo_bloqueo : TEXT
+}
+
+entity "USUARIO" as e_user {
+  * **id** : INTEGER <<PK>>
+  --
+  * username : VARCHAR(50) <<UNIQUE>>
+  * password_hash : VARCHAR(128)
+  * nombre_completo : VARCHAR(120)
+  * email : VARCHAR(100) <<UNIQUE>>
+  * rol : VARCHAR(20)
+  * activo : BOOLEAN
+}
+
+entity "REGISTRO_ACCESO" as e_reg {
+  * **id** : INTEGER <<PK>>
+  --
+  * vehiculo_placa : VARCHAR(10) <<FK>>
+  * celda_codigo : VARCHAR(10) <<FK>>
+  * fecha_ingreso : DATETIME
+  fecha_salida : DATETIME
+  * estado : VARCHAR(15)
+  usuario_id : INTEGER <<FK>>
+}
+
+entity "HISTORIAL_CELDA" as e_hist {
+  * **id** : INTEGER <<PK>>
+  --
+  * celda_codigo : VARCHAR(10) <<FK>>
+  * estado_anterior : VARCHAR(15)
+  * estado_nuevo : VARCHAR(15)
+  motivo : TEXT
+  usuario_id : INTEGER <<FK>>
+}
+
+entity "AUDITORIA_ACCION" as e_aud {
+  * **id** : INTEGER <<PK>>
+  --
+  usuario_id : INTEGER <<FK>>
+  * modulo : VARCHAR(50)
+  * accion : VARCHAR(50)
+  detalle : TEXT
+  fecha : DATETIME
+}
+
+e_prop ||--o{ e_veh : "1:N"
+e_veh ||--o{ e_mens : "1:N"
+e_veh ||--o{ e_pago : "1:N"
+e_mens ||--o{ e_pago : "1:N"
+e_user ||--o{ e_pago : "1:N"
+e_veh ||--o{ e_reg : "1:N"
+e_celda ||--o{ e_reg : "1:N"
+e_celda ||--o{ e_hist : "1:N"
+e_user ||--o{ e_reg : "1:N"
+e_user ||--o{ e_hist : "1:N"
+e_user ||--o{ e_aud : "1:N"
+@enduml
