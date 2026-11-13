@@ -260,12 +260,17 @@
             { "_type": "UMLAttribute", "_id": "AT_P3", "name": "vehiculo_placa", "type": "str" },
             { "_type": "UMLAttribute", "_id": "AT_P4", "name": "mensualidad_id", "type": "int" },
             { "_type": "UMLAttribute", "_id": "AT_P5", "name": "fecha_pago", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_P5B", "name": "fecha_registro", "type": "datetime" },
             { "_type": "UMLAttribute", "_id": "AT_P6", "name": "periodo_inicio", "type": "date" },
             { "_type": "UMLAttribute", "_id": "AT_P7", "name": "periodo_fin", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_P7B", "name": "meses_pagados", "type": "int" },
             { "_type": "UMLAttribute", "_id": "AT_P8", "name": "valor_pagado", "type": "decimal" },
             { "_type": "UMLAttribute", "_id": "AT_P9", "name": "metodo_pago", "type": "MetodoPago" },
+            { "_type": "UMLAttribute", "_id": "AT_P9B", "name": "referencia_comprobante", "type": "str" },
             { "_type": "UMLAttribute", "_id": "AT_P10", "name": "tipo_aplicacion", "type": "TipoAplicacion" },
-            { "_type": "UMLAttribute", "_id": "AT_P11", "name": "estado", "type": "EstadoPago" }
+            { "_type": "UMLAttribute", "_id": "AT_P11", "name": "estado", "type": "EstadoPago" },
+            { "_type": "UMLAttribute", "_id": "AT_P12", "name": "observaciones", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_P13", "name": "usuario_id", "type": "int" }
           ],
           "operations": [
             { "_type": "UMLOperation", "_id": "OP_P1", "name": "previsualizar_pago_mensualidad" },
@@ -287,6 +292,7 @@
             { "_type": "UMLAttribute", "_id": "AT_M2", "name": "vehiculo_placa", "type": "str" },
             { "_type": "UMLAttribute", "_id": "AT_M3", "name": "fecha_pago", "type": "date" },
             { "_type": "UMLAttribute", "_id": "AT_M4", "name": "fecha_vencimiento", "type": "date" },
+            { "_type": "UMLAttribute", "_id": "AT_M4B", "name": "valor_pagado", "type": "decimal" },
             { "_type": "UMLAttribute", "_id": "AT_M5", "name": "estado", "type": "EstadoMensualidad" }
           ],
           "operations": [
@@ -294,13 +300,145 @@
             { "_type": "UMLOperation", "_id": "OP_M2", "name": "esta_al_dia" }
           ]
         },
-        { "_type": "UMLClass", "_id": "CLS_USUARIO", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Usuario" },
-        { "_type": "UMLClass", "_id": "CLS_PROP", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Propietario" },
-        { "_type": "UMLClass", "_id": "CLS_VEH", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Vehiculo" },
-        { "_type": "UMLClass", "_id": "CLS_CELDA", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "Celda" },
-        { "_type": "UMLClass", "_id": "CLS_REG", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "RegistroAcceso" },
-        { "_type": "UMLClass", "_id": "CLS_HIST", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "HistorialCelda" },
-        { "_type": "UMLClass", "_id": "CLS_AUD", "_parent": { "$ref": "MODEL_CLASES_IT3" }, "name": "AuditoriaAccion" }
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_USUARIO",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "Usuario",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_U1", "name": "id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_U2", "name": "username", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_U3", "name": "password_hash", "type": "str", "visibility": "private" },
+            { "_type": "UMLAttribute", "_id": "AT_U4", "name": "nombre_completo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_U5", "name": "email", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_U6", "name": "rol", "type": "RolRBAC" },
+            { "_type": "UMLAttribute", "_id": "AT_U7", "name": "activo", "type": "bool" }
+          ],
+          "operations": [
+            { "_type": "UMLOperation", "_id": "OP_U1", "name": "autenticar_usuario" },
+            { "_type": "UMLOperation", "_id": "OP_U2", "name": "crear_usuario" },
+            { "_type": "UMLOperation", "_id": "OP_U3", "name": "actualizar_usuario" },
+            { "_type": "UMLOperation", "_id": "OP_U4", "name": "eliminar_usuario" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_RBAC",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "VerificadorRBAC",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_RB1", "name": "PERMISOS_POR_ROL", "type": "dict" }
+          ],
+          "operations": [
+            { "_type": "UMLOperation", "_id": "OP_RB1", "name": "verificar_permiso" },
+            { "_type": "UMLOperation", "_id": "OP_RB2", "name": "obtener_matriz_rbac" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_PROP",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "Propietario",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_PR1", "name": "id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_PR2", "name": "documento", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_PR3", "name": "nombre_completo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_PR4", "name": "telefono", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_PR5", "name": "email", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_PR6", "name": "direccion", "type": "str" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_VEH",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "Vehiculo",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_V1", "name": "placa", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_V2", "name": "tipo_vehiculo", "type": "TipoVehiculo" },
+            { "_type": "UMLAttribute", "_id": "AT_V3", "name": "marca", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_V4", "name": "modelo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_V5", "name": "color", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_V6", "name": "propietario_id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_V7", "name": "activo", "type": "bool" }
+          ],
+          "operations": [
+            { "_type": "UMLOperation", "_id": "OP_V1", "name": "consultar_vehiculo" },
+            { "_type": "UMLOperation", "_id": "OP_V2", "name": "registrar_nuevo_abonado" },
+            { "_type": "UMLOperation", "_id": "OP_V3", "name": "cancelar_suscripcion_abonado" },
+            { "_type": "UMLOperation", "_id": "OP_V4", "name": "reactivar_suscripcion_abonado" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_CELDA",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "Celda",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_C1", "name": "codigo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_C2", "name": "tipo_permitido", "type": "TipoVehiculo" },
+            { "_type": "UMLAttribute", "_id": "AT_C3", "name": "estado", "type": "EstadoCelda" },
+            { "_type": "UMLAttribute", "_id": "AT_C4", "name": "piso", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_C5", "name": "zona", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_C6", "name": "motivo_bloqueo", "type": "str" }
+          ],
+          "operations": [
+            { "_type": "UMLOperation", "_id": "OP_C1", "name": "crear_celda" },
+            { "_type": "UMLOperation", "_id": "OP_C2", "name": "cambiar_estado_celda" },
+            { "_type": "UMLOperation", "_id": "OP_C3", "name": "reubicar_vehiculo_celda" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_REG",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "RegistroAcceso",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_R1", "name": "id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_R2", "name": "vehiculo_placa", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_R3", "name": "celda_codigo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_R4", "name": "fecha_ingreso", "type": "datetime" },
+            { "_type": "UMLAttribute", "_id": "AT_R5", "name": "fecha_salida", "type": "datetime" },
+            { "_type": "UMLAttribute", "_id": "AT_R6", "name": "estado", "type": "EstadoAcceso" },
+            { "_type": "UMLAttribute", "_id": "AT_R7", "name": "observaciones", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_R8", "name": "usuario_id", "type": "int" }
+          ],
+          "operations": [
+            { "_type": "UMLOperation", "_id": "OP_R1", "name": "registrar_ingreso" },
+            { "_type": "UMLOperation", "_id": "OP_R2", "name": "registrar_novedad_vehiculo" },
+            { "_type": "UMLOperation", "_id": "OP_R3", "name": "registrar_salida" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_HIST",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "HistorialCelda",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_H1", "name": "id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_H2", "name": "celda_codigo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_H3", "name": "estado_anterior", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_H4", "name": "estado_nuevo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_H5", "name": "motivo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_H6", "name": "usuario_id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_H7", "name": "fecha_cambio", "type": "datetime" }
+          ]
+        },
+        {
+          "_type": "UMLClass",
+          "_id": "CLS_AUD",
+          "_parent": { "$ref": "MODEL_CLASES_IT3" },
+          "name": "AuditoriaAccion",
+          "attributes": [
+            { "_type": "UMLAttribute", "_id": "AT_A1", "name": "id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_A2", "name": "usuario_id", "type": "int" },
+            { "_type": "UMLAttribute", "_id": "AT_A3", "name": "modulo", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_A4", "name": "accion", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_A5", "name": "detalle", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_A6", "name": "ip_terminal", "type": "str" },
+            { "_type": "UMLAttribute", "_id": "AT_A7", "name": "fecha", "type": "datetime" }
+          ]
+        }
       ]
     },
     {

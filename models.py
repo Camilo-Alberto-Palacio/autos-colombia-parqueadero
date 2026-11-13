@@ -1057,6 +1057,25 @@ def obtener_historial_celdas(limite: int = 60):
 # MÓDULO 3: GESTIÓN CRUD DE CLIENTES ABONADOS Y VEHÍCULOS (ITERACIÓN 2)
 # ====================================================================
 
+def _denegar_si_sin_permiso(usuario_id: int, permiso: str, modulo: str):
+    """Retorna diccionario de rechazo RBAC si el actor carece del permiso requerido, o None."""
+    check = verificar_permiso(usuario_id, permiso, modulo)
+    if not check["autorizado"]:
+        return {
+            "success": False,
+            "codigo_error": check["codigo_error"],
+            "mensaje": check["mensaje"],
+        }
+    return None
+
+
+def _abortar_tx(conn, payload: dict):
+    """Revierte la transacción activa, cierra la conexión SQLite y retorna el payload."""
+    conn.rollback()
+    conn.close()
+    return payload
+
+
 def listar_abonados(busqueda: str = None):
     """Lista los clientes abonados, sus vehículos registrados y estado de vigencia."""
     conn = get_connection()
@@ -1084,7 +1103,7 @@ def listar_abonados(busqueda: str = None):
         LEFT JOIN mensualidad m ON m.id = (
             SELECT id FROM mensualidad 
             WHERE vehiculo_placa = v.placa 
-            ORDER BY fecha_vencimiento DESC LIMIT 1
+            ORDER BY CASE WHEN estado = 'CANCELADA' THEN 1 ELSE 0 END ASC, fecha_vencimiento DESC, id DESC LIMIT 1
         )
         WHERE 1=1
     """
@@ -1371,7 +1390,7 @@ def consultar_vehiculo(placa_raw: str):
     SELECT id, fecha_pago, fecha_vencimiento, valor_pagado, estado
     FROM mensualidad
     WHERE vehiculo_placa = ?
-    ORDER BY fecha_vencimiento DESC
+    ORDER BY CASE WHEN estado = 'CANCELADA' THEN 1 ELSE 0 END ASC, fecha_vencimiento DESC, id DESC
     LIMIT 1
     """
     cursor.execute(query_mensualidad, (vehiculo["placa"],))
@@ -1391,7 +1410,7 @@ def consultar_vehiculo(placa_raw: str):
     SELECT r.id, r.celda_codigo, r.fecha_ingreso, r.estado, r.observaciones
     FROM registro_acceso r
     WHERE r.vehiculo_placa = ? AND r.estado = 'ADENTRO'
-    ORDER BY r.fecha_ingreso DESC
+    ORDER BY r.fecha_ingreso DESC, r.id DESC
     LIMIT 1
     """
     cursor.execute(query_adentro, (vehiculo["placa"],))
@@ -1963,14 +1982,89 @@ def _validar_datos_pago(datos: dict):
     }
 
 
+def _validar_monto_pago(valor_recibido_raw, tipo_vehiculo: str, meses: int):
+    """Valida que el monto recibido coincida exactamente con la tarifa reglamentaria."""
+    tarifa = _tarifa_por_tipo(tipo_vehiculo)
+    valor_esperado = tarifa * meses
+    if valor_recibido_raw is None or str(valor_recibido_raw).strip() == "":
+        return {"ok": True, "valor": valor_esperado}
+    try:
+        valor_recibido = float(valor_recibido_raw)
+    except (ValueError, TypeError):
+        return {"ok": False, "codigo_error": "MONTO_INVALIDO", "mensaje": "Valor pagado no es numérico."}
+    if valor_recibido <= 0 or abs(valor_recibido - valor_esperado) > 0.01:
+        return {
+            "ok": False,
+            "codigo_error": "MONTO_INVALIDO",
+            "mensaje": f"Valor incorrecto para {tipo_vehiculo} ({meses} mes/es). Tarifa exacta: ${valor_esperado:,.0f} COP.",
+        }
+    return {"ok": True, "valor": valor_recibido}
+
+
+def _persistir_mensualidad_y_pago(cursor, val: dict, calculo: dict, valor_recibido: float, m_actual, usuario_id: int):
+    """Actualiza o crea la mensualidad activa e inserta el recibo inmutable en pago."""
+    fecha_pago_str = val["fecha_pago"].strftime("%Y-%m-%d")
+    if val["es_reactivacion"]:
+        cursor.execute("UPDATE vehiculo SET activo = 1 WHERE placa = ?", (val["placa"],))
+
+    if m_actual and m_actual["estado"] != "CANCELADA":
+        mensualidad_id = m_actual["id"]
+        cursor.execute(
+            """
+            UPDATE mensualidad
+            SET fecha_pago = ?, fecha_vencimiento = ?, valor_pagado = ?, estado = ?
+            WHERE id = ?
+            """,
+            (fecha_pago_str, calculo["nueva_fecha_vencimiento"], valor_recibido, calculo["nuevo_estado"], mensualidad_id),
+        )
+    else:
+        cursor.execute(
+            """
+            INSERT INTO mensualidad (vehiculo_placa, fecha_pago, fecha_vencimiento, valor_pagado, estado)
+            VALUES (?, ?, ?, ?, ?)
+            """,
+            (val["placa"], fecha_pago_str, calculo["nueva_fecha_vencimiento"], valor_recibido, calculo["nuevo_estado"]),
+        )
+        mensualidad_id = cursor.lastrowid
+
+    numero_recibo = _generar_numero_recibo(cursor, val["fecha_pago"])
+    obs = val["observaciones"] or _construir_explicacion_vigencia(calculo, val["fecha_pago"], val["meses"])
+    cursor.execute(
+        """
+        INSERT INTO pago (
+            numero_recibo, vehiculo_placa, mensualidad_id, fecha_pago,
+            periodo_inicio, periodo_fin, meses_pagados, valor_pagado,
+            metodo_pago, referencia_comprobante, tipo_aplicacion, estado, observaciones, usuario_id
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMADO', ?, ?)
+        """,
+        (
+            numero_recibo,
+            val["placa"],
+            mensualidad_id,
+            fecha_pago_str,
+            calculo["periodo_inicio"],
+            calculo["nueva_fecha_vencimiento"],
+            val["meses"],
+            valor_recibido,
+            val["metodo_pago"],
+            val["referencia"],
+            calculo["tipo_aplicacion"],
+            obs,
+            usuario_id,
+        ),
+    )
+    return numero_recibo, cursor.lastrowid
+
+
 def registrar_pago_mensualidad(datos: dict, usuario_id: int = 2):
     """
     Registra directamente en plataforma un pago de mensualidad (Operario o Admin),
     sin pasarela externa, aplicando la lógica consecutiva de fechas de corte.
     """
-    check = verificar_permiso(usuario_id, "GESTION_PAGOS", "PAGOS")
-    if not check["autorizado"]:
-        return {"success": False, "codigo_error": check["codigo_error"], "mensaje": check["mensaje"]}
+    denegado = _denegar_si_sin_permiso(usuario_id, "GESTION_PAGOS", "PAGOS")
+    if denegado:
+        return denegado
 
     val = _validar_datos_pago(datos)
     if not val["ok"]:
@@ -1982,7 +2076,6 @@ def registrar_pago_mensualidad(datos: dict, usuario_id: int = 2):
 
         try:
             cursor.execute("BEGIN IMMEDIATE;")
-
             cursor.execute(
                 """
                 SELECT v.placa, v.tipo_vehiculo, v.activo, p.nombre_completo AS propietario_nombre
@@ -1994,50 +2087,41 @@ def registrar_pago_mensualidad(datos: dict, usuario_id: int = 2):
             )
             veh = cursor.fetchone()
             if not veh:
-                conn.rollback()
-                conn.close()
-                return {
+                return _abortar_tx(conn, {
                     "success": False,
                     "codigo_error": "NO_REGISTRADO",
                     "mensaje": f"El vehículo '{formatear_placa(val['placa'])}' no existe en el padrón de abonados.",
-                }
+                })
 
             if veh["activo"] == 0 and not val["es_reactivacion"]:
-                conn.rollback()
-                conn.close()
-                return {
+                return _abortar_tx(conn, {
                     "success": False,
                     "codigo_error": "VEHICULO_INACTIVO",
                     "mensaje": f"El vehículo '{formatear_placa(val['placa'])}' está dado de baja. Utilice la opción Reactivar Servicio.",
-                }
+                })
 
-            tarifa = _tarifa_por_tipo(veh["tipo_vehiculo"])
-            valor_esperado = tarifa * val["meses"]
-            valor_recibido_raw = datos.get("valor_pagado")
-            if valor_recibido_raw is not None and str(valor_recibido_raw).strip() != "":
-                try:
-                    valor_recibido = float(valor_recibido_raw)
-                except (ValueError, TypeError):
-                    conn.rollback()
-                    conn.close()
-                    return {"success": False, "codigo_error": "MONTO_INVALIDO", "mensaje": "Valor pagado no es numérico."}
-                if valor_recibido <= 0 or abs(valor_recibido - valor_esperado) > 0.01:
-                    conn.rollback()
-                    conn.close()
-                    return {
-                        "success": False,
-                        "codigo_error": "MONTO_INVALIDO",
-                        "mensaje": f"Valor incorrecto para {veh['tipo_vehiculo']} ({val['meses']} mes/es). Tarifa exacta: ${valor_esperado:,.0f} COP.",
-                    }
-            else:
-                valor_recibido = valor_esperado
+            if val["es_reactivacion"] and veh["activo"] == 1:
+                return _abortar_tx(conn, {
+                    "success": False,
+                    "codigo_error": "VEHICULO_YA_ACTIVO",
+                    "mensaje": f"El vehículo '{formatear_placa(val['placa'])}' ya tiene una suscripción activa. Registre un pago ordinario.",
+                })
+
+            monto = _validar_monto_pago(datos.get("valor_pagado"), veh["tipo_vehiculo"], val["meses"])
+            if not monto["ok"]:
+                return _abortar_tx(conn, {
+                    "success": False,
+                    "codigo_error": monto["codigo_error"],
+                    "mensaje": monto["mensaje"],
+                })
+            valor_recibido = monto["valor"]
 
             cursor.execute(
                 """
                 SELECT id, fecha_pago, fecha_vencimiento, valor_pagado, estado
                 FROM mensualidad
                 WHERE vehiculo_placa = ?
-                ORDER BY fecha_vencimiento DESC, id DESC
+                ORDER BY CASE WHEN estado = 'CANCELADA' THEN 1 ELSE 0 END ASC, fecha_vencimiento DESC, id DESC
                 LIMIT 1
                 """,
                 (val["placa"],),
@@ -2050,72 +2134,9 @@ def registrar_pago_mensualidad(datos: dict, usuario_id: int = 2):
                 val["meses"],
                 es_reactivacion=val["es_reactivacion"],
             )
-            fecha_pago_str = val["fecha_pago"].strftime("%Y-%m-%d")
-
-            if val["es_reactivacion"]:
-                cursor.execute("UPDATE vehiculo SET activo = 1 WHERE placa = ?", (val["placa"],))
-
-            if m_actual and m_actual["estado"] != "CANCELADA":
-                mensualidad_id = m_actual["id"]
-                cursor.execute(
-                    """
-                    UPDATE mensualidad
-                    SET fecha_pago = ?, fecha_vencimiento = ?, valor_pagado = ?, estado = ?
-                    WHERE id = ?
-                    """,
-                    (
-                        fecha_pago_str,
-                        calculo["nueva_fecha_vencimiento"],
-                        valor_recibido,
-                        calculo["nuevo_estado"],
-                        mensualidad_id,
-                    ),
-                )
-            else:
-                cursor.execute(
-                    """
-                    INSERT INTO mensualidad (vehiculo_placa, fecha_pago, fecha_vencimiento, valor_pagado, estado)
-                    VALUES (?, ?, ?, ?, ?)
-                    """,
-                    (
-                        val["placa"],
-                        fecha_pago_str,
-                        calculo["nueva_fecha_vencimiento"],
-                        valor_recibido,
-                        calculo["nuevo_estado"],
-                    ),
-                )
-                mensualidad_id = cursor.lastrowid
-
-            numero_recibo = _generar_numero_recibo(cursor, val["fecha_pago"])
-            obs = val["observaciones"] or _construir_explicacion_vigencia(calculo, val["fecha_pago"], val["meses"])
-
-            cursor.execute(
-                """
-                INSERT INTO pago (
-                    numero_recibo, vehiculo_placa, mensualidad_id, fecha_pago,
-                    periodo_inicio, periodo_fin, meses_pagados, valor_pagado,
-                    metodo_pago, referencia_comprobante, tipo_aplicacion, estado, observaciones, usuario_id
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'CONFIRMADO', ?, ?)
-                """,
-                (
-                    numero_recibo,
-                    val["placa"],
-                    mensualidad_id,
-                    fecha_pago_str,
-                    calculo["periodo_inicio"],
-                    calculo["nueva_fecha_vencimiento"],
-                    val["meses"],
-                    valor_recibido,
-                    val["metodo_pago"],
-                    val["referencia"],
-                    calculo["tipo_aplicacion"],
-                    obs,
-                    usuario_id,
-                ),
+            numero_recibo, pago_id = _persistir_mensualidad_y_pago(
+                cursor, val, calculo, valor_recibido, m_actual, usuario_id
             )
-            pago_id = cursor.lastrowid
             conn.commit()
             conn.close()
 
@@ -2139,9 +2160,52 @@ def registrar_pago_mensualidad(datos: dict, usuario_id: int = 2):
                 "pago": recibo,
             }
         except Exception as e:
-            conn.rollback()
-            conn.close()
-            return {"success": False, "mensaje": f"Error transaccional al registrar pago: {str(e)}"}
+            return _abortar_tx(conn, {"success": False, "mensaje": f"Error transaccional al registrar pago: {str(e)}"})
+
+
+def _revertir_mensualidad_por_anulacion(cursor, p):
+    """Revierte el estado y fechas de la mensualidad afectada al anular un pago confirmado."""
+    cursor.execute(
+        """
+        SELECT * FROM pago
+        WHERE vehiculo_placa = ? AND estado = 'CONFIRMADO' AND id != ?
+        ORDER BY id DESC LIMIT 1
+        """,
+        (p["vehiculo_placa"], p["id"]),
+    )
+    pago_prev = cursor.fetchone()
+    hoy = date.today()
+
+    if pago_prev and pago_prev["mensualidad_id"] == p["mensualidad_id"]:
+        fv_prev = datetime.strptime(pago_prev["periodo_fin"], "%Y-%m-%d").date()
+        est_prev = "ACTIVA" if fv_prev >= hoy else "VENCIDA"
+        cursor.execute(
+            """
+            UPDATE mensualidad
+            SET fecha_pago = ?, fecha_vencimiento = ?, valor_pagado = ?, estado = ?
+            WHERE id = ?
+            """,
+            (pago_prev["fecha_pago"], pago_prev["periodo_fin"], pago_prev["valor_pagado"], est_prev, p["mensualidad_id"]),
+        )
+        return
+
+    if p["tipo_aplicacion"] == "INICIAL_REACTIVACION":
+        cursor.execute("UPDATE mensualidad SET estado = 'CANCELADA' WHERE id = ?", (p["mensualidad_id"],))
+        cursor.execute(
+            "SELECT id FROM mensualidad WHERE vehiculo_placa = ? AND id != ? LIMIT 1",
+            (p["vehiculo_placa"], p["mensualidad_id"]),
+        )
+        if cursor.fetchone():
+            # Si existía un contrato previo antes de esta reactivación, el vehículo vuelve a estado inactivo
+            cursor.execute("UPDATE vehiculo SET activo = 0 WHERE placa = ?", (p["vehiculo_placa"],))
+        return
+
+    corte_prev = datetime.strptime(p["periodo_inicio"], "%Y-%m-%d").date() - timedelta(days=1)
+    est_prev = "ACTIVA" if corte_prev >= hoy else "VENCIDA"
+    cursor.execute(
+        "UPDATE mensualidad SET fecha_vencimiento = ?, estado = ? WHERE id = ?",
+        (corte_prev.strftime("%Y-%m-%d"), est_prev, p["mensualidad_id"]),
+    )
 
 
 def anular_pago(pago_id: int, motivo: str, admin_id: int = 1):
@@ -2149,9 +2213,9 @@ def anular_pago(pago_id: int, motivo: str, admin_id: int = 1):
     Anula lógicamente (sin DELETE) el último pago confirmado de un vehículo,
     revirtiendo la fecha de vencimiento al corte previo bajo control estricto de rol ADMIN.
     """
-    check = verificar_permiso(admin_id, "ANULAR_PAGOS", "PAGOS")
-    if not check["autorizado"]:
-        return {"success": False, "codigo_error": check["codigo_error"], "mensaje": check["mensaje"]}
+    denegado = _denegar_si_sin_permiso(admin_id, "ANULAR_PAGOS", "PAGOS")
+    if denegado:
+        return denegado
 
     motivo_limpio = (motivo or "").strip()
     if not motivo_limpio:
@@ -2166,16 +2230,11 @@ def anular_pago(pago_id: int, motivo: str, admin_id: int = 1):
             cursor.execute("SELECT * FROM pago WHERE id = ?", (pago_id,))
             p = cursor.fetchone()
             if not p:
-                conn.rollback()
-                conn.close()
-                return {"success": False, "mensaje": "Registro de pago no encontrado."}
+                return _abortar_tx(conn, {"success": False, "mensaje": "Registro de pago no encontrado."})
 
             if p["estado"] == "ANULADO":
-                conn.rollback()
-                conn.close()
-                return {"success": False, "mensaje": f"El recibo {p['numero_recibo']} ya fue anulado previamente."}
+                return _abortar_tx(conn, {"success": False, "mensaje": f"El recibo {p['numero_recibo']} ya fue anulado previamente."})
 
-            # Verificar que sea el último pago confirmado de esa placa para mantener consistencia cronológica
             cursor.execute(
                 """
                 SELECT id FROM pago
@@ -2186,51 +2245,17 @@ def anular_pago(pago_id: int, motivo: str, admin_id: int = 1):
             )
             ultimo = cursor.fetchone()
             if ultimo and ultimo["id"] != p["id"]:
-                conn.rollback()
-                conn.close()
-                return {
+                return _abortar_tx(conn, {
                     "success": False,
                     "mensaje": "Solo se puede anular el último pago confirmado de la placa para preservar la secuencia de cortes.",
-                }
+                })
 
             obs_nueva = (p["observaciones"] or "") + f" | [ANULADO: {motivo_limpio}]"
             cursor.execute(
                 "UPDATE pago SET estado = 'ANULADO', observaciones = ? WHERE id = ?",
                 (obs_nueva, pago_id),
             )
-
-            # Revertir la mensualidad al corte anterior si corresponde
-            cursor.execute(
-                """
-                SELECT * FROM pago
-                WHERE vehiculo_placa = ? AND estado = 'CONFIRMADO' AND id != ?
-                ORDER BY id DESC LIMIT 1
-                """,
-                (p["vehiculo_placa"], pago_id),
-            )
-            pago_prev = cursor.fetchone()
-            hoy = date.today()
-
-            if p["tipo_aplicacion"] == "INICIAL_REACTIVACION" and not pago_prev:
-                cursor.execute("UPDATE mensualidad SET estado = 'CANCELADA' WHERE id = ?", (p["mensualidad_id"],))
-            elif pago_prev:
-                fv_prev = datetime.strptime(pago_prev["periodo_fin"], "%Y-%m-%d").date()
-                est_prev = "ACTIVA" if fv_prev >= hoy else "VENCIDA"
-                cursor.execute(
-                    """
-                    UPDATE mensualidad
-                    SET fecha_pago = ?, fecha_vencimiento = ?, valor_pagado = ?, estado = ?
-                    WHERE id = ?
-                    """,
-                    (pago_prev["fecha_pago"], pago_prev["periodo_fin"], pago_prev["valor_pagado"], est_prev, p["mensualidad_id"]),
-                )
-            else:
-                corte_prev = datetime.strptime(p["periodo_inicio"], "%Y-%m-%d").date() - timedelta(days=1)
-                est_prev = "ACTIVA" if corte_prev >= hoy else "VENCIDA"
-                cursor.execute(
-                    "UPDATE mensualidad SET fecha_vencimiento = ?, estado = ? WHERE id = ?",
-                    (corte_prev.strftime("%Y-%m-%d"), est_prev, p["mensualidad_id"]),
-                )
+            _revertir_mensualidad_por_anulacion(cursor, p)
 
             conn.commit()
             conn.close()
@@ -2246,9 +2271,7 @@ def anular_pago(pago_id: int, motivo: str, admin_id: int = 1):
                 "mensaje": f"Pago {p['numero_recibo']} anulado correctamente y vigencia revertida.",
             }
         except Exception as e:
-            conn.rollback()
-            conn.close()
-            return {"success": False, "mensaje": f"Error al anular pago: {str(e)}"}
+            return _abortar_tx(conn, {"success": False, "mensaje": f"Error al anular pago: {str(e)}"})
 
 
 def cancelar_suscripcion_abonado(placa_raw: str, motivo: str = "", usuario_id: int = 1):
@@ -2256,9 +2279,9 @@ def cancelar_suscripcion_abonado(placa_raw: str, motivo: str = "", usuario_id: i
     Da de baja lógica (cancelación de servicio) a un cliente abonado sin eliminar registros de BD.
     Exige: (1) Vehículo NO esté adentro del parqueadero, (2) No tenga mora pendiente.
     """
-    check = verificar_permiso(usuario_id, "GESTION_PAGOS", "PAGOS")
-    if not check["autorizado"]:
-        return {"success": False, "codigo_error": check["codigo_error"], "mensaje": check["mensaje"]}
+    denegado = _denegar_si_sin_permiso(usuario_id, "GESTION_PAGOS", "PAGOS")
+    if denegado:
+        return denegado
 
     with db_lock:
         placa = limpiar_placa(placa_raw)
@@ -2286,11 +2309,15 @@ def cancelar_suscripcion_abonado(placa_raw: str, motivo: str = "", usuario_id: i
 
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute("UPDATE vehiculo SET activo = 0 WHERE placa = ?", (placa,))
-        if m:
-            cursor.execute("UPDATE mensualidad SET estado = 'CANCELADA' WHERE id = ?", (m["id"],))
-        conn.commit()
-        conn.close()
+        try:
+            cursor.execute("BEGIN IMMEDIATE;")
+            cursor.execute("UPDATE vehiculo SET activo = 0 WHERE placa = ?", (placa,))
+            if m:
+                cursor.execute("UPDATE mensualidad SET estado = 'CANCELADA' WHERE id = ?", (m["id"],))
+            conn.commit()
+            conn.close()
+        except Exception as e:
+            return _abortar_tx(conn, {"success": False, "mensaje": f"Error transaccional al cancelar suscripción: {str(e)}"})
 
         motivo_txt = (motivo or "Retiro voluntario del servicio").strip()
         registrar_auditoria(
@@ -2339,16 +2366,8 @@ def obtener_recibo_pago(numero_recibo: str):
     return dict(row) if row else None
 
 
-def obtener_estado_pagos_y_caja(
-    placa: str = None,
-    metodo: str = None,
-    desde: str = None,
-    hasta: str = None,
-):
-    """Consolida el historial de pagos, flujo de caja por método/categoría y alertas de cartera."""
-    conn = get_connection()
-    cursor = conn.cursor()
-
+def _consultar_lista_pagos(cursor, placa: str = None, metodo: str = None, desde: str = None, hasta: str = None):
+    """Consulta el historial filtrado de pagos con datos de titular y recaudador."""
     sql = """
         SELECT
             pg.id, pg.numero_recibo, pg.vehiculo_placa, pg.fecha_pago, pg.fecha_registro,
@@ -2378,22 +2397,13 @@ def obtener_estado_pagos_y_caja(
 
     sql += " ORDER BY pg.id DESC"
     cursor.execute(sql, params)
-    pagos = [dict(r) for r in cursor.fetchall()]
+    return [dict(r) for r in cursor.fetchall()]
 
+
+def _calcular_metricas_caja(rows_pagos):
+    """Calcula el cuadre total, diario, mensual y por método/categoría excluyendo anulados."""
     hoy_str = date.today().strftime("%Y-%m-%d")
     mes_prefijo = date.today().strftime("%Y-%m")
-
-    cursor.execute(
-        """
-        SELECT
-            pg.valor_pagado, pg.metodo_pago, pg.fecha_pago, pg.estado, v.tipo_vehiculo
-        FROM pago pg
-        JOIN vehiculo v ON pg.vehiculo_placa = v.placa
-        """
-    )
-    todos = cursor.fetchall()
-    conn.close()
-
     recaudo_total = 0.0
     recaudo_hoy = 0.0
     recaudo_mes = 0.0
@@ -2402,7 +2412,7 @@ def obtener_estado_pagos_y_caja(
     por_metodo = {m: 0.0 for m in METODOS_PAGO}
     por_categoria = {"CARRO": 0.0, "MOTO": 0.0}
 
-    for row in todos:
+    for row in rows_pagos:
         if row["estado"] == "ANULADO":
             anulados += 1
             continue
@@ -2418,7 +2428,19 @@ def obtener_estado_pagos_y_caja(
         if row["tipo_vehiculo"] in por_categoria:
             por_categoria[row["tipo_vehiculo"]] += val
 
-    abonados = listar_abonados()
+    return {
+        "recaudo_total": recaudo_total,
+        "recaudo_hoy": recaudo_hoy,
+        "recaudo_mes": recaudo_mes,
+        "confirmados": confirmados,
+        "anulados": anulados,
+        "por_metodo": por_metodo,
+        "por_categoria": por_categoria,
+    }
+
+
+def _clasificar_cartera_abonados(abonados):
+    """Clasifica el padrón de abonados en al día, próximos a vencer, en mora e inactivos."""
     al_dia_list = []
     proximos_list = []
     mora_list = []
@@ -2436,37 +2458,56 @@ def obtener_estado_pagos_y_caja(
             mora_list.append(ab)
 
     return {
+        "al_dia": al_dia_list,
+        "proximos_vencer": proximos_list,
+        "en_mora": mora_list,
+        "inactivos": inactivos_list,
+    }
+
+
+def obtener_estado_pagos_y_caja(
+    placa: str = None,
+    metodo: str = None,
+    desde: str = None,
+    hasta: str = None,
+):
+    """Consolida el historial de pagos, flujo de caja por método/categoría y alertas de cartera."""
+    conn = get_connection()
+    cursor = conn.cursor()
+    pagos = _consultar_lista_pagos(cursor, placa, metodo, desde, hasta)
+    cursor.execute(
+        """
+        SELECT
+            pg.valor_pagado, pg.metodo_pago, pg.fecha_pago, pg.estado, v.tipo_vehiculo
+        FROM pago pg
+        JOIN vehiculo v ON pg.vehiculo_placa = v.placa
+        """
+    )
+    todos = cursor.fetchall()
+    conn.close()
+
+    flujo_caja = _calcular_metricas_caja(todos)
+    cartera = _clasificar_cartera_abonados(listar_abonados())
+
+    return {
         "pagos": pagos,
         "total_pagos": len(pagos),
-        "flujo_caja": {
-            "recaudo_total": recaudo_total,
-            "recaudo_hoy": recaudo_hoy,
-            "recaudo_mes": recaudo_mes,
-            "confirmados": confirmados,
-            "anulados": anulados,
-            "por_metodo": por_metodo,
-            "por_categoria": por_categoria,
-        },
-        "cartera": {
-            "al_dia": al_dia_list,
-            "proximos_vencer": proximos_list,
-            "en_mora": mora_list,
-            "inactivos": inactivos_list,
-        },
+        "flujo_caja": flujo_caja,
+        "cartera": cartera,
         "conteo_cartera": {
-            "al_dia": len(al_dia_list) + len(proximos_list),
-            "proximos_vencer": len(proximos_list),
-            "en_mora": len(mora_list),
-            "inactivos": len(inactivos_list),
+            "al_dia": len(cartera["al_dia"]) + len(cartera["proximos_vencer"]),
+            "proximos_vencer": len(cartera["proximos_vencer"]),
+            "en_mora": len(cartera["en_mora"]),
+            "inactivos": len(cartera["inactivos"]),
         },
     }
 
 
 def registrar_alerta_vencimiento(placa_raw: str, canal: str = "WHATSAPP", usuario_id: int = 2):
     """Genera y audita un recordatorio preventivo de vencimiento o cobro para el cliente."""
-    check = verificar_permiso(usuario_id, "GESTION_PAGOS", "PAGOS")
-    if not check["autorizado"]:
-        return {"success": False, "codigo_error": check["codigo_error"], "mensaje": check["mensaje"]}
+    denegado = _denegar_si_sin_permiso(usuario_id, "GESTION_PAGOS", "PAGOS")
+    if denegado:
+        return denegado
 
     placa = limpiar_placa(placa_raw)
     vehiculo = consultar_vehiculo(placa)

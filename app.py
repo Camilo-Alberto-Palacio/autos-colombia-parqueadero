@@ -38,6 +38,18 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
         if os.environ.get("QUIET_SERVER") != "1":
             super().log_message(format, *args)
 
+    def _safe_int(self, valor, default=None, campo: str = "parámetro") -> int:
+        if valor is None or (isinstance(valor, str) and not valor.strip()):
+            if default is not None:
+                return default
+            raise ValueError(f"El campo '{campo}' es obligatorio y debe ser un entero.")
+        if isinstance(valor, bool):
+            raise ValueError(f"El campo '{campo}' debe ser un número entero válido.")
+        try:
+            return int(str(valor).strip()) if isinstance(valor, str) else int(valor)
+        except (ValueError, TypeError) as exc:
+            raise ValueError(f"El campo '{campo}' debe ser un número entero válido.") from exc
+
     def _status_for_result(self, resultado: dict, success_code: int = 200) -> int:
         if resultado.get("success"):
             return success_code
@@ -50,15 +62,18 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
 
     def _send_json(self, data, status_code=200):
         response_bytes = json.dumps(data, ensure_ascii=False, default=str).encode("utf-8")
-        self.send_response(status_code)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(response_bytes)))
-        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.end_headers()
-        self.wfile.write(response_bytes)
+        try:
+            self.send_response(status_code)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(response_bytes)))
+            self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.send_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type")
+            self.end_headers()
+            self.wfile.write(response_bytes)
+        except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError):
+            pass
 
     def do_OPTIONS(self):
         self.send_response(200)
@@ -67,280 +82,234 @@ class AutosColombiaHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
+    def _payload_salud(self):
+        return {
+            "status": "OK",
+            "sistema": "Autos Colombia 24/7 - Iteraciones 1, 2 y 3 Unificadas",
+            "docente": "Reinaldo Rojas",
+            "grupo": "25",
+            "modulos": [
+                "Control de Acceso 24/7 (Entrada/Salida/Novedades)",
+                "Gestión CRUD de Usuarios y Control RBAC (Admin, Operario, Auditor)",
+                "Gestión CRUD, Mantenimiento y Reubicación de Celdas (80 Plazas)",
+                "Gestión CRUD de Clientes Abonados y Vehículos",
+                "Gestión de Pagos en Plataforma, Vigencia Consecutiva y Flujo de Caja (Iteración 3)",
+                "Auditoría Inmutable 24/7",
+            ],
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        }
+
+    def _despachar_get_api(self, path: str, params: dict):
+        rutas_simples = {
+            "/api/resumen": lambda: models.obtener_resumen_operativo(),
+            "/api/roles": lambda: {"roles": models.obtener_matriz_rbac()},
+            "/api/usuarios": lambda: (
+                lambda u: {"total": len(u), "usuarios": u}
+            )(
+                models.listar_usuarios(
+                    params.get("rol", [None])[0],
+                    params.get("activos", ["false"])[0].lower() == "true",
+                    params.get("q", [None])[0],
+                )
+            ),
+            "/api/celdas": lambda: (
+                lambda c: {"total": len(c), "celdas": c}
+            )(
+                models.listar_celdas_administracion(
+                    params.get("tipo", [None])[0],
+                    params.get("estado", [None])[0],
+                    params.get("zona", [None])[0],
+                    params.get("q", [None])[0],
+                )
+            ),
+            "/api/abonados": lambda: (
+                lambda a: {"total": len(a), "abonados": a}
+            )(models.listar_abonados(params.get("q", [None])[0])),
+            "/api/auditoria": lambda: (
+                lambda it: {"total": len(it), "auditoria": it}
+            )(
+                models.obtener_auditoria_sistema(
+                    self._safe_int(params.get("limite", [60])[0], 60, "limite"),
+                    params.get("modulo", [None])[0],
+                )
+            ),
+            "/api/historial_celdas": lambda: (
+                lambda it: {"total": len(it), "historial": it}
+            )(
+                models.obtener_historial_celdas(
+                    self._safe_int(params.get("limite", [60])[0], 60, "limite")
+                )
+            ),
+            "/api/pagos": lambda: models.obtener_estado_pagos_y_caja(
+                params.get("placa", [None])[0],
+                params.get("metodo", [None])[0],
+                params.get("desde", [None])[0],
+                params.get("hasta", [None])[0],
+            ),
+            "/api/salud": self._payload_salud,
+        }
+        if path in rutas_simples:
+            return rutas_simples[path](), 200
+
+        if path == "/api/vehiculo":
+            placa = params.get("placa", [""])[0]
+            if not placa:
+                return {"error": "Debe especificar el parámetro 'placa'"}, 400
+            data = models.consultar_vehiculo(placa)
+            if data:
+                return data, 200
+            return {"error": f"Vehículo con placa '{placa}' no encontrado"}, 404
+
+        if path == "/api/pagos/previsualizar":
+            res = models.previsualizar_pago_mensualidad(
+                params.get("placa", [""])[0],
+                params.get("fecha_pago", [None])[0],
+                params.get("meses", [1])[0],
+                params.get("reactivacion", ["false"])[0].lower() == "true",
+            )
+            return res, self._status_for_result(res, 200)
+
+        if path == "/api/pagos/recibo":
+            numero_recibo = params.get("numero_recibo", [""])[0]
+            recibo = models.obtener_recibo_pago(numero_recibo)
+            if recibo:
+                return {"success": True, "pago": recibo}, 200
+            return {"success": False, "mensaje": f"Recibo '{numero_recibo}' no encontrado."}, 404
+
+        return None
+
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
         path = parsed.path
         params = urllib.parse.parse_qs(parsed.query)
 
-        # 1. Resumen Operativo General (Dashboard 24/7)
-        if path == "/api/resumen":
-            return self._send_json(models.obtener_resumen_operativo())
+        if path.startswith("/api/"):
+            try:
+                res = self._despachar_get_api(path, params)
+                if res is not None:
+                    return self._send_json(res[0], res[1])
+                return self._send_json({"error": "Ruta GET no encontrada"}, 404)
+            except ValueError as exc:
+                return self._send_json({"success": False, "codigo_error": "PARAMETRO_INVALIDO", "mensaje": str(exc)}, 400)
 
-        # 2. Matriz RBAC de Roles y Permisos
-        elif path == "/api/roles":
-            return self._send_json({"roles": models.obtener_matriz_rbac()})
-
-        # 3. Consulta de Vehículo por Placa
-        elif path == "/api/vehiculo":
-            placa = params.get("placa", [""])[0]
-            if not placa:
-                return self._send_json({"error": "Debe especificar el parámetro 'placa'"}, 400)
-            data = models.consultar_vehiculo(placa)
-            if data:
-                return self._send_json(data)
-            return self._send_json({"error": f"Vehículo con placa '{placa}' no encontrado"}, 404)
-
-        # 4. Listado y Filtro de Usuarios del Sistema (Iteración 2)
-        elif path == "/api/usuarios":
-            rol_filtro = params.get("rol", [None])[0]
-            solo_activos = params.get("activos", ["false"])[0].lower() == "true"
-            busqueda = params.get("q", [None])[0]
-            usuarios = models.listar_usuarios(rol_filtro, solo_activos, busqueda)
-            return self._send_json({"total": len(usuarios), "usuarios": usuarios})
-
-        # 5. Inventario y Filtros de Celdas (Iteración 2)
-        elif path == "/api/celdas":
-            tipo = params.get("tipo", [None])[0]
-            estado = params.get("estado", [None])[0]
-            zona = params.get("zona", [None])[0]
-            busqueda = params.get("q", [None])[0]
-            celdas = models.listar_celdas_administracion(tipo, estado, zona, busqueda)
-            return self._send_json({"total": len(celdas), "celdas": celdas})
-
-        # 6. Listado y Búsqueda de Clientes Abonados y Vehículos (Iteración 2)
-        elif path == "/api/abonados":
-            busqueda = params.get("q", [None])[0]
-            abonados = models.listar_abonados(busqueda)
-            return self._send_json({"total": len(abonados), "abonados": abonados})
-
-        # 7. Bitácora Central de Auditoría 24/7
-        elif path == "/api/auditoria":
-            limite = int(params.get("limite", [60])[0])
-            modulo = params.get("modulo", [None])[0]
-            items = models.obtener_auditoria_sistema(limite, modulo)
-            return self._send_json({"total": len(items), "auditoria": items})
-
-        # 8. Historial Técnico de Cambios y Mantenimiento de Celdas
-        elif path == "/api/historial_celdas":
-            limite = int(params.get("limite", [60])[0])
-            items = models.obtener_historial_celdas(limite)
-            return self._send_json({"total": len(items), "historial": items})
-
-        # 9. Gestión de Pagos: Historial, Flujo de Caja y Cartera (Iteración 3)
-        elif path == "/api/pagos":
-            placa = params.get("placa", [None])[0]
-            metodo = params.get("metodo", [None])[0]
-            desde = params.get("desde", [None])[0]
-            hasta = params.get("hasta", [None])[0]
-            estado_pagos = models.obtener_estado_pagos_y_caja(placa, metodo, desde, hasta)
-            return self._send_json(estado_pagos)
-
-        # 10. Gestión de Pagos: Previsualización de Cálculo Consecutivo de Fechas
-        elif path == "/api/pagos/previsualizar":
-            placa = params.get("placa", [""])[0]
-            fecha_pago = params.get("fecha_pago", [None])[0]
-            meses = params.get("meses", [1])[0]
-            reactivacion = params.get("reactivacion", ["false"])[0].lower() == "true"
-            res = models.previsualizar_pago_mensualidad(placa, fecha_pago, meses, reactivacion)
-            return self._send_json(res, self._status_for_result(res, 200))
-
-        # 11. Gestión de Pagos: Consulta de Comprobante / Recibo Individual
-        elif path == "/api/pagos/recibo":
-            numero_recibo = params.get("numero_recibo", [""])[0]
-            recibo = models.obtener_recibo_pago(numero_recibo)
-            if recibo:
-                return self._send_json({"success": True, "pago": recibo})
-            return self._send_json({"success": False, "mensaje": f"Recibo '{numero_recibo}' no encontrado."}, 404)
-
-        # 12. Endpoint de Salud del Sistema
-        elif path == "/api/salud":
-            return self._send_json(
-                {
-                    "status": "OK",
-                    "sistema": "Autos Colombia 24/7 - Iteraciones 1, 2 y 3 Unificadas",
-                    "docente": "Reinaldo Rojas",
-                    "grupo": "25",
-                    "modulos": [
-                        "Control de Acceso 24/7 (Entrada/Salida/Novedades)",
-                        "Gestión CRUD de Usuarios y Control RBAC (Admin, Operario, Auditor)",
-                        "Gestión CRUD, Mantenimiento y Reubicación de Celdas (80 Plazas)",
-                        "Gestión CRUD de Clientes Abonados y Vehículos",
-                        "Gestión de Pagos en Plataforma, Vigencia Consecutiva y Flujo de Caja (Iteración 3)",
-                        "Auditoría Inmutable 24/7",
-                    ],
-                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                }
-            )
-
-        # Servir Frontend SPA
         if path in ("/", ""):
             self.path = "/index.html"
 
         return super().do_GET()
 
-    def do_POST(self):
-        parsed = urllib.parse.urlparse(self.path)
-        path = parsed.path
-
-        content_length = int(self.headers.get("Content-Length", 0))
+    def _leer_json_body(self):
+        content_length = self._safe_int(self.headers.get("Content-Length", 0), 0, "Content-Length")
+        if content_length < 0:
+            raise ValueError("Content-Length no puede ser negativo.")
         body = self.rfile.read(content_length)
+        datos = json.loads(body.decode("utf-8")) if body else {}
+        if not isinstance(datos, dict):
+            raise ValueError("El cuerpo JSON debe ser un objeto JSON clave-valor.")
+        return datos
+
+    def _despachar_post_usuarios(self, path: str, datos: dict):
+        admin_id = self._safe_int(datos.get("admin_id", 1), 1, "admin_id")
+        if path == "/api/usuarios":
+            return models.crear_usuario(datos, admin_id), 201
+        if path == "/api/usuarios/actualizar":
+            user_id = self._safe_int(datos.get("user_id", 0), 0, "user_id")
+            return models.actualizar_usuario(user_id, datos, admin_id), 200
+        if path == "/api/usuarios/clave":
+            user_id = self._safe_int(datos.get("user_id", 0), 0, "user_id")
+            return models.cambiar_password(user_id, datos.get("nueva_password", ""), admin_id), 200
+        if path == "/api/usuarios/eliminar":
+            user_id = self._safe_int(datos.get("user_id", 0), 0, "user_id")
+            return models.eliminar_usuario(user_id, admin_id), 200
+        return None
+
+    def _despachar_post_celdas(self, path: str, datos: dict):
+        usuario_id = self._safe_int(datos.get("usuario_id", 1), 1, "usuario_id")
+        if path == "/api/celdas":
+            return models.crear_celda(datos, usuario_id), 201
+        if path == "/api/celdas/actualizar":
+            return models.actualizar_celda(datos.get("codigo", ""), datos, usuario_id), 200
+        if path == "/api/celdas/eliminar":
+            return models.eliminar_celda(datos.get("codigo", ""), usuario_id), 200
+        if path == "/api/celdas/estado":
+            return models.cambiar_estado_celda(
+                datos.get("codigo", ""), datos.get("nuevo_estado", ""), datos.get("motivo", ""), usuario_id
+            ), 200
+        if path == "/api/celdas/reubicar":
+            return models.reubicar_vehiculo_celda(
+                datos.get("placa", ""),
+                datos.get("nueva_celda", ""),
+                datos.get("motivo", ""),
+                bool(datos.get("marcar_anterior_mantenimiento", False)),
+                usuario_id,
+            ), 200
+        return None
+
+    def _despachar_post_operacion_y_pagos(self, path: str, datos: dict):
+        if path == "/api/ingreso":
+            uid = self._safe_int(datos.get("usuario_id", 2), 2, "usuario_id")
+            return models.registrar_ingreso(
+                datos.get("placa", ""), datos.get("observaciones", None), datos.get("puerta", "Puerta 1 (Norte)"), uid
+            ), 200
+        if path == "/api/novedad":
+            uid = self._safe_int(datos.get("usuario_id", 2), 2, "usuario_id")
+            return models.registrar_novedad_vehiculo(datos.get("placa", ""), datos.get("novedad", ""), uid), 200
+        if path == "/api/salida":
+            uid = self._safe_int(datos.get("usuario_id", 2), 2, "usuario_id")
+            return models.registrar_salida(
+                datos.get("placa", ""), datos.get("observaciones_salida", None), datos.get("puerta", "Puerta 1 (Norte)"), uid
+            ), 200
+        if path == "/api/abonado":
+            uid = self._safe_int(datos.get("usuario_id", 1), 1, "usuario_id")
+            return models.registrar_nuevo_abonado(datos, uid), 201
+        if path == "/api/abonado/actualizar":
+            uid = self._safe_int(datos.get("usuario_id", 1), 1, "usuario_id")
+            return models.actualizar_abonado_vehiculo(datos.get("placa", ""), datos, uid), 200
+        if path == "/api/pagos":
+            uid = self._safe_int(datos.get("usuario_id", 2), 2, "usuario_id")
+            return models.registrar_pago_mensualidad(datos, uid), 201
+        if path == "/api/pagos/anular":
+            pago_id = self._safe_int(datos.get("pago_id", 0), 0, "pago_id")
+            admin_id = self._safe_int(datos.get("admin_id", datos.get("usuario_id", 1)), 1, "admin_id")
+            return models.anular_pago(pago_id, datos.get("motivo", ""), admin_id), 200
+        if path == "/api/pagos/notificar":
+            uid = self._safe_int(datos.get("usuario_id", 2), 2, "usuario_id")
+            return models.registrar_alerta_vencimiento(datos.get("placa", ""), datos.get("canal", "WHATSAPP"), uid), 200
+        if path == "/api/abonado/baja":
+            uid = self._safe_int(datos.get("usuario_id", 1), 1, "usuario_id")
+            return models.cancelar_suscripcion_abonado(datos.get("placa", ""), datos.get("motivo", ""), uid), 200
+        if path == "/api/abonado/reactivar":
+            uid = self._safe_int(datos.get("usuario_id", 2), 2, "usuario_id")
+            return models.reactivar_suscripcion_abonado(datos, uid), 200
+        return None
+
+    def do_POST(self):
+        path = urllib.parse.urlparse(self.path).path
 
         try:
-            datos = json.loads(body.decode("utf-8")) if body else {}
+            datos = self._leer_json_body()
         except json.JSONDecodeError:
             return self._send_json({"success": False, "mensaje": "Cuerpo JSON inválido"}, 400)
+        except ValueError as exc:
+            return self._send_json({"success": False, "codigo_error": "PARAMETRO_INVALIDO", "mensaje": str(exc)}, 400)
 
-        # 1. Autenticación / Inicio de Sesión (SHA-256 + RBAC)
         if path == "/api/auth/login":
-            username = datos.get("username", "")
-            password = datos.get("password", "")
-            ip = datos.get("terminal", "Cabina Principal")
-            resultado = models.autenticar_usuario(username, password, ip)
+            resultado = models.autenticar_usuario(
+                datos.get("username", ""), datos.get("password", ""), datos.get("terminal", "Cabina Principal")
+            )
             return self._send_json(resultado, 200 if resultado["success"] else 401)
 
-        # 2. CRUD Usuarios: Crear Usuario
-        elif path == "/api/usuarios":
-            admin_id = int(datos.get("admin_id", 1))
-            resultado = models.crear_usuario(datos, admin_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 201))
-
-        # 3. CRUD Usuarios: Actualizar Perfil / Rol / Estado
-        elif path == "/api/usuarios/actualizar":
-            user_id = int(datos.get("user_id", 0))
-            admin_id = int(datos.get("admin_id", 1))
-            resultado = models.actualizar_usuario(user_id, datos, admin_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 4. CRUD Usuarios: Restablecer Contraseña
-        elif path == "/api/usuarios/clave":
-            user_id = int(datos.get("user_id", 0))
-            nueva_clave = datos.get("nueva_password", "")
-            admin_id = int(datos.get("admin_id", 1))
-            resultado = models.cambiar_password(user_id, nueva_clave, admin_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 5. CRUD Usuarios: Eliminar / Baja Lógica de Usuario
-        elif path == "/api/usuarios/eliminar":
-            user_id = int(datos.get("user_id", 0))
-            admin_id = int(datos.get("admin_id", 1))
-            resultado = models.eliminar_usuario(user_id, admin_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 6. CRUD Celdas: Crear Nueva Celda
-        elif path == "/api/celdas":
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.crear_celda(datos, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 201))
-
-        # 7. CRUD Celdas: Actualizar Parámetros de Celda (Zona, Piso, Tipo, Estado)
-        elif path == "/api/celdas/actualizar":
-            codigo = datos.get("codigo", "")
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.actualizar_celda(codigo, datos, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 8. CRUD Celdas: Eliminar Celda (con validación de integridad)
-        elif path == "/api/celdas/eliminar":
-            codigo = datos.get("codigo", "")
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.eliminar_celda(codigo, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 9. Gestión Operativa de Celdas: Cambiar Estado (Disponible / Mantenimiento / Inactiva)
-        elif path == "/api/celdas/estado":
-            codigo = datos.get("codigo", "")
-            nuevo_estado = datos.get("nuevo_estado", "")
-            motivo = datos.get("motivo", "")
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.cambiar_estado_celda(codigo, nuevo_estado, motivo, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 10. Gestión Operativa de Celdas: Reubicación Atómica de Vehículo
-        elif path == "/api/celdas/reubicar":
-            placa = datos.get("placa", "")
-            nueva_celda = datos.get("nueva_celda", "")
-            motivo = datos.get("motivo", "")
-            marcar_mantenimiento = bool(datos.get("marcar_anterior_mantenimiento", False))
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.reubicar_vehiculo_celda(
-                placa, nueva_celda, motivo, marcar_mantenimiento, usuario_id
+        try:
+            despacho = (
+                self._despachar_post_usuarios(path, datos)
+                or self._despachar_post_celdas(path, datos)
+                or self._despachar_post_operacion_y_pagos(path, datos)
             )
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
+        except ValueError as exc:
+            return self._send_json({"success": False, "codigo_error": "PARAMETRO_INVALIDO", "mensaje": str(exc)}, 400)
 
-        # 11. Control de Acceso: Registrar Entrada de Vehículo (Iteración 1 + 2)
-        elif path == "/api/ingreso":
-            placa = datos.get("placa", "")
-            observaciones = datos.get("observaciones", None)
-            puerta = datos.get("puerta", "Puerta 1 (Norte)")
-            usuario_id = int(datos.get("usuario_id", 2))
-            resultado = models.registrar_ingreso(placa, observaciones, puerta, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 12. Control de Acceso: Registrar Novedad Física sobre Vehículo Estacionado
-        elif path == "/api/novedad":
-            placa = datos.get("placa", "")
-            novedad = datos.get("novedad", "")
-            usuario_id = int(datos.get("usuario_id", 2))
-            resultado = models.registrar_novedad_vehiculo(placa, novedad, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 13. Control de Acceso: Registrar Salida de Vehículo y Liberar Celda
-        elif path == "/api/salida":
-            placa = datos.get("placa", "")
-            observaciones_salida = datos.get("observaciones_salida", None)
-            puerta = datos.get("puerta", "Puerta 1 (Norte)")
-            usuario_id = int(datos.get("usuario_id", 2))
-            resultado = models.registrar_salida(placa, observaciones_salida, puerta, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 14. CRUD Abonados: Registrar Nuevo Cliente Abonado y Vehículo
-        elif path == "/api/abonado":
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.registrar_nuevo_abonado(datos, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 201))
-
-        # 15. CRUD Abonados: Actualizar Datos del Titular y Vehículo
-        elif path == "/api/abonado/actualizar":
-            placa = datos.get("placa", "")
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.actualizar_abonado_vehiculo(placa, datos, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 16. Gestión de Pagos: Registrar Pago de Mensualidad en Plataforma (Iteración 3)
-        elif path == "/api/pagos":
-            usuario_id = int(datos.get("usuario_id", 2))
-            resultado = models.registrar_pago_mensualidad(datos, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 201))
-
-        # 17. Gestión de Pagos: Anular Pago Erróneo (Exclusivo ADMIN, sin borrado físico)
-        elif path == "/api/pagos/anular":
-            pago_id = int(datos.get("pago_id", 0))
-            motivo = datos.get("motivo", "")
-            admin_id = int(datos.get("admin_id", datos.get("usuario_id", 1)))
-            resultado = models.anular_pago(pago_id, motivo, admin_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 18. Gestión de Pagos: Emitir Recordatorio / Alerta de Vencimiento o Mora
-        elif path == "/api/pagos/notificar":
-            placa = datos.get("placa", "")
-            canal = datos.get("canal", "WHATSAPP")
-            usuario_id = int(datos.get("usuario_id", 2))
-            resultado = models.registrar_alerta_vencimiento(placa, canal, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 19. Gestión de Pagos: Baja Lógica / Cancelación de Servicio de Abonado
-        elif path == "/api/abonado/baja":
-            placa = datos.get("placa", "")
-            motivo = datos.get("motivo", "")
-            usuario_id = int(datos.get("usuario_id", 1))
-            resultado = models.cancelar_suscripcion_abonado(placa, motivo, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
-
-        # 20. Gestión de Pagos: Reactivación de Servicio con Nuevo Pago
-        elif path == "/api/abonado/reactivar":
-            usuario_id = int(datos.get("usuario_id", 2))
-            resultado = models.reactivar_suscripcion_abonado(datos, usuario_id)
-            return self._send_json(resultado, self._status_for_result(resultado, 200))
+        if despacho:
+            resultado, ok_code = despacho
+            return self._send_json(resultado, self._status_for_result(resultado, ok_code))
 
         return self._send_json({"error": "Ruta POST no encontrada"}, 404)
 

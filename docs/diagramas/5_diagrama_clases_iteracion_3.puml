@@ -11,22 +11,68 @@ skinparam ClassBackgroundColor #FFFBEB
 skinparam ClassHeaderBackgroundColor #FEF3C7
 skinparam ClassBorderColor #B45309
 
-title Diagrama de Clases del Dominio (Módulo de Pagos Integrado) — Iteración 3
+skinparam nodesep 28
+skinparam ranksep 38
+title Diagrama de Clases del Dominio Integrado (9 Entidades + RBAC) — Iteración 3 (Gestión de Pagos)
 
 class Usuario {
   + id : int <<PK>>
   + username : str <<unique>>
   - password_hash : str [SHA-256]
+  + nombre_completo : str
+  + email : str <<unique>>
   + rol : Enum(ADMIN, OPERARIO, AUDITOR)
   + activo : bool
   --
   + autenticar_usuario(username, password) : dict
+  + crear_usuario(datos, admin_id) : dict
+  + actualizar_usuario(user_id, datos, admin_id) : dict
+  + eliminar_usuario(user_id, admin_id) : dict
 }
 
 class VerificadorRBAC <<service>> {
   + PERMISOS_POR_ROL : dict
   --
   + verificar_permiso(actor_id, permiso, modulo) : dict
+  + obtener_matriz_rbac() : dict
+}
+
+class Celda {
+  + codigo : str <<PK>> [C-01..C-70, M-01..M-10]
+  + tipo_permitido : Enum(CARRO, MOTO)
+  + estado : Enum(DISPONIBLE, OCUPADA, MANTENIMIENTO, INACTIVA)
+  + piso : int
+  + zona : str
+  + motivo_bloqueo : str
+  --
+  + crear_celda(datos, usuario_id) : dict
+  + cambiar_estado_celda(codigo, estado, motivo, usuario_id) : dict
+  + reubicar_vehiculo_celda(placa, nueva_celda, ...) : dict
+}
+
+class RegistroAcceso {
+  + id : int <<PK>>
+  + vehiculo_placa : str <<FK>>
+  + celda_codigo : str <<FK>>
+  + fecha_ingreso : datetime
+  + fecha_salida : datetime
+  + estado : Enum(ADENTRO, FINALIZADO)
+  + observaciones : str
+  + usuario_id : int <<FK>>
+  --
+  + registrar_ingreso(placa, obs, puerta, usuario_id) : dict
+  + registrar_novedad_vehiculo(placa, novedad, usuario_id) : dict
+  + registrar_salida(placa, obs, puerta, usuario_id) : dict
+}
+
+class HistorialCelda {
+  + id : int <<PK>>
+  + celda_codigo : str <<FK>>
+  + estado_anterior : str
+  + estado_nuevo : str
+  + motivo : str
+  + usuario_id : int <<FK>>
+  + fecha_cambio : datetime
 }
 
 class Propietario {
@@ -35,15 +81,20 @@ class Propietario {
   + nombre_completo : str
   + telefono : str
   + email : str
+  + direccion : str
 }
 
 class Vehiculo {
   + placa : str <<PK>>
   + tipo_vehiculo : Enum(CARRO, MOTO)
+  + marca : str
+  + modelo : str
+  + color : str
   + propietario_id : int <<FK>>
   + activo : bool
   --
   + consultar_vehiculo(placa) : dict
+  + registrar_nuevo_abonado(datos, usuario_id) : dict
   + cancelar_suscripcion_abonado(placa, motivo, usuario_id) : dict
   + reactivar_suscripcion_abonado(datos, usuario_id) : dict
 }
@@ -66,14 +117,16 @@ class Pago #ECFDF5;line:059669 {
   + vehiculo_placa : str <<FK>>
   + mensualidad_id : int <<FK>>
   + fecha_pago : date
+  + fecha_registro : datetime
   + periodo_inicio : date
   + periodo_fin : date
   + meses_pagados : int
   + valor_pagado : decimal
-  + metodo_pago : Enum(EFECTIVO, TRANSFERENCIA, QR, CONSIGNACION)
+  + metodo_pago : Enum(EFECTIVO, TRANSFERENCIA_BANCARIA, CODIGO_QR, CONSIGNACION)
   + referencia_comprobante : str
-  + tipo_aplicacion : Enum(ANTICIPADO, PUNTUAL, MORA, INICIAL)
+  + tipo_aplicacion : Enum(PAGO_ANTICIPADO, PAGO_PUNTUAL, MORA_CONSECUTIVA, INICIAL_REACTIVACION)
   + estado : Enum(CONFIRMADO, ANULADO)
+  + observaciones : str
   + usuario_id : int <<FK>>
   --
   + previsualizar_pago_mensualidad(placa, fecha, meses) : dict
@@ -89,14 +142,20 @@ class AuditoriaAccion {
   + modulo : str
   + accion : str
   + detalle : str
+  + ip_terminal : str
   + fecha : datetime
 }
 
 Usuario "1" ..> VerificadorRBAC : valida permisos >
+Usuario "1" -- "0..*" AuditoriaAccion : registra >
+Usuario "1" -- "0..*" HistorialCelda : ejecuta cambio >
+Usuario "1" -- "0..*" RegistroAcceso : opera en cabina >
+Usuario "1" -- "0..*" Pago : recauda / anula >
 Propietario "1" -- "1..*" Vehiculo : posee >
 Vehiculo "1" *-- "1..*" Mensualidad : suscribe >
 Vehiculo "1" -- "0..*" Pago : liquida >
+Vehiculo "1" -- "0..*" RegistroAcceso : protagoniza >
+Celda "1" -- "0..*" RegistroAcceso : aloja en >
+Celda "1" *-- "0..*" HistorialCelda : registra cambios >
 Mensualidad "1" *-- "0..*" Pago : respalda >
-Usuario "1" -- "0..*" Pago : recauda / anula >
-Usuario "1" -- "0..*" AuditoriaAccion : registra >
 @enduml

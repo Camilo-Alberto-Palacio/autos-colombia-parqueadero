@@ -29,7 +29,7 @@ actor "Administrador\n(ADMIN)" as Admin
 actor "Operario de Cabina\n(OPERARIO 24/7)" as Operario
 actor "Auditor de Calidad\n(AUDITOR)" as Auditor
 
-' Generalización jerárquica RBAC entre actores (OMG UML 2.5)
+' Asociaciones limpias según jerarquía RBAC
 Admin -down-|> Operario : hereda permisos
 Operario -down-|> Auditor : hereda supervisión
 
@@ -38,14 +38,14 @@ rectangle "Módulo de Gestión de Pagos — Autos Colombia 24/7 (Iteración 3)" 
   package "1. Recaudo Directo y Vigencia de Mensualidades" {
     usecase "CU-11: Registrar Pago de\nMensualidad en Plataforma" as CU11
     usecase "CU-12: Calcular Vigencia Consecutiva\n(30 Días sin Corrimiento)" as CU12
-    usecase "CU-13: Emitir Comprobante y Consultar\nLibro Mayor de Pagos" as CU13
+    usecase "CU-13: Emitir y Consultar\nComprobante y Libro Mayor" as CU13
   }
 
   package "2. Control Financiero, Bajas y Cartera" {
     usecase "CU-14: Anular Pago Erróneo\n(Sin Borrado Físico)" as CU14
     usecase "CU-15: Gestionar Baja Lógica\ny Reactivación de Servicio" as CU15
     usecase "CU-16: Consultar Flujo de Caja\ny Cartera de Vencimientos" as CU16
-    usecase "Enviar Alerta Preventiva\nde Cobro (WhatsApp/Email)" as UC_Alerta
+    usecase "Enviar Alerta Preventiva\nde Cobro (Operario / Admin)" as UC_Alerta
   }
 
   package "3. Seguridad Transversal" {
@@ -54,10 +54,11 @@ rectangle "Módulo de Gestión de Pagos — Autos Colombia 24/7 (Iteración 3)" 
   }
 }
 
-' Asociaciones limpias según jerarquía RBAC
+' Asociaciones directas por rol
+Admin --> CU14
 Operario --> CU11
 Operario --> CU15
-Admin --> CU14
+Operario --> UC_Alerta
 Auditor --> CU13
 Auditor --> CU16
 
@@ -67,12 +68,20 @@ CU11 ..> CU13 : <<include>>
 CU11 ..> UC_RBAC : <<include>>
 CU14 ..> UC_RBAC : <<include>>
 CU15 ..> UC_RBAC : <<include>>
+UC_Alerta ..> UC_RBAC : <<include>>
 
 CU11 ..> UC_Audit : <<include>>
 CU14 ..> UC_Audit : <<include>>
 CU15 ..> UC_Audit : <<include>>
+UC_Alerta ..> UC_Audit : <<include>>
 
-UC_Alerta .up.> CU16 : <<extend>>
+UC_Alerta .> CU16 : <<extend>>
 
-note "Alcance Iteración 3:\nRecaudo directo por Operario/Admin\nen plataforma (sin pasarela externa).\nProhíbe pagos a futuro y separa\nfecha_pago de fecha_vencimiento." as N_Alcance
+note left of Admin
+  Alcance Iteración 3:
+  Recaudo directo por Operario/Admin
+  en plataforma (sin pasarela externa).
+  Prohíbe pagos a futuro y separa
+  fecha_pago de fecha_vencimiento.
+end note
 @enduml

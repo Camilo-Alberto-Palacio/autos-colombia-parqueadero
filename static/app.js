@@ -152,7 +152,7 @@ async function apiPost(ruta, payload) {
 // NAVEGACIÓN DE VISTAS Y SINCRONIZACIÓN DE PRIVILEGIOS RBAC
 // ============================================================================
 
-function cambiarVista(vistaId) {
+function cambiarVista(vistaId, opciones = {}) {
   document.querySelectorAll(".view-container").forEach((sec) => {
     sec.classList.toggle("active", sec.id === vistaId);
   });
@@ -188,7 +188,7 @@ function cambiarVista(vistaId) {
   } else if (vistaId === "view-abonados") {
     cargarAbonadosServidor();
   } else if (vistaId === "view-pagos") {
-    cargarVistaPagos();
+    cargarVistaPagos(opciones.placa || null);
   } else if (vistaId === "view-auditoria") {
     cargarAuditoria();
   } else if (vistaId === "view-mapa") {
@@ -1374,8 +1374,7 @@ function obtenerFechaHoyISO() {
 }
 
 function irAPagosConPlaca(placa) {
-  cambiarVista("view-pagos");
-  setTimeout(() => seleccionarPlacaPago(placa), 100);
+  cambiarVista("view-pagos", { placa });
 }
 
 function seleccionarPlacaPago(placa) {
@@ -1391,7 +1390,7 @@ function ajustarPlaceholderReferenciaPago() {
   const inp = document.getElementById("pago-referencia");
   if (!inp) return;
   if (met === "EFECTIVO") {
-    inp.placeholder = "Opcional en efectivo (ej. CAJA-01)";
+    inp.placeholder = "Opcional (ej. CAJA-01)";
   } else if (met === "CODIGO_QR") {
     inp.placeholder = "Obligatorio: N° aprobación QR";
   } else if (met === "TRANSFERENCIA_BANCARIA") {

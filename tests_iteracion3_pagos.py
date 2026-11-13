@@ -147,6 +147,15 @@ class PlanPruebasIteracion3PagosTestCase(unittest.TestCase):
         self.assertFalse(r_monto["success"])
         self.assertEqual(r_monto["codigo_error"], "MONTO_INVALIDO")
 
+        # 4. Parámetros HTTP no numéricos rechazados limpiamente con HTTP 400 (sin Error 500)
+        st_bad_q, b_bad_q = self._http_get("/api/auditoria?limite=invalido")
+        self.assertEqual(st_bad_q, 400)
+        self.assertEqual(b_bad_q.get("codigo_error"), "PARAMETRO_INVALIDO")
+
+        st_bad_p, b_bad_p = self._http_post("/api/pagos/anular", {"pago_id": "abc", "motivo": "Prueba", "admin_id": 1})
+        self.assertEqual(st_bad_p, 400)
+        self.assertEqual(b_bad_p.get("codigo_error"), "PARAMETRO_INVALIDO")
+
     def test_cp24_pago_anticipado_preserva_dias_restantes(self):
         """CP-24: Pago anticipado (ABC-123 vence en +20d) suma +30d al corte vigente alcanzando +50d."""
         hoy = date.today()
@@ -385,6 +394,36 @@ class PlanPruebasIteracion3PagosTestCase(unittest.TestCase):
         self.assertTrue(b_react["success"])
         self.assertEqual(b_react["tipo_aplicacion"], "INICIAL_REACTIVACION")
         self.assertEqual(b_react["nueva_fecha_vencimiento"], (hoy + timedelta(days=30)).strftime("%Y-%m-%d"))
+
+        # Rechazar reactivación duplicada si el vehículo ya se encuentra activo
+        st_dup, b_dup = self._http_post(
+            "/api/abonado/reactivar",
+            {"placa": "KLR-500", "fecha_pago": hoy_str, "metodo_pago": "EFECTIVO", "usuario_id": 2},
+        )
+        self.assertEqual(st_dup, 400)
+        self.assertEqual(b_dup.get("codigo_error"), "VEHICULO_YA_ACTIVO")
+
+        # Anular la reactivación como ADMIN debe revertir el vehículo a activo=0 y mensualidad CANCELADA
+        st_anul_r, b_anul_r = self._http_post(
+            "/api/pagos/anular",
+            {"pago_id": b_react["pago_id"], "motivo": "Prueba reversión de reactivación", "admin_id": 1},
+        )
+        self.assertEqual(st_anul_r, 200)
+        self.assertTrue(b_anul_r["success"])
+        ficha_rev = models.consultar_vehiculo("KLR-500")
+        self.assertEqual(ficha_rev["activo"], 0)
+        self.assertEqual(ficha_rev["mensualidad"]["estado"], "CANCELADA")
+
+        # Reactivación definitiva para verificar prioridad sobre contratos CANCELADA previos
+        st_react2, b_react2 = self._http_post(
+            "/api/abonado/reactivar",
+            {"placa": "KLR-500", "fecha_pago": hoy_str, "metodo_pago": "EFECTIVO", "usuario_id": 2},
+        )
+        self.assertEqual(st_react2, 200)
+        self.assertTrue(b_react2["success"])
+        ficha_fin = models.consultar_vehiculo("KLR-500")
+        self.assertEqual(ficha_fin["activo"], 1)
+        self.assertTrue(ficha_fin["mensualidad"]["al_dia"])
 
     def test_cp32_flujo_caja_mensual_cartera_y_alerta_vencimiento(self):
         """CP-32: Flujo de caja consolidado por método/categoría, clasificación de cartera y alerta auditada."""

@@ -498,10 +498,10 @@
           <td class="mono bold center">CP-23</td>
           <td class="mono center">CU-11</td>
           <td class="mono center">HU-11 / RF-19, RNF-13</td>
-          <td class="bold">Rechazo estricto de fecha futura, monto inválido y falta de referencia QR/Banco</td>
-          <td>Enviar fecha_pago=mañana; transferencia sin ref.; valor_pagado=120000.</td>
-          <td>Rechaza con FECHA_FUTURA, REFERENCIA_REQUERIDA y MONTO_INVALIDO.</td>
-          <td>Las 3 validaciones bloquearon la operación.</td>
+          <td class="bold">Rechazo de fecha futura, monto inválido, falta de ref. y parámetros malformados</td>
+          <td>fecha_pago=mañana; transferencia sin ref.; valor=120000; IDs/meses no enteros.</td>
+          <td>Rechaza con FECHA_FUTURA, REFERENCIA_REQUERIDA, MONTO_INVALIDO y HTTP 400 PARAMETRO_INVALIDO.</td>
+          <td>Las 4 validaciones bloquearon sin errores HTTP 500.</td>
           <td class="center"><span class="pill pill-ok">APROBADO</span></td>
         </tr><tr>
           <td class="mono bold center">CP-24</td>
@@ -570,10 +570,10 @@
           <td class="mono bold center">CP-31</td>
           <td class="mono center">CU-15</td>
           <td class="mono center">HU-15 / RF-23</td>
-          <td class="bold">Baja lógica bloquea entrada y reactivación inicia 30d desde fecha_pago</td>
-          <td>Baja de KLR-500 -&gt; intento ingreso -&gt; reactivar pagando hoy.</td>
-          <td>Baja marca activo=0; barrera da VEHICULO_INACTIVO; reactivar da hoy+30d.</td>
-          <td>Ciclo completo validado preservando BD.</td>
+          <td class="bold">Baja lógica, bloqueo de entrada, reactivación y reversión al anular reactivación</td>
+          <td>Baja KLR-500 -&gt; ingreso -&gt; reactivar -&gt; re-reactivar -&gt; anular -&gt; re-reactivar.</td>
+          <td>Baja activo=0; barrera VEHICULO_INACTIVO; reactiva +30d; rechaza VEHICULO_YA_ACTIVO; anular revierte activo=0.</td>
+          <td>Ciclo completo y reversión verificados sin corrupción.</td>
           <td class="center"><span class="pill pill-ok">APROBADO</span></td>
         </tr><tr>
           <td class="mono bold center">CP-32</td>

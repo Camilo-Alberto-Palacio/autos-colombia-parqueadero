@@ -56,8 +56,8 @@ Resultado verificado: **20/20 OK** en Iteraciones 1–2 y **12/12 OK** exclusivo
 
 | Usuario (`username`) | Contraseña | Rol RBAC | Titular Asignado | Privilegios Verificables |
 | :--- | :--- | :---: | :--- | :--- |
-| **`admin`** | `admin123` | `ADMIN` | Camilo Alberto Palacios Turriago | Control total: CRUD Usuarios, CRUD estructural de Celdas, Mantenimiento, Reubicación, Abonados y Acceso 24/7. |
-| **`adriana_op`** | `operario123` | `OPERARIO` | Adriana Andrea Agudelo Agudelo | Cabina Norte 24/7: Entrada/Salida, Novedades, Mantenimiento/Reubicación de Celdas y Padrón Abonados (`HTTP 403` en CRUD Admin). |
+| **`admin`** | `admin123` | `ADMIN` | Camilo Alberto Palacios Turriago | Control total: CRUD Usuarios, CRUD estructural de Celdas, Mantenimiento, Reubicación, Abonados, Pagos, Anulación Auditada (`ANULAR_PAGOS`) y Acceso 24/7. |
+| **`adriana_op`** | `operario123` | `OPERARIO` | Adriana Andrea Agudelo Agudelo | Cabina Norte 24/7: Entrada/Salida, Novedades, Mantenimiento/Reubicación de Celdas, Padrón Abonados y Recaudo Directo de Pagos (`HTTP 403` en CRUD Admin y Anulación). |
 | **`daniel_op`** | `operario123` | `OPERARIO` | Juan Daniel Pulgarin García | Cabina Sur 24/7: Operación multi-cabina concurrente sobre SQLite WAL. |
 | **`auditor`** | `auditor123` | `AUDITOR` | Auditor de Calidad y Seguridad | Supervisión estricta de Solo Lectura: bloquea con `HTTP 403` cualquier escritura. |
 
@@ -71,7 +71,7 @@ Resultado verificado: **20/20 OK** en Iteraciones 1–2 y **12/12 OK** exclusivo
 | `GET` | `/api/resumen` | `CONSULTA_AUDITORIA` | KPIs de las 80 celdas, vehículos adentro y abonados. |
 | `GET` | `/api/vehiculo?placa=...` | `CONSULTA_AUDITORIA` | Ficha técnica, titular y vigencia estricta por placa. |
 | `GET` | `/api/celdas` | `CONSULTA_AUDITORIA` | Inventario filtrable de celdas (`estado`, `tipo`, `zona`, `q`). |
-| `GET` | `/api/celdas/historial` | `CONSULTA_AUDITORIA` | Bitácora técnica de cambios y mantenimientos (`historial_celda`). |
+| `GET` | `/api/historial_celdas` | `CONSULTA_AUDITORIA` | Bitácora técnica de cambios y mantenimientos (`historial_celda`). |
 | `GET` | `/api/usuarios` | `CONSULTA_AUDITORIA` | Listado de usuarios internos sin exponer `password_hash`. |
 | `GET` | `/api/roles` | `CONSULTA_AUDITORIA` | Matriz declarativa de roles y permisos RBAC. |
 | `GET` | `/api/abonados` | `CONSULTA_AUDITORIA` | Padrón completo de propietarios, vehículos y vigencias. |

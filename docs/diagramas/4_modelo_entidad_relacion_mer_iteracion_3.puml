@@ -56,6 +56,7 @@ entity "PAGO (Nuevo Iteración 3)" as e_pago #ECFDF5;line:059669 {
   * vehiculo_placa : VARCHAR(10) <<FK>>
   * mensualidad_id : INTEGER <<FK>>
   * fecha_pago : DATE
+  fecha_registro : DATETIME
   * periodo_inicio : DATE
   * periodo_fin : DATE
   * meses_pagados : INTEGER
@@ -86,7 +87,10 @@ entity "USUARIO" as e_user {
   * nombre_completo : VARCHAR(120)
   * email : VARCHAR(100) <<UNIQUE>>
   * rol : VARCHAR(20)
+  cargo : VARCHAR(60)
   * activo : BOOLEAN
+  fecha_creacion : DATETIME
+  ultimo_login : DATETIME
 }
 
 entity "REGISTRO_ACCESO" as e_reg {
@@ -97,6 +101,7 @@ entity "REGISTRO_ACCESO" as e_reg {
   * fecha_ingreso : DATETIME
   fecha_salida : DATETIME
   * estado : VARCHAR(15)
+  observaciones : TEXT
   usuario_id : INTEGER <<FK>>
 }
 
@@ -108,6 +113,7 @@ entity "HISTORIAL_CELDA" as e_hist {
   * estado_nuevo : VARCHAR(15)
   motivo : TEXT
   usuario_id : INTEGER <<FK>>
+  fecha_cambio : DATETIME
 }
 
 entity "AUDITORIA_ACCION" as e_aud {
@@ -117,6 +123,7 @@ entity "AUDITORIA_ACCION" as e_aud {
   * modulo : VARCHAR(50)
   * accion : VARCHAR(50)
   detalle : TEXT
+  ip_terminal : VARCHAR(50)
   fecha : DATETIME
 }
 

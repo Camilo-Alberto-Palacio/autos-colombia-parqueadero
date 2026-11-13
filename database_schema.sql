@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS propietario (
     telefono VARCHAR(20) NOT NULL,
     email VARCHAR(100),
     direccion VARCHAR(120),
-    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP
+    fecha_registro DATETIME DEFAULT (datetime('now', 'localtime'))
 );
 
 -- 2. TABLA: VEHICULO (Catálogo de Automotores)
@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS vehiculo (
     color VARCHAR(30) NOT NULL,
     propietario_id INTEGER NOT NULL,
     activo BOOLEAN DEFAULT 1,
-    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_creacion DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (propietario_id) REFERENCES propietario(id) ON DELETE RESTRICT
 );
 
@@ -64,7 +64,7 @@ CREATE TABLE IF NOT EXISTS usuario (
     rol VARCHAR(20) NOT NULL CHECK (rol IN ('ADMIN', 'OPERARIO', 'AUDITOR')),
     cargo VARCHAR(60) DEFAULT 'Operador de Turno',
     activo BOOLEAN NOT NULL DEFAULT 1,
-    fecha_creacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_creacion DATETIME DEFAULT (datetime('now', 'localtime')),
     ultimo_login DATETIME
 );
 
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS historial_celda (
     estado_nuevo VARCHAR(15) NOT NULL,
     motivo TEXT,
     usuario_id INTEGER,
-    fecha_cambio DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_cambio DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (celda_codigo) REFERENCES celda(codigo) ON DELETE CASCADE,
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE SET NULL
 );
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS auditoria_accion (
     accion VARCHAR(50) NOT NULL,
     detalle TEXT,
     ip_terminal VARCHAR(50) DEFAULT 'Terminal Local',
-    fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha DATETIME DEFAULT (datetime('now', 'localtime')),
     FOREIGN KEY (usuario_id) REFERENCES usuario(id) ON DELETE SET NULL
 );
 
@@ -115,7 +115,7 @@ CREATE TABLE IF NOT EXISTS pago (
     vehiculo_placa VARCHAR(10) NOT NULL,
     mensualidad_id INTEGER NOT NULL,
     fecha_pago DATE NOT NULL,
-    fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fecha_registro DATETIME DEFAULT (datetime('now', 'localtime')),
     periodo_inicio DATE NOT NULL,
     periodo_fin DATE NOT NULL,
     meses_pagados INTEGER NOT NULL DEFAULT 1 CHECK (meses_pagados >= 1 AND meses_pagados <= 12),
@@ -260,20 +260,20 @@ INSERT OR IGNORE INTO vehiculo (placa, tipo_vehiculo, marca, modelo, color, prop
 ('KLR500', 'MOTO', 'Kawasaki', 'KLR 650 Adventure', 'Verde Militar', 4, 1),
 ('TOY456', 'CARRO', 'Toyota', 'Corolla Cross Híbrido', 'Blanco Perlado', 5, 1);
 
--- Mensualidades registradas
+-- Mensualidades registradas (fechas alineadas a hora local Colombia)
 INSERT OR IGNORE INTO mensualidad (id, vehiculo_placa, fecha_pago, fecha_vencimiento, valor_pagado, estado) VALUES
-(1, 'ABC123', date('now', '-10 days'), date('now', '+20 days'), 250000.00, 'ACTIVA'),
-(2, 'MOT808', date('now', '-5 days'), date('now', '+25 days'), 100000.00, 'ACTIVA'),
-(3, 'XYZ999', date('now', '-45 days'), date('now', '-15 days'), 250000.00, 'VENCIDA'),
-(4, 'MOT101', date('now', '-40 days'), date('now', '-10 days'), 100000.00, 'VENCIDA'),
-(5, 'KLR500', date('now', '-2 days'), date('now', '+28 days'), 100000.00, 'ACTIVA'),
-(6, 'TOY456', date('now', '-12 days'), date('now', '+18 days'), 250000.00, 'ACTIVA');
+(1, 'ABC123', date('now', 'localtime', '-10 days'), date('now', 'localtime', '+20 days'), 250000.00, 'ACTIVA'),
+(2, 'MOT808', date('now', 'localtime', '-5 days'), date('now', 'localtime', '+25 days'), 100000.00, 'ACTIVA'),
+(3, 'XYZ999', date('now', 'localtime', '-45 days'), date('now', 'localtime', '-15 days'), 250000.00, 'VENCIDA'),
+(4, 'MOT101', date('now', 'localtime', '-40 days'), date('now', 'localtime', '-10 days'), 100000.00, 'VENCIDA'),
+(5, 'KLR500', date('now', 'localtime', '-2 days'), date('now', 'localtime', '+28 days'), 100000.00, 'ACTIVA'),
+(6, 'TOY456', date('now', 'localtime', '-12 days'), date('now', 'localtime', '+18 days'), 250000.00, 'ACTIVA');
 
 -- Historial semilla de pagos (Iteración 3 - Coherente con las mensualidades base)
 INSERT OR IGNORE INTO pago (id, numero_recibo, vehiculo_placa, mensualidad_id, fecha_pago, periodo_inicio, periodo_fin, meses_pagados, valor_pagado, metodo_pago, referencia_comprobante, tipo_aplicacion, estado, observaciones, usuario_id) VALUES
-(1, 'REC-SEED-0001', 'ABC123', 1, date('now', '-10 days'), date('now', '-10 days'), date('now', '+20 days'), 1, 250000.00, 'TRANSFERENCIA_BANCARIA', 'BANCOL-88210', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Pago mensualidad inicial en plataforma', 2),
-(2, 'REC-SEED-0002', 'MOT808', 2, date('now', '-5 days'), date('now', '-5 days'), date('now', '+25 days'), 1, 100000.00, 'CODIGO_QR', 'QR-77412', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Pago con código QR en cabina norte', 2),
-(3, 'REC-SEED-0003', 'XYZ999', 3, date('now', '-45 days'), date('now', '-45 days'), date('now', '-15 days'), 1, 250000.00, 'EFECTIVO', 'CAJA-0019', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Mensualidad anterior (hoy vencida hace 15 días)', 3),
-(4, 'REC-SEED-0004', 'MOT101', 4, date('now', '-40 days'), date('now', '-40 days'), date('now', '-10 days'), 1, 100000.00, 'EFECTIVO', 'CAJA-0024', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Mensualidad anterior (hoy vencida hace 10 días)', 3),
-(5, 'REC-SEED-0005', 'KLR500', 5, date('now', '-2 days'), date('now', '-2 days'), date('now', '+28 days'), 1, 100000.00, 'CONSIGNACION', 'CONS-55019', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Consignación bancaria verificada en recibo', 2),
-(6, 'REC-SEED-0006', 'TOY456', 6, date('now', '-12 days'), date('now', '-12 days'), date('now', '+18 days'), 1, 250000.00, 'CODIGO_QR', 'QR-99104', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Pago QR verificado por administrador', 1);
+(1, 'REC-SEED-0001', 'ABC123', 1, date('now', 'localtime', '-10 days'), date('now', 'localtime', '-10 days'), date('now', 'localtime', '+20 days'), 1, 250000.00, 'TRANSFERENCIA_BANCARIA', 'BANCOL-88210', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Pago mensualidad inicial en plataforma', 2),
+(2, 'REC-SEED-0002', 'MOT808', 2, date('now', 'localtime', '-5 days'), date('now', 'localtime', '-5 days'), date('now', 'localtime', '+25 days'), 1, 100000.00, 'CODIGO_QR', 'QR-77412', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Pago con código QR en cabina norte', 2),
+(3, 'REC-SEED-0003', 'XYZ999', 3, date('now', 'localtime', '-45 days'), date('now', 'localtime', '-45 days'), date('now', 'localtime', '-15 days'), 1, 250000.00, 'EFECTIVO', 'CAJA-0019', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Mensualidad anterior (hoy vencida hace 15 días)', 3),
+(4, 'REC-SEED-0004', 'MOT101', 4, date('now', 'localtime', '-40 days'), date('now', 'localtime', '-40 days'), date('now', 'localtime', '-10 days'), 1, 100000.00, 'EFECTIVO', 'CAJA-0024', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Mensualidad anterior (hoy vencida hace 10 días)', 3),
+(5, 'REC-SEED-0005', 'KLR500', 5, date('now', 'localtime', '-2 days'), date('now', 'localtime', '-2 days'), date('now', 'localtime', '+28 days'), 1, 100000.00, 'CONSIGNACION', 'CONS-55019', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Consignación bancaria verificada en recibo', 2),
+(6, 'REC-SEED-0006', 'TOY456', 6, date('now', 'localtime', '-12 days'), date('now', 'localtime', '-12 days'), date('now', 'localtime', '+18 days'), 1, 250000.00, 'CODIGO_QR', 'QR-99104', 'INICIAL_REACTIVACION', 'CONFIRMADO', 'Pago QR verificado por administrador', 1);
